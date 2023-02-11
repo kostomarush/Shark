@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{%block title%}{% endblock %}</title>
+    <link href="{% static 'server/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <h1 class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"><a class="nav-link text-dark" href="{% url 'home'%}">Shark</a></h1>
+      <ul class="nav nav-pills">
+          {% if request.user.username %}
+          {% url 'home' as url_home%}
+          {% url 'data' as url_data%}
+        <li class="nav-item"><a aria-current="page" class="nav-link {% if url_home == request.path%}active {%endif%}" href="{{url_home}}">Личный кабинет</a></li>
+        <li class="nav-item"><a aria-current="page" class="nav-link {% if url_data == request.path%}active {%endif%}" href="{{url_data}}">Данные</a></li>
+          {% if request.user.is_superuser %}
+        <li class="nav-item"><a aria-current="page" class="btn btn-outline-success" href="/admin">Режим админа</a></li>
+            {% endif %}
+          <span class="nav-link text-dark">
+          {% if request.user.is_authenticated %}
+            Привет {{ request.user.username }},
+            <a href="{% url 'logout' %}">Выйти</a>
+        {% else %}
+            <a href="{% url 'login' %}">Войти</a>
+        {% endif %}
+    {% endif %}
+          </span>
+      </ul>
+    </header>
+</div>
+{% block content %}
+{% endblock %}
+</body>

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+
+message DataServer {
+
+    string ip = 1;
+    string port = 2;
+
+}
+
+message DataClient {
+
+    string state = 1;
+
+}
+
+service RPC {
+
+    rpc scan (stream DataClient) returns (stream DataServer) {};
+
+}

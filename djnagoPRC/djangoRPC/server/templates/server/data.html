@@ -1,0 +1,20 @@
+{% extends 'server/base.html' %}
+{% load static %}
+{% block title %} ДОМ {% endblock %}
+
+{% block content %}
+    <table class="table table-striped text-center">
+        <thead class="table-dark">
+        <tr>
+            <th>Id</th>
+            <th>Состояние</th>
+        </tr>
+        </thead>
+        {% for i in section %}
+        <tr>
+            <th>{{i.id}}</th>
+            <th>{{i.data}}</th>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endblock %}

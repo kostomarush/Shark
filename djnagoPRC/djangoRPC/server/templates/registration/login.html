@@ -1,0 +1,29 @@
+{% extends 'server/base.html' %}
+{% load extra_filters %}
+{% block title %}Вход в систему{% endblock %}
+{% block content %}
+<main class="container h-100 w-25 p-3 text-center">
+    <h1 class="mt-5 h3 mb-3 fw-normal">Вход в систему</h1>
+    {% if form.errors %}
+    <p>
+        Ваше имя пользователя и пароль не совпали.
+        Пожалуйста, попробуйте снова.
+    </p>
+    {% else %}
+    <p>Пожалуйста, используйте следующую форму для входа в систему:</p>
+    {% endif %}
+    <form action="{% url 'login' %}" method="post">
+        <div class="form-floating">
+            {{ form.username|addclass:"form-control mb-2" }}
+            <label>Имя</label>
+        </div>
+        <div class="form-floating">
+            {{ form.password|addclass:"form-control mb-2" }}
+            <label>Пароль</label>
+        </div>
+        {% csrf_token %}
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+        <p class="mt-3 mb-3 text-muted">&copy; Kostomarov V.M. 392 student group</p>
+    </form>
+</main>
+{% endblock %}
