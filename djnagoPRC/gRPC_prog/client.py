@@ -8,8 +8,9 @@ def scan():
     stub = prot_pb2_grpc.RPCStub(channel)
     response = stub.scan(prot_pb2.DataClient(message = 'Hello'))
     nm = nmap.PortScanner()
-    scanning = nm.scan(f'{response.ip}', f'{response.port}')
-    stub.scan(prot_pb2.DataClient(info_scan = scanning))
+    nm.scan(f'{response.ip}', f'{response.port}')
+    print(nm['127.0.0.1']['tcp'].keys())
+    stub.scan(prot_pb2.DataClient(scan_info = 'scanning'))
 
 if __name__ == "__main__":
     scan()

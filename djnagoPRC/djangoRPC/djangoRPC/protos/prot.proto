@@ -5,15 +5,13 @@ message DataServer {
 
     string ip = 1;
     string port = 2;
-    string state_server = 3;
 
 }
 
 message DataClient {
 
-    string data = 1;
-    string state_client = 2;
-
+    string message = 1;
+    string scan_info = 2;
 }
 
 service RPC {
