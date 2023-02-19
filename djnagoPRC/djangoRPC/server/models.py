@@ -1,7 +1,7 @@
 from django.db import models
 
 class DataPorts(models.Model):
-    data = models.CharField(max_length=100)
+    info_scan = models.CharField(max_length=1000)
 
 class DataServer(models.Model):
     ip = models.CharField(max_length=20)

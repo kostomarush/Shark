@@ -1,7 +1,6 @@
 import prot_pb2
 import prot_pb2_grpc
 from server.models import DataPorts, DataServer
-import time
 
 
 def grpc_hook(server):
@@ -16,7 +15,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         port = data_out[0].port
         response = prot_pb2.DataServer(ip=ip, port=port)
         data = request.state
-        data_in = DataPorts(data=request.state)
+        print(data)
+        data_in = DataPorts(data=request.scan_info)
         data_in.save()
-        print(time.time())
         return response
