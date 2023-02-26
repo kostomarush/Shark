@@ -7,13 +7,25 @@
         <thead class="table-dark">
         <tr>
             <th>Id</th>
-            <th>Состояние</th>
+            <th>Состояние Сети</th>
+            <th>Протокол</th>
+            <th>Открытые порты</th>
+            <th>Состояние портов</th>
+            <th>ОС</th>
+            <th>Вендор</th>
+            <th>Версия</th>
         </tr>
         </thead>
         {% for i in section %}
         <tr>
             <th>{{i.id}}</th>
-            <th>{{i.info_scan}}</th>
+            <th>{{i.ip_status}}</th>
+            <th>{{i.protocols}}</th>
+            <th>{{i.open_ports}}</th>
+            <th>{{i.state}}</th>
+            <th>{{i.vendor}}</th>
+            <th>{{i.os_family}}</th>
+            <th>{{i.osgen}}</th>
         </tr>
         {% endfor %}
     </table>

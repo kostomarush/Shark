@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nprot.proto\"&\n\nDataServer\x12\n\n\x02ip\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\t\"0\n\nDataClient\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\tscan_info\x18\x02 \x01(\t2)\n\x03RPC\x12\"\n\x04scan\x12\x0b.DataClient\x1a\x0b.DataServer\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nprot.proto\"4\n\nDataServer\x12\n\n\x02ip\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\t\x12\x0c\n\x04mode\x18\x03 \x01(\t\"\x98\x01\n\nDataClient\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\tip_status\x18\x02 \x01(\t\x12\x11\n\tprotocols\x18\x03 \x01(\t\x12\x12\n\nopen_ports\x18\x04 \x01(\t\x12\r\n\x05state\x18\x05 \x01(\t\x12\x0e\n\x06vendor\x18\x06 \x01(\t\x12\x11\n\tos_family\x18\x07 \x01(\t\x12\r\n\x05osgen\x18\x08 \x01(\t2)\n\x03RPC\x12\"\n\x04scan\x12\x0b.DataClient\x1a\x0b.DataServer\"\x00\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'prot_pb2', globals())
@@ -21,9 +21,9 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _DATASERVER._serialized_start=14
-  _DATASERVER._serialized_end=52
-  _DATACLIENT._serialized_start=54
-  _DATACLIENT._serialized_end=102
-  _RPC._serialized_start=104
-  _RPC._serialized_end=145
+  _DATASERVER._serialized_end=66
+  _DATACLIENT._serialized_start=69
+  _DATACLIENT._serialized_end=221
+  _RPC._serialized_start=223
+  _RPC._serialized_end=264
 # @@protoc_insertion_point(module_scope)

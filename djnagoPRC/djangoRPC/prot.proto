@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+
+message DataServer {
+
+    string ip = 1;
+    string port = 2;
+    string mode = 3;
+
+}
+
+message DataClient {
+
+    string message = 1;
+    string ip_status = 2;
+    string protocols = 3;
+    string open_ports = 4;
+    string state = 5;
+    string vendor = 6;
+    string os_family = 7;
+    string osgen = 8;
+
+}
+
+service RPC {
+
+    rpc scan (DataClient) returns (DataServer) {};
+
+}

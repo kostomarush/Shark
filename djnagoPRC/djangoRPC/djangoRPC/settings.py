@@ -107,7 +107,7 @@ GRPCSERVER = {
     'servicers': ['djangoRPC.servicer.grpc_hook'],
     'maximum_concurrent_rpcs': None,
     'options': [("grpc.max_receive_message_length", 1024 * 1024 * 100)],
-    'async': False  # Default: False, if True then gRPC server will start in ASYNC mode
+    'async': True  # Default: False, if True then gRPC server will start in ASYNC mode
 }
 
 
