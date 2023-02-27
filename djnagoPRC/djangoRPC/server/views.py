@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from server.models import ScanInfo
+from django.shortcuts import render, redirect
+from .models import ScanInfo, DataServer
+from .forms import DataServerForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -9,4 +10,20 @@ def home(request):
 @login_required(redirect_field_name=None, login_url='/')
 def data(request):
     query_results = ScanInfo.objects.all()
-    return render(request, 'server/data.html', {'section': query_results})
+    error = ''
+    if request.method == 'POST':
+        form = DataServerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+        else:
+            error = 'Форма не верна'
+    form = DataServerForm()
+
+    data = {
+        'form': form,
+        'section': query_results,
+        'error': error
+    }
+    return render(request, 'server/data.html', data)
+

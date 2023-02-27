@@ -3,6 +3,16 @@
 {% block title %} ДОМ {% endblock %}
 
 {% block content %}
+
+    <form method="post" class="container">
+        {% csrf_token %}
+        {{ form.ip }}<br>
+        {{ form.port }}<br>
+        <span>{{ error }}</span>
+        <button type="submit" class="btn btn-success mx-auto d-block">Ввести</button><br>
+    </form>
+
+
     <table class="table table-striped text-center">
         <thead class="table-dark">
         <tr>
