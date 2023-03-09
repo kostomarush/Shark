@@ -7,7 +7,8 @@
     <form method="post" class="container">
         {% csrf_token %}
         {{ form.ip }}<br>
-        {{ form.port }}<br>
+        {{ form.port }}<br> 
+        {{ form.mode }}<br>
         <span>{{ error }}</span>
         <button type="submit" class="btn btn-success mx-auto d-block">Ввести</button><br>
     </form>
@@ -36,6 +37,29 @@
             <th>{{i.vendor}}</th>
             <th>{{i.os_family}}</th>
             <th>{{i.osgen}}</th>
+        </tr>
+        {% endfor %}
+    </table>
+    <table class="table table-striped text-center">
+        <thead class="table-dark">
+        <tr>
+            <th>id</th>
+            <th>ip</th>
+            <th>port</th>
+            <th>mode</th>
+            <th>client_scan</th>
+            <th>tag</th>
+            
+        </tr>
+        </thead>
+        {% for i in data_serv %}
+        <tr>
+            <th>{{i.id}}</th>
+            <th>{{i.ip}}</th>
+            <th>{{i.port}}</th>
+            <th>{{i.mode}}</th>
+            <th>{{i.client}}</th>
+            <th>{{i.tag}}</th>
         </tr>
         {% endfor %}
     </table>

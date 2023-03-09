@@ -10,19 +10,20 @@ def home(request):
 @login_required(redirect_field_name=None, login_url='/')
 def data(request):
     query_results = ScanInfo.objects.all()
+    data_serv = DataServer.objects.all()
     error = ''
     if request.method == 'POST':
         form = DataServerForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('data')
         else:
             error = 'Форма не верна'
     form = DataServerForm()
-
     data = {
         'form': form,
         'section': query_results,
+        'data_serv': data_serv,
         'error': error
     }
     return render(request, 'server/data.html', data)
