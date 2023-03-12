@@ -10,21 +10,19 @@ def grpc_hook(server):
     
 class RPCServicer(prot_pb2_grpc.RPCServicer):
     def scan(self, request, context):
-        data_server = DataServer.objects.in_bulk([5])
+        data_server = DataServer.objects.in_bulk()
         print(data_server)
         for id in data_server:
-            if data_server[id].tag == 1:
-                #cl = ClientBD.objects.create(ip_client="11.11.0.1")
-                print(request.message)
+            print(data_server[id].client)
+            if data_server[id].сдшуте == 'False':
                 if request.message != '':
-                    DataServer.objects.filter(id = id).update(client = request.message)
+                    DataServer.objects.filter(id = id).update(client = request.message, tag= 'Filter')
                 ip = data_server[id].ip
                 port = data_server[id].port
                 mode = data_server[id].mode
-                print(ip,port,mode)
                 response = prot_pb2.DataServer(ip=ip, port=port, mode=mode)
                 if request.ip_status != '' or request.vendor != '':
                     data_in = ScanInfo(ip_status=request.ip_status, protocols=request.protocols, open_ports=request.open_ports,state=request.state,vendor=request.vendor,os_family=request.os_family,osgen=request.osgen)
-                    DataServer.objects.filter(id = id).update(tag = 0)
-                    data_in.save() 
+                    data_in.save()
+            
                 return response

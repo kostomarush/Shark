@@ -18,8 +18,8 @@ class ClientBD(models.Model):
         return self.ip_client
 
 class DataServer(models.Model):
-    client = models.OneToOneField(ClientBD, on_delete=models.SET_NULL, null=True)
-    tag = models.BooleanField(default=False)
+    client = models.ForeignKey(ClientBD, on_delete=models.SET_NULL, null=True)
+    tag = models.CharField(max_length=10, default=False)
     ip = models.CharField(max_length=20)
     port = models.CharField(max_length=20)
     mode = models.CharField(max_length=20)

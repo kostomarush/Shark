@@ -5,12 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: текущий файл",
+            "name": "Python: Django",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "justMyCode": true
+            "program": "${workspaceFolder}\\djnagoPRC\\djangoRPC\\manage.py",
+            "args": [
+                "grpcserver"
+            ],
+            "django": true
         }
     ]
 }
