@@ -19,6 +19,7 @@ message DataClient {
     string vendor = 6;
     string os_family = 7;
     string osgen = 8;
+    string id_client = 9;
 
 }
 
