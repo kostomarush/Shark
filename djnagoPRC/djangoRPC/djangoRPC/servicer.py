@@ -12,7 +12,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
         for id in data_server:
-            if data_server[id].tag == 'Processing' and f'{data_server[id].client.id}' == request.message:
+            if data_server[id].tag == 'Processing' and f'{data_server[id].client.id}' == request.id_client:
                 data_in = ScanInfo(ip_status=request.ip_status, 
                 protocols=request.protocols, open_ports=request.open_ports,
                 state=request.state,vendor=request.vendor,os_family=request.os_family,
@@ -22,6 +22,10 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 return response
 
             elif data_server[id].tag == 'False':
-                DataServer.objects.filter(id = id).update(client = request.message, tag = 'Processing')
+                DataServer.objects.filter(id = id).update(client = request.id_client, tag = 'Processing')
+                ip = data_server[id].ip
+                port = data_server[id].port
+                mode = data_server[id].mode
                 response = prot_pb2.DataServer(ip=ip, port=port, mode=mode)
                 return response
+            
