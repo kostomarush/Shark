@@ -12,7 +12,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
         for id in data_server:
-            if data_server[id].tag != 'Done' and (data_server[id].client == None or request.message == f'{data_server[id].client.id}' or data_server[id].client.ip_client == request.id_client):
+            if (data_server[id].tag != 'Done') and (data_server[id].client == None or data_server[id].client.ip_client == request.id_client or request.message == f'{data_server[id].client.id}'):
                 if request.message != '':
                     DataServer.objects.filter(id = id).update(client = request.message,
                     tag = 'Processing')
