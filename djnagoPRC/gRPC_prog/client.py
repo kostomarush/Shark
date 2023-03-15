@@ -4,9 +4,9 @@ import nmap
 
 
 def scan():
-    channel = grpc.insecure_channel('localhost:50051', options=(('grpc.enable_http_proxy', 0),))
+    channel = grpc.insecure_channel('localhost:50051')
     stub = prot_pb2_grpc.RPCStub(channel)
-    response = stub.scan(prot_pb2.DataClient(message = '1'))
+    response = stub.scan(prot_pb2.DataClient(id_client = '1'))
     ip_address = response.ip
     port = response.port
     #SYN ACK Scan:
@@ -17,8 +17,8 @@ def scan():
         protocols = nm[ip_address].all_protocols()[0]
         open_ports = nm[ip_address]['tcp'].keys()
         for ports in open_ports:
-            state = nm[ip_address]['tcp'][ports]['state']
-            stub.scan(prot_pb2.DataClient(id_client='10.0.0.1',ip_status=ip_status, protocols=protocols,open_ports=f'{ports}', state = nm[ip_address]['tcp'][ports]['state']))
+            stub.scan(prot_pb2.DataClient(id_client='1',ip_status=ip_status, protocols=protocols,open_ports=f'{ports}', 
+                                          state = nm[ip_address]['tcp'][ports]['state']))
     #UDP Scan
     if response.mode == 'UDP':
         nm.scan(ip_address, port, '-v -sU')
@@ -42,7 +42,8 @@ def scan():
         os_family = os_detection[0]['osclass'][0]['osfamily']
         osgen = os_detection[0]['osclass'][0]['osgen']
         stub.scan(prot_pb2.DataClient(id_client='10.0.0.1',vendor=vendor, os_family=os_family, osgen=osgen))
-
+    
+    stub.scan(prot_pb2.DataClient(message='End'))
 
 if __name__ == "__main__":
     scan()
