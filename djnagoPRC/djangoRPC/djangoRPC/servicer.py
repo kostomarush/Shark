@@ -12,7 +12,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
         for id in data_server:
-            if request.message == 'End' and f'{data_server[id].client.id}' == request.id_client:
+            if request.message == 'End' and f'{data_server[id].client.id}' == request.id_client and data_server[id].tag == 'Processing':
                 DataServer.objects.filter(id = id).update(tag = 'Done')
                 response_end = prot_pb2.DataServer()
                 return response_end
