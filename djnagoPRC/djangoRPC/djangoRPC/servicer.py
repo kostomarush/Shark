@@ -11,13 +11,12 @@ def grpc_hook(server):
 class RPCServicer(prot_pb2_grpc.RPCServicer):
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
+        response = prot_pb2.DataServer()
         for id in data_server:
-            if request.message == 'End' and f'{data_server[id].client.id}' == request.id_client and data_server[id].tag == 'Processing':
-                DataServer.objects.filter(id = id).update(tag = 'Done')
-                response_end = prot_pb2.DataServer()
-                return response_end
-
             if data_server[id].tag == 'Processing' and f'{data_server[id].client.id}' == request.id_client:
+                if request.message == 'End':
+                    DataServer.objects.filter(id = id).update(tag = 'Done')
+                    return response
                 data_in = ScanInfo(ip_status=request.ip_status, 
                 protocols=request.protocols, open_ports=request.open_ports,
                 state=request.state,vendor=request.vendor,os_family=request.os_family,
@@ -25,8 +24,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 data_in.save()
                 # if request.message == 'End':
                 #     DataServer.objects.filter(id = id).update(tag = 'Done')
-                response_scan = prot_pb2.DataServer()
-                return response_scan
+                return response
 
             elif data_server[id].tag == 'False':
                 DataServer.objects.filter(id = id).update(client = request.id_client, tag = 'Processing')

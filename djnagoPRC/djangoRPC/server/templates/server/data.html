@@ -1,23 +1,18 @@
 {% extends 'server/base.html' %}
-{% load static %}
 {% block title %} ДОМ {% endblock %}
+{% block js %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<script>
+    setTimeout('location.reload()', 1000)
+  </script>
+</script>
+{% endblock %}
 
 {% block content %}
 
-    <form method="post" class="container">
-        {% csrf_token %}
-        {{ form.ip }}<br>
-        {{ form.port }}<br> 
-        {{ form.mode }}<br>
-        <span>{{ error }}</span>
-        <button type="submit" class="btn btn-success mx-auto d-block">Ввести</button><br>
-    </form>
-
-
-    <table class="table table-striped text-center">
-        <thead class="table-dark">
+    <table class="table table-striped text-center mx-auto">
+    <thead class="table-dark">
         <tr>
-            <th>Id</th>
             <th>Состояние Сети</th>
             <th>Протокол</th>
             <th>Открытые порты</th>
@@ -29,7 +24,6 @@
         </thead>
         {% for i in section %}
         <tr>
-            <th>{{i.id}}</th>
             <th>{{i.ip_status}}</th>
             <th>{{i.protocols}}</th>
             <th>{{i.open_ports}}</th>
@@ -40,27 +34,7 @@
         </tr>
         {% endfor %}
     </table>
-    <table class="table table-striped text-center">
-        <thead class="table-dark">
-        <tr>
-            <th>id</th>
-            <th>ip</th>
-            <th>port</th>
-            <th>mode</th>
-            <th>client_scan</th>
-            <th>tag</th>
-            
-        </tr>
-        </thead>
-        {% for i in data_serv %}
-        <tr>
-            <th>{{i.id}}</th>
-            <th>{{i.ip}}</th>
-            <th>{{i.port}}</th>
-            <th>{{i.mode}}</th>
-            <th>{{i.client}}</th>
-            <th>{{i.tag}}</th>
-        </tr>
-        {% endfor %}
-    </table>
+        </table>
+</tbody>
     {% endblock %}
+    
