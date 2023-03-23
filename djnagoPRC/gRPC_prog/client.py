@@ -20,7 +20,7 @@ def scan(stub, ip_address, port, mode, id_cl):
     #SYN ACK Scan:
     nm = nmap.PortScanner()
     if mode == 'SYN':
-        nm.scan(ip_address,port, '-v -sS')
+        nm.scan(ip_address,port, '-v -sS', sudo='True')
         ip_status = nm[ip_address].state()
         protocols = nm[ip_address].all_protocols()[0]
         open_ports = nm[ip_address]['tcp'].keys()
@@ -32,7 +32,7 @@ def scan(stub, ip_address, port, mode, id_cl):
                                           state = nm[ip_address]['tcp'][ports]['state']))
     #UDP Scan
     if mode == 'UDP':
-        nm.scan(ip_address, port, '-v -sU')
+        nm.scan(ip_address, port, '-v -sU', sudo='True')
         ip_status = nm[ip_address].state()
         protocols = nm[ip_address].all_protocols()
         open_ports = nm[ip_address]['udp'].keys()
@@ -40,7 +40,7 @@ def scan(stub, ip_address, port, mode, id_cl):
             stub.scan(prot_pb2.DataClient(ip_status=ip_status, protocols=protocols,open_ports=f'{ports}',state = nm[ip_address]['udp'][ports]['state']))
     #Comprehensive Scan
     if mode == 'CS':
-        nm.scan(ip_address, port, '-v -sS -sV -sC -A -O')
+        nm.scan(ip_address, port, '-v -sS -sV -sC -A -O', sudo='True')
         ip_status = nm[ip_address].state()
         protocols = nm[ip_address].all_protocols()
         open_ports = nm[ip_address]['tcp'].keys()
@@ -48,7 +48,7 @@ def scan(stub, ip_address, port, mode, id_cl):
             stub.scan(prot_pb2.DataClient(id_client=id_cl,ip_status=ip_status, protocols=protocols,open_ports=f'{ports}'), state = nm[ip_address]['tcp'][ports]['state'])
     #OS Detection
     if mode == 'OS':
-        os_detection = nm.scan(ip_address, arguments="-O")['scan'][ip_address]['osmatch']
+        os_detection = nm.scan(ip_address, arguments="-O", sudo='True')['scan'][ip_address]['osmatch']
         vendor = os_detection[0]['osclass'][0]['vendor']
         os_family = os_detection[0]['osclass'][0]['osfamily']
         osgen = os_detection[0]['osclass'][0]['osgen']

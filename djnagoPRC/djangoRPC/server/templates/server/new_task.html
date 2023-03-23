@@ -31,9 +31,9 @@
             <th>{{i.port}}</th>
             <th>{{i.mode}}</th>
             <th>{{i.client}}</th>
-            {% if i.tag == 'Processing' %}
+            {% if i.tag != 'Done' %}
             <script>
-                setTimeout('location.reload()', 500)
+                setTimeout('location.reload()', 100)
               </script>
             {% endif%}
             <th>{{i.tag}}</th>

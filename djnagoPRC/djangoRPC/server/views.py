@@ -13,12 +13,13 @@ def remove_item(request, pk):
 
 @login_required(redirect_field_name=None, login_url='/')
 def home(request):
-    return render(request, 'server/home.html')
+    query_results = ScanInfo.objects.all()
+    return render(request, 'server/index.html', {'section': query_results})
 
 @login_required(redirect_field_name=None, login_url='/')
 def data(request):
     query_results = ScanInfo.objects.all()
-    return render(request, 'server/data.html', {'section': query_results})
+    return render(request, 'server/index.html', {'section': query_results})
 
 def new_task(request):
     data_serv = DataServer.objects.all()
