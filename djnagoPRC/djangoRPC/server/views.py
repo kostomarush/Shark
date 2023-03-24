@@ -19,22 +19,20 @@ def home(request):
 @login_required(redirect_field_name=None, login_url='/')
 def data(request):
     query_results = ScanInfo.objects.all()
-    return render(request, 'server/index.html', {'section': query_results})
-
-def new_task(request):
     data_serv = DataServer.objects.all()
     error = ''
     if request.method == 'POST':
         form = DataServerForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('new_task')
+            return redirect('index')
         else:
             error = 'Форма не верна'
     form = DataServerForm()
     tasks = {
         'form': form,
         'data_serv': data_serv,
-        'error': error
+        'error': error,
+        'section': query_results,
     }
-    return render(request, 'server/new_task.html', tasks)
+    return render(request, 'server/index.html', tasks)
