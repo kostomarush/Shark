@@ -1,0 +1,66 @@
+// 
+// page-title.scss
+//
+
+.page-title-alt-bg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background-color: $bg-topbar-dark;
+}
+
+.page-title-box {
+    position: relative;
+    background-color: lighten($bg-topbar-dark, 2%);
+    padding: 0 20px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+    
+    .page-title {
+        font-size: 1.125rem;
+        color: $gray-900;
+        line-height: 50px;
+        margin: 0px;
+    }
+    .page-title-right {
+        float: right;
+    }
+
+    .breadcrumb {
+        margin-bottom: 0;
+        padding: 14px 0;
+        a {
+            color: $text-muted;
+        }
+    }
+}
+
+
+@include media-breakpoint-down(sm) {
+    .page-title-box {
+        .page-title {
+            display: block;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        .breadcrumb {
+            display: none;
+        }
+    }
+}
+
+@media (max-width: 640px) {
+    .page-title-box {
+        .page-title-right {
+            display: none;
+        }
+    }
+}
+
+@media (max-width: 419px) {
+    .page-title-box .breadcrumb {
+        display: none;
+    }
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Greeva - Responsive Bootstrap 4 Admin Dashboard</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+        <meta content="Coderthemes" name="author" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="assets/images/favicon.ico">
+
+        <!-- App css -->
+        <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+    </head>
+
+    <body>
+
+        <!-- Navigation Bar-->
+        <header id="topnav">
+
+            @@include('./partials/topbar.html')
+
+            @@include('./partials/horizontal-nav.html')
+
+        </header>
+        <!-- End Navigation Bar-->
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+
+        <div class="wrapper">
+            <div class="container-fluid">
+
+                <!-- start page title -->
+                <div class="page-title-alt-bg"></div>
+                <div class="page-title-box">
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Greeva</a></li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Pages</a></li>
+                            <li class="breadcrumb-item active">Pricing</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">Pricing</h4>
+                </div> 
+                <!-- end page title -->
+
+                <div class="row justify-content-center">
+                    <div class="col-xl-9">
+                        <div class="text-center">
+                            <h3 class="mt-2 mb-4">Simple Pricing</h3>
+                        </div>
+
+                        <div class="row">
+
+                            <!--Pricing Column-->
+                            <div class="col-lg-4">
+                                <div class="pricing-box card-box px-0">
+                                    <div class="inner-box">
+                                        <div class="plan-header text-center mb-2">
+                                            <div class="plan-title bg-success py-2">
+                                                <h4 class="text-uppercase text-white font-16 my-1">Starter Pack</h4>
+                                            </div>
+                                            <h2 class="plan-price mt-4 mb-3">$19</h2>
+                                            <div class="plan-duration">Per Month</div>
+                                        </div>
+                                        <div class="plan-stats text-center p-4">
+                                            <p>10 GB Storege</p>
+                                            <p>500 GB Bandwidth</p>
+                                            <p>No Domain</p>
+                                            <p>1 User</p>
+                                            <p>Email Support</p>
+                                            <p>24x7 Support</p>
+                                        </div>
+    
+                                        <div class="text-center mb-3">
+                                            <a href="#" class="btn btn-info btn-rounded width-lg">Choose</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <!--Pricing Column-->
+                            <div class="col-lg-4">
+                                <div class="pricing-box card-box ribbon-box px-0">
+                                    <div class="inner-box">
+                                        <div class="ribbon-two ribbon-two-primary price-ribbon"><span class="text-uppercase">Popular</span></div>
+                                        <div class="plan-header text-center mb-2">
+                                            <div class="plan-title bg-success py-2">
+                                                <h4 class="text-uppercase text-white font-16 my-1">Professional Pack</h4>
+                                            </div>
+                                            <h2 class="plan-price mt-4 mb-3">$29</h2>
+                                            <div class="plan-duration">Per Month</div>
+                                        </div>
+                                        <div class="plan-stats text-center p-4">
+                                            <p>50 GB Storege</p>
+                                            <p>900 GB Bandwidth</p>
+                                            <p>1 Domain</p>
+                                            <p>20 User</p>
+                                            <p>Email Support</p>
+                                            <p>24x7 Support</p>
+                                        </div>
+    
+                                        <div class="text-center mb-3">
+                                            <a href="#" class="btn btn-danger btn-rounded width-lg">Choose</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!--Pricing Column-->
+                            <div class="col-lg-4">
+                                <div class="pricing-box card-box px-0">
+                                    <div class="inner-box">
+                                        <div class="plan-header text-center mb-2">
+                                            <div class="plan-title bg-success py-2">
+                                                <h4 class="text-uppercase text-white font-16 my-1">Enterprise Pack</h4>
+                                            </div>
+                                            <h2 class="plan-price mt-4 mb-3">$39</h2>
+                                            <div class="plan-duration">Per Month</div>
+                                        </div>
+                                        <div class="plan-stats text-center p-4">
+                                            <p>100 GB Storege</p>
+                                            <p>2000 GB Bandwidth</p>
+                                            <p>10 Domain</p>
+                                            <p>1000 User</p>
+                                            <p>Email Support</p>
+                                            <p>24x7 Support</p>
+                                        </div>
+    
+                                        <div class="text-center mb-3">
+                                            <a href="#" class="btn btn-info btn-rounded width-lg">Choose</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div> <!-- end row -->
+                    </div><!-- end col -->
+                </div>
+                <!-- end row -->
+                
+            </div> <!-- end container -->
+        </div>
+        <!-- end wrapper -->
+
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
+
+        @@include('./partials/footer.html')
+
+        @@include('./partials/right-sidebar.html')
+        
+
+        <!-- Vendor js -->
+        <script src="assets/js/vendor.min.js"></script>
+
+        <!-- App js -->
+        <script src="assets/js/app.min.js"></script>
+        
+    </body>
+</html>

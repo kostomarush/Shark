@@ -11,24 +11,18 @@
     <meta content="Coderthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- App favicon -->
-    {% block favicon%}
     <link rel="shortcut icon" href="{% static 'server/images/favicon.ico' %}">
-    {% endblock %}
     <!-- jvectormap -->
-    {% block jvectormap%}
     <link href="{% static 'server/libs/jqvmap/jqvmap.min.css' %}" rel="stylesheet" />
-    {% endblock %}
     <!-- DataTables -->
-    {% block DataTables%}
     <link href="{% static 'server/libs/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'server/libs/datatables/responsive.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
-    {% endblock %}
+    <link href="{% static 'server/libs/datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'server/libs/datatables/select.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
     <!-- App css -->
-    {% block css%}
     <link href="{% static 'server/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'server/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'server/css/app.min.css' %}" rel="stylesheet" type="text/css" />
-    {% endblock %}
 
 </head>
 
@@ -436,8 +430,30 @@
                     </div><!-- end card-box-->
 
                     <div class="card-box">
-                        <h4 class="header-title mb-4">Таблица Задач</h4>
-                        <table id="datatable" class="table table-bordered dt-responsive nowrap">
+                        
+                    </div> <!-- end card-box-->
+                </div> <!-- end col -->
+
+                <div class="col-xl-4">
+                    <div class="card-box">
+                        <div class="dropdown float-right">
+                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="mdi mdi-dots-horizontal"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <!-- item-->
+                                <a href="javascript:void(0);" class="dropdown-item">Settings</a>
+                                <!-- item-->
+                                <a href="javascript:void(0);" class="dropdown-item">Download</a>
+                                <!-- item-->
+                                <a href="javascript:void(0);" class="dropdown-item">Upload</a>
+                                <!-- item-->
+                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                            </div>
+                        </div>
+                        <h4 class="header-title mb-3">Таблица Задач</h4>
+                        <table class="table table-bordered dt-responsive nowrap" id="datatables">
                             <thead>
                                 <tr>
                                     <th>id</th>
@@ -460,51 +476,10 @@
                                     <th>{{i.tag}}</th>
                                     <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a>
                                     </th>
-
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-                    </div> <!-- end card-box-->
-
-                </div> <!-- end col -->
-
-                <div class="col-xl-4">
-                    <div class="card-box">
-                        <div class="dropdown float-right">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="mdi mdi-dots-horizontal"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                            </div>
-                        </div>
-                        <h4 class="header-title mb-3">Статистика</h4>
-                        <div class="row text-center">
-                            <div class="col-sm-4 mb-3">
-                                <h3 class="font-weight-light">4,335</h3>
-                                <p class="text-muted text-overflow">Total Sales</p>
-                            </div>
-                            <div class="col-sm-4 mb-3">
-                                <h3 class="font-weight-light">874</h3>
-                                <p class="text-muted text-overflow">Open Compaign</p>
-                            </div>
-                            <div class="col-sm-4 mb-3">
-                                <h3 class="font-weight-light">2,548</h3>
-                                <p class="text-muted text-overflow">Total Sales</p>
-                            </div>
-                        </div>
-                        <div class="chartjs-chart high-performing-product">
-                            <canvas id="high-performing-product"></canvas>
-                        </div>
                     </div> <!-- end card-box-->
                 </div> <!-- end col -->
 
@@ -609,7 +584,7 @@
 
 
                         <div class="table-responsive">
-                            <table id="datatable" class="table table-centered table-hover mb-0">
+                            <table class="table table-centered table-hover mb-0" id="selection-datatable">
                                 <thead>
                                     <tr>
                                         <th class="border-top-0">№</th>
@@ -939,7 +914,17 @@
     <script src="{% static 'server/libs/datatables/dataTables.bootstrap4.min.js' %}"></script>
     <script src="{% static 'server/libs/datatables/dataTables.responsive.min.js' %}"></script>
     <script src="{% static 'server/libs/datatables/responsive.bootstrap4.min.js' %}"></script>
+    
+    <script src="{% static 'server/libs/datatables/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'server/libs/datatables/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'server/libs/datatables/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'server/libs/datatables/buttons.flash.min.js' %}"></script>
+    <script src="{% static 'server/libs/datatables/buttons.print.min.js' %}"></script>
+    <script src="{% static 'server/libs/datatables/dataTables.keyTable.min.js' %}"></script>
+    <script src="{% static 'server/libs/datatables/dataTables.select.min.js' %}"></script>
 
+    <!-- Datatables init -->
+    <script src="{% static 'server/js/pages/datatables.init.js' %}"></script>        
     <!-- Dashboard Init JS -->
     <script src="{% static 'server/js/pages/dashboard.init.js' %}"></script>
 

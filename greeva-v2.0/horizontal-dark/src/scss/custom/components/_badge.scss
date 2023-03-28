@@ -1,0 +1,29 @@
+// 
+// badge.scss
+//
+
+.badge {
+    color: $white;
+    font-family: $font-family-secondary;
+}
+
+.badge-light{
+    background-color: lighten($light, 4%);
+}
+
+.badge-dark{
+    color: $gray-200;
+}
+
+// badge lighten
+
+@mixin badge-light-variant($bg) {
+    background-color: rgba($bg, 0.2);
+    color: $bg !important;
+}
+
+@each $color, $value in $theme-colors {
+    .badge-light-#{$color} {
+      @include badge-light-variant($value);
+    }
+}

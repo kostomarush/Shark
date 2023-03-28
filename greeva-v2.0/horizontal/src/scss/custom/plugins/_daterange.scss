@@ -1,0 +1,16 @@
+//
+// Daterange
+//
+
+.daterangepicker {
+    font-family: $font-family-base;
+
+    td.active,td.active:hover,.ranges li.active {
+        background-color: $primary;
+    }
+    .drp-buttons {
+        .btn{
+            font-weight: $font-weight-semibold;
+        }
+    }
+}

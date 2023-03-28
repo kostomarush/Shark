@@ -1,0 +1,20 @@
+// 
+// footer.scss
+//
+
+.footer {
+    bottom: 0;
+    padding: 19px 15px 20px;
+    position: absolute;
+    right: 0;
+    color: $gray-600;
+    left: 0;
+    background-color: lighten($body-bg, 4%);
+}
+
+@include media-breakpoint-down(sm) {
+    .footer {
+        left: 0 !important;
+        text-align: center;
+    }
+}

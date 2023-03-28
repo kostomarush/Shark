@@ -1,0 +1,11 @@
+//
+// layouts.scss
+//
+
+body {
+    &.boxed-layout {
+        .container-fluid {
+            max-width: $boxed-layout-width;
+        }
+    }
+}

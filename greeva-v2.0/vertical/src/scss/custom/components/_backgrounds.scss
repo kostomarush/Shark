@@ -1,0 +1,36 @@
+// 
+// backgrounds.scss
+//
+
+
+@each $color,
+$value in $theme-colors {
+    .bg-soft-#{$color} {
+        background-color: rgba(($value), 0.25) !important;
+    }
+}
+
+// Gradient
+.gradient-primary {
+    background-image: linear-gradient(15deg, lighten($primary,30%) 0%, $primary 100%);
+  }
+  
+  .gradient-success {
+    background-image: linear-gradient(15deg, $teal 0%, $green 100%);
+  }
+  
+  .gradient-info {
+    background-image: linear-gradient(15deg, lighten($info,10%) 0%, $indigo 100%);
+  }
+  
+  .gradient-warning {
+    background-image: linear-gradient(15deg, lighten($warning,10%) 0%, $warning 100%);
+  }
+  
+  .gradient-danger {
+    background-image: linear-gradient(15deg, lighten($danger,10%) 0%, $pink 100%);
+  }
+  
+  .gradient-dark {
+    background-image: linear-gradient(15deg, lighten($dark,10%) 0%, $dark 100%);
+  }

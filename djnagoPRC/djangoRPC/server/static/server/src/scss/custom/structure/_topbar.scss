@@ -1,0 +1,237 @@
+// 
+// topbar.scss
+//
+
+// Logo
+.logo {
+    display: block;
+    line-height: $topbar-height;
+    span.logo-lg {
+        display: block;
+    }
+    span.logo-sm {
+        display: none;
+    }
+    .logo-lg-text-dark {
+        color: $dark;
+        font-weight: $font-weight-bold;
+        font-size: 22px;
+        text-transform: uppercase;
+    }
+    .logo-lg-text-light {
+        color: $white;
+        font-weight: $font-weight-bold;
+        font-size: 22px;
+        text-transform: uppercase;
+    }
+}
+
+.logo-box {
+    padding-right: 40px;
+    padding-left: 12px;
+}
+
+.navbar-custom {
+    position: fixed;
+    left: 0;
+    right: 0;
+    height: $topbar-height;
+    z-index: 100;
+
+    .topnav-menu {
+        > li {
+            float: left;
+        }
+        .nav-link {
+            padding: 0 15px;
+            color:rgba($white, 0.8);
+            min-width: 32px;
+            display: block;
+            line-height: $topbar-height;
+            text-align: center;
+            max-height: $topbar-height;
+        }
+    }
+
+    .menu-left{
+        overflow: hidden;
+    }
+
+    .dropdown.show {
+        .nav-link {
+            background-color: rgba($dark,0.05);
+        }   
+    }
+
+    /* Search */
+    .app-search {
+        padding-top: 16px;
+        padding-right: 20px;
+        
+        .form-control {
+            border: none;
+            height: 38px;
+            padding-left: 20px;
+            padding-right: 20px;
+            color: $white;
+            background-color: rgba($white,0.05);
+            box-shadow: none;
+            min-width: 180px;
+            width: 50%;
+        }
+    }
+
+    .button-menu-mobile {
+        border: none;
+        color: $dark;
+        display: inline-block;
+        height: $topbar-height;
+        line-height: $topbar-height;
+        width: 60px;
+        background-color: transparent;
+        font-size: 24px;
+        cursor: pointer;
+
+        span {
+            width: 18px;
+            height: 2px;
+            background-color: $dark;
+            display: block;
+            margin: 5px 12px;
+
+            &:nth-of-type(2) {
+                width: 24px;
+            }
+        }
+    }
+    
+    .button-menu-mobile.disable-btn {
+        display: none;
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    body {
+        padding-bottom: 80px;
+    }
+
+    .pro-user-name {
+        display: none;
+    }
+    .navbar-custom {
+        padding: 0 0 0 ($grid-gutter-width / 2);
+    }
+
+    .logo-box {
+        padding-right: 0;
+        padding-left: 0;
+
+        .logo-lg {
+            display: none !important;
+        }
+        .logo-sm {
+            display: block !important;
+        }
+    }
+}
+
+@media (min-width: 992px) {
+    #topnav{
+        .topbar-menu{
+            padding-bottom: 10px;
+        }
+    }
+}
+
+/* Notification */
+.noti-scroll {
+    max-height: 230px;
+}
+
+.notification-list {
+    margin-left: 0;
+
+    .noti-title {
+        padding: 15px 20px;
+    }
+
+    .noti-icon {
+        font-size: 21px;
+        vertical-align: middle;
+    }
+
+    .noti-icon-badge {
+        display: inline-block;
+        position: absolute;
+        top: 14px;
+        right: 8px;
+    }
+
+    .notify-item {
+        padding: 12px 20px;
+
+        .notify-icon {
+            float: left;
+            height: 36px;
+            width: 36px;
+            font-size: 16px;
+            line-height: 36px;
+            text-align: center;
+            margin-right: 10px;
+            border-radius: 50%;
+            color: $white;
+        }
+
+        .notify-details {
+            margin-bottom: 5px;
+            overflow: hidden;
+            margin-left: 45px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: $gray-800;
+            font-weight: $font-weight-medium;
+            
+
+            b {
+                font-weight: 500;
+            }
+            small {
+                display: block;
+            }
+            span {
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 13px;
+            }
+        }
+        
+        .user-msg {
+            margin-left: 45px;
+            white-space: normal;
+            line-height: 16px;
+        }
+    }
+    .profile-dropdown {
+        .notify-item {
+            padding: $dropdown-item-padding-y $dropdown-item-padding-x;
+        }
+    }
+}
+
+.profile-dropdown {
+    width: 170px;
+    i {
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+}
+
+.nav-user {
+    padding: 0 12px !important;
+    img {
+        height: 32px;
+        width: 32px;
+    }
+}

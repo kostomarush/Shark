@@ -1,0 +1,47 @@
+
+
+//
+// bootstrap-timepicker.scss
+//
+
+.bootstrap-timepicker-widget {
+    table {
+        td {
+            input {
+                height: 32px;
+                width: 32px;
+                color: $white;
+                border: none;
+                background-color: $primary;
+                border-radius: 50%;
+            }
+
+            a{
+                color: $gray-400;
+                &:hover {
+                    background-color: transparent;
+                    border: 1px solid transparent;
+                    color: $primary;
+                }
+            }
+        }
+    }
+
+    &.dropdown-menu{
+        &:after{
+            border-bottom-color: $light; 
+        }
+        &:before{
+            border-bottom-color: lighten($light, 4%);
+        }
+    }
+
+    &.timepicker-orient-bottom{
+        &:after{
+            border-top-color: $light; 
+        }
+        &:before{
+            border-top-color: lighten($light, 4%);
+        }
+    }
+}

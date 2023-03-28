@@ -1,0 +1,23 @@
+// 
+// authentication.scss
+//
+
+// authentication pages background
+body{
+    &.authentication-bg {
+        height: 100vh;
+        background-size: cover;
+        background-repeat: no-repeat;
+        padding-bottom: 0;
+    }
+    &.authentication-bg-pattern {
+        background-image: url("../images/bg-pattern.png");
+        background-color: $bg-topbar-dark;
+    }
+}
+
+.home-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+}

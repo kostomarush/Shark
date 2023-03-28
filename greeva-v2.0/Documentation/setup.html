@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Greeva - Responsive Admin Dashboard Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
+
+    <!-- App css -->
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+    <!-- Begin page -->
+    <div id="wrapper">
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+
+        <div class="content-page">
+            <div class="content">
+
+                <!-- Topbar Start -->
+                <div class="navbar-custom">
+                    <a href="index.html" class="logo text-center d-none d-md-inline-block mr-2">
+                        <span class="logo-lg">
+                            <img src="assets/images/logo-light.png" alt="" height="20">
+                        </span>
+                    </a>
+
+                    <button type="button" class="btn btn-sm btn-dark d-inline-block d-lg-none button-menu-mobile">Menu</button>
+    
+                    <span class="badge badge-danger float-right">v2.0.0</span>
+                </div>
+                <!-- end Topbar -->
+
+                <!-- Start Content-->
+                <div class="container-fluid">
+
+                    <div class="page-wrapper">
+                        <div class="left-sidebar">
+                            <div class="slimscroll-menu">
+                                <div class="list-group list-group-transparent mb-0">
+
+                                    <span class="list-group-item disabled">
+                                        Getting Started
+                                    </span>
+
+                                    <a href="index.html" class="list-group-item list-group-item-action ">
+                                        <span class="mr-2">
+                                            <i class="mdi mdi-flag-variant-outline"></i>
+                                        </span>Introduction
+                                    </a>
+
+                                    <a href="setup.html" class="list-group-item list-group-item-action active">
+                                        <span class="mr-2">
+                                            <i class="mdi mdi-apps"></i>
+                                        </span>Setup
+                                    </a>
+
+                                    <a href="customization.html" class="list-group-item list-group-item-action ">
+                                        <span class="mr-2">
+                                            <i class="mdi mdi-square-edit-outline"></i>
+                                        </span>Customization
+                                    </a>
+
+                                    <a href="plugins-uses.html" class="list-group-item list-group-item-action ">
+                                        <span class="mr-2">
+                                            <i class="mdi mdi-widgets"></i>
+                                        </span>How to use plugins
+                                    </a>
+
+                                    <span class="list-group-item disabled">
+                                        Layout
+                                    </span>
+
+                                    <a href="vertical.html" class="list-group-item list-group-item-action ">
+                                        <span class="mr-2">
+                                            <i class="mdi mdi-menu"></i>
+                                        </span>Vertical Layouts
+                                    </a>
+
+                                    <a href="horizontal.html" class="list-group-item list-group-item-action ">
+                                        <span class="mr-2">
+                                            <i class="mdi mdi-page-layout-sidebar-left"></i>
+                                        </span>Horizontal Layouts
+                                    </a>
+                                    <a href="rtl.html" class="list-group-item list-group-item-action ">
+                                        <span class="mr-2">
+                                            <i class="mdi mdi-page-layout-sidebar-left"></i>
+                                        </span>RTL Version
+                                    </a>
+
+                                    <span class="list-group-item disabled">
+                                        Other
+                                    </span>
+
+                                    <a href="changelog.html" class="list-group-item list-group-item-action ">
+                                        <span class="mr-2">
+                                            <i class="mdi mdi-book-open-page-variant"></i>
+                                        </span>Changelog
+                                    </a>
+        
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end left-sidebar-->
+
+                        <div class="page-content">
+                            <div class="card ">
+                                <div class="card-body">
+                                    <div class="p-lg-3">
+                                        <h3 class="mt-0 mb-2 font-weight-bold">Setup</h3>
+                                        <hr/>
+
+                                        <p>
+                                            We are using
+                                            <a href="https://gulpjs.com/" target="_blank">gulp</a> which allows to have complete automation for build flow. In case if
+                                            you don't know - Gulp is a toolkit for automating painful or time-consuming
+                                            tasks in development workflow, so you can stop messing around and build something.
+                                            You can read it more about it
+                                            <a href="https://gulpjs.com/" target="_blank">here</a>. Please follow below steps to install and setup all prerequisites:
+                                        </p>
+                                        <p>
+                                            <ul>
+                                                <li>
+                                                    <strong>Install nodejs (v9.11.2) and gulp (v3.9.1)</strong>
+                                                    <p>If you have already installed nodejs and gulp, you can skip this step</p>
+
+                                                    <ol>
+                                                        <li>
+                                                            Make sure to have the
+                                                            <a href="https://nodejs.org/" target="_blank">Node.js</a> installed &amp; running on your computer. If you
+                                                            are using the latest version (10x), you might run into some issue
+                                                            based on your operating system. We would encourage to install
+                                                            and use the specified version only.
+                                                        </li>
+                                                        <li>
+                                                            Open your terminal and install gulp globally. You can use the command
+                                                            <code>npm install -g gulp@3.9.1</code>
+                                                        </li>
+                                                    </ol>
+                                                </li>
+
+                                                <li class="mt-3">
+                                                    <strong>Install dependencies</strong>
+                                                    <p>Go to your folder and enter the command
+                                                        <code>npm install</code>. This would install all required dependencies in <code>node_modules</code> folder.</p>
+                                                </li>
+                                            </ul>
+                                        </p>
+
+                                        <p>
+                                            After you finished with above two steps, you can run the automated tasks (as described below) to build the application.
+                                        </p>
+                                        <table class="table table-bordered m-0">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 20%;">
+                                                        <i class="ti-file"></i> Command</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <code>gulp</code>
+                                                    </td>
+                                                    <td>
+                                                        It runs the watch command and starts a development server at 'http://localhost:3000'. You can modify your html, sass and
+                                                        js files and it automatically compiles the sass into css, sync your
+                                                        html or js file change.
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <code>gulp build</code>
+                                                    </td>
+                                                    <td>
+                                                        Build production ready folder. It compiles end-to-end files and copied into dist folder.
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="mt-5">
+                                            <h4 class="mt-0 mb-2 font-weight-bold">FAQs</h4>
+                                            <ul>
+                                                <li>
+                                                    I am already having nodejs v10x and can't change for some reason, what should I do?
+                                                    <p>
+                                                        Try to force the natives dependency in the package-lock.json to a newer version while installing dependencies.
+                                                        On windows you might run into issue while it builds node-sass, in that case we would suggest to use node 9x version.
+                                                    </p>
+                                                </li>
+                                                <li>
+                                                    I am getting following issues while running npm install, what should I do?
+                                                    <p>
+                                                        <code>Error: ENOENT: no such file or directory, scandir '/root/website/node_modules/node-sass/vendor'</code>
+                                                    </p>
+
+                                                    <p>If you are getting this issue, then there could be a problem due to multiple issues. Try following work around:</p>
+                                                    <ul>
+                                                        <li>1. Run the command <code>npm rebuild node-sass</code> to re-install node-sass</li>
+                                                        <li>2. Delete node_modules folder and re run the command  <code>npm install</code></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- end page-wrapper-->
+
+
+                    </div>
+
+                </div>
+                <!-- content -->
+                <!-- Footer Start -->
+                <footer class="footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                2019 © Greeva by Coderthemes
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-md-right footer-links d-none d-sm-block">
+                                    <a href="http://coderthemes.com/" target="_blank">About</a>
+                                    <a href="http://coderthemes.com/#contact" target="_blank">Support</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+                <!-- end Footer -->
+
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Page content -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- END wrapper -->
+
+        <script src="assets/js/app.min.js"></script>
+
+</body>
+
+</html>
