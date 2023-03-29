@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 def remove_item(request, pk):
     item = DataServer.objects.get(pk=pk)
     item.delete()
-    return redirect('new_task')
+    return redirect('index')
 
 
 @login_required(redirect_field_name=None, login_url='/')
