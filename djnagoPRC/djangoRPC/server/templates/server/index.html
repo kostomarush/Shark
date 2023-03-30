@@ -334,19 +334,11 @@
                             </div>
                         </form>
                     </div><!-- end card-box-->
-                    <div class="card-box widget-chart-one gradient-success bx-shadow-lg">
-                        <div class="float-left" dir="ltr">
-                            <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
-                                    data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" value="85" data-skin="tron" data-angleOffset="180"
-                                    data-readOnly=true data-thickness=".1"/>
-                        </div>
-                        <div class="widget-chart-one-content text-right">
-                            <p class="text-white mb-0 mt-2">Выполнено задач из</p>
-                            <h3 class="text-white">100</h3>
-                        </div>
-                    </div> <!-- end card-box-->
+                    <div class="card-box">
+                        <h4 class="header-title">Гистограмма</h4>
+                            <canvas id="myChart" height="125"></canvas>    
+                    </div> <!-- end card-box -->
                 </div> <!-- end col -->
-
                 <div class="col-xl-4">
                     <div class="card-box">
                         <div class="dropdown float-right">
@@ -365,8 +357,8 @@
                                 <a href="javascript:void(0);" class="dropdown-item">Action</a>
                             </div>
                         </div>
-                        <h4 class="header-title mb-3">Статистика состояния портов</h4>
-                        <div>
+                        <h4 class="header-title mt-1 mb-3">Статистика состояния портов</h4>
+                        <div class="mb-2">
                             <canvas id="chartId"></canvas>
                         </div>
                     </div> <!-- end card-box-->
@@ -390,7 +382,7 @@
                         </div>
                     </div>
                     <h4 class="header-title mb-3">Таблица Задач</h4>
-                    <table class="table table-bordered dt-responsive nowrap" id="datatable2">
+                    <table class="table table-bordered dt-responsive nowrap" id = 'datatables'>
                         <thead>
                             <tr>
                                 <th>id</th>
@@ -417,6 +409,17 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    </div> <!-- end card-box-->
+                    <div class="card-box widget-chart-one gradient-success bx-shadow-lg">
+                        <div class="float-left" dir="ltr">
+                            <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
+                                    data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" value="85" data-skin="tron" data-angleOffset="180"
+                                    data-readOnly=true data-thickness=".1"/>
+                        </div>
+                        <div class="widget-chart-one-content text-right">
+                            <p class="text-white mb-0">Выполнено задач из</p>
+                            <h3 class="text-white">100</h3>
+                        </div>
                     </div> <!-- end card-box-->
                 </div> <!-- end col -->
             </div>
@@ -622,12 +625,11 @@
     <script src="{% static 'server/js/pages/datatables.init.js' %}"></script>     
     
     <!-- Dashboard Init JS -->
-    <script src="{% static 'server/js/pages/dashboard.init2.js' %}"></script>
+    <script src="{% static 'server/js/pages/dashboardes.init.js' %}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
 
-    <script src="{% static 'server/char.js' %}"></script>
-
+    <script type="text/javascript" src="{% static 'server/char.js' %}"></script>
     <!-- App js -->
     <script src="{% static 'server/js/app.min.js' %}"></script>
 

@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from .models import ScanInfo, DataServer
 from .forms import DataServerForm
+import simplejson
 from django.contrib.auth.decorators import login_required
+
 
 
 @login_required(redirect_field_name=None, login_url='/')
@@ -12,14 +14,11 @@ def remove_item(request, pk):
 
 
 @login_required(redirect_field_name=None, login_url='/')
-def home(request):
-    query_results = ScanInfo.objects.all()
-    return render(request, 'server/index.html', {'section': query_results})
-
-@login_required(redirect_field_name=None, login_url='/')
 def data(request):
     query_results = ScanInfo.objects.all()
     data_serv = DataServer.objects.all()
+    mylist = [1, 1, 1]
+    js_data = simplejson.dumps(mylist)
     error = ''
     if request.method == 'POST':
         form = DataServerForm(request.POST)
@@ -34,5 +33,6 @@ def data(request):
         'data_serv': data_serv,
         'error': error,
         'section': query_results,
+        #'js_data': js_data,
     }
     return render(request, 'server/index.html', tasks)

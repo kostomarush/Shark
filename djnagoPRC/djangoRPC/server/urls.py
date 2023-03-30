@@ -7,7 +7,6 @@ from . import views
 urlpatterns = [
     path('index/', views.data, name = 'index'),
     path('data/<int:pk>/', views.remove_item, name='delete'),
-    path('home/', views.home, name = 'home'),
     path('', LoginView.as_view(next_page="/index"), name="login"),
     path("logout/", LogoutView.as_view(next_page='/'), name="logout"),
 ]
