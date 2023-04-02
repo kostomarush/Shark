@@ -204,7 +204,7 @@
                     <li class="float-left logo-box">
                         <a href="/" class="logo">
                             <span class="logo-lg p-1">
-                                <h3>Shark</h3>
+                                <img src="{% static 'server/images/logo-shark.png' %}" alt="" height="40">
                             </span>
                             <span class="logo-sm">
                                 <img src="{% static 'server/images/logo-sm.png' %}" alt="" height="24">
@@ -336,7 +336,7 @@
                     </div><!-- end card-box-->
                     <div class="card-box">
                         <h4 class="header-title">Гистограмма</h4>
-                            <canvas id="myChart" height="125"></canvas>    
+                            <canvas id="myChart" height="125" ></canvas>    
                     </div> <!-- end card-box -->
                 </div> <!-- end col -->
                 <div class="col-xl-4">
@@ -397,11 +397,16 @@
                         <tbody>
                             {% for i in data_serv %}
                             <tr>
-                                <th>{{i.id}}</th>
+                                <th>{{forloop.counter}}</th>
                                 <th>{{i.ip}}</th>
                                 <th>{{i.port}}</th>
                                 <th>{{i.mode}}</th>
                                 <th>{{i.client}}</th>
+                                {% if i.tag != 'Done' %}
+                                <script>
+                                    setInterval('location.reload()', 5000);
+                                </script>
+                                {% endif%}
                                 <th>{{i.tag}}</th>
                                 <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a>
                                 </th>
@@ -413,12 +418,14 @@
                     <div class="card-box widget-chart-one gradient-success bx-shadow-lg">
                         <div class="float-left" dir="ltr">
                             <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
-                                    data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" value="85" data-skin="tron" data-angleOffset="180"
-                                    data-readOnly=true data-thickness=".1"/>
+                                    data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" data-max="{% for i in data_serv %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}" 
+                                    value="{{ task_done|safe  }}" 
+                                    data-skin="tron" data-angleOffset="180"
+                                    data-readOnly=true data-thickness=".2"/>
                         </div>
                         <div class="widget-chart-one-content text-right">
                             <p class="text-white mb-0">Выполнено задач из</p>
-                            <h3 class="text-white">100</h3>
+                            <h3 class="text-white">{% for i in data_serv %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}</h3>
                         </div>
                     </div> <!-- end card-box-->
                 </div> <!-- end col -->
@@ -452,20 +459,27 @@
                                         <th class="border-top-0">Протокол</th>
                                         <th class="border-top-0">Рабочие порты</th>
                                         <th class="border-top-0">Состояние портов</th>
+                                        <th class="border-top-0">ОС</th>
+                                        <th class="border-top-0">Вендор</th>
+                                        <th class="border-top-0">Версия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for i in section %}
                                     <tr>
-                                        <td><span class="ml-2">{{i.id}}</span></td>
+                                        <td><span class="ml-2">{{forloop.counter}}</span></td>
                                         <td><span class="ml-2">{{i.ip_status}}</span></td>
                                         <td><span class="ml-2">{{i.protocols}}</span></td>
                                         <td><span class="ml-2">{{i.open_ports}}</span></td>
                                         <td>
                                             <span
-                                                class="badge badge-pill {% if i.state == 'open' %}badge-success{% elif i.state == 'filtered' %}badge-warning{% endif %}">
+                                                class="badge badge-pill {% if i.state == 'open' %}badge-success{% elif i.state == 'filtered' %}badge-warning
+                                                {% elif i.state == 'closed' %}badge-danger{% elif i.state == 'open|filtered' %}badge-info{% endif %}">
                                                 {{i.state}}</span>
                                         </td>
+                                        <td><span class="ml-2">{{i.vendor}}</span></td>
+                                        <td><span class="ml-2">{{i.os_family}}</span></td>
+                                        <td><span class="ml-2">{{i.osgen}}</span></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -607,7 +621,8 @@
 
     <!-- Vendor js -->
     <script src="{% static 'server/js/vendor.min.js' %}"></script>
-
+    <!-- KNOB JS -->
+    <script src="{% static 'server/libs/jquery-knob/jquery.knob.min.js' %}"></script>
     <!-- Jvector map -->
     <script src="{% static 'server/libs/jqvmap/jquery.vmap.min.js' %}"></script>
     <script src="{% static 'server/libs/jqvmap/jquery.vmap.usa.js' %}"></script>
@@ -618,20 +633,41 @@
     <script src="{% static 'server/libs/datatables/dataTables.responsive.min.js' %}"></script>
     <script src="{% static 'server/libs/datatables/responsive.bootstrap4.min.js' %}"></script>      
 
-    <!-- KNOB JS -->
-    <script src="{% static 'server/libs/jquery-knob/jquery.knob.min.js' %}"></script>
-
     <!-- Datatables init -->
     <script src="{% static 'server/js/pages/datatables.init.js' %}"></script>     
     
     <!-- Dashboard Init JS -->
-    <script src="{% static 'server/js/pages/dashboardes.init.js' %}"></script>
+    <script src="{% static 'server/js/pages/dashboardess.init.js' %}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
 
-    <script type="text/javascript" src="{% static 'server/char.js' %}"></script>
+    <script type="text/javascript" src="{% static 'server/charss.js' %}"></script>
     <!-- App js -->
     <script src="{% static 'server/js/app.min.js' %}"></script>
+    <script>
+        function getJson(){
+            $.getJSON('/get_json/', function(data){
+                chartId.data.datasets = [{
+                    label: "Char", data: data, backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'], hoverOffset: 3,
+                }]
+            })
+            chartId.update()
+        }
+        getJson();
+    </script>
+    <script>
+        function getClient(){
+            $.getJSON('/get_client/', function(data){
+                myChart.data.datasets = [{
+                    data: data,
+                    label: "Выполнено задач",
+                    backgroundColor: "#00CED1",
+                }]
+            })
+            myChart.update()
+        }
+        getClient();
+    </script>
 
 </body>
 
