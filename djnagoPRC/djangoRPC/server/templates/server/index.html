@@ -405,11 +405,11 @@
                                 <th>{{i.port}}</th>
                                 <th>{{i.mode}}</th>
                                 <th>{{i.client}}</th>
-                                {% if i.tag != 'Done' %}
+                                <!-- {% if i.tag != 'Done' %}
                                 <script>
                                     setInterval('location.reload()', 5000);
                                 </script>
-                                {% endif%}
+                                {% endif%} -->
                                 <th>{{i.tag}}</th>
                                 <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a>
                                 </th>
