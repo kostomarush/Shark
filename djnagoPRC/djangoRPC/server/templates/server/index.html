@@ -23,6 +23,7 @@
     <link href="{% static 'server/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'server/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'server/css/app.min.css' %}" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
 
 </head>
 
@@ -339,7 +340,23 @@
                     </div><!-- end card-box-->
                     <div class="card-box">
                         <h4 class="header-title">Гистограмма</h4>
-                            <canvas id="myChart" height="125" ></canvas>    
+                            <canvas id="myChart" height="125" ></canvas>
+                            <script>
+                                var ctx = document.getElementById("myChart").getContext("2d");
+                                var myChart = new Chart(ctx, {
+                                  type: "bar",
+                                  data: {
+                                    labels: ["Клиент 1", "Клиент 2"],
+                                    datasets: [
+                                      {
+                                        data: ['{{client_1|safe}}','{{client_2|safe}}'],
+                                        label: "Выполнено задач",
+                                        backgroundColor: "#00CED1",
+                                      },
+                                    ],
+                                  },
+                                });
+                            </script>   
                     </div> <!-- end card-box -->
                 </div> <!-- end col -->
                 <div class="col-xl-4">
@@ -363,6 +380,21 @@
                         <h4 class="header-title mt-1 mb-3">Статистика состояния портов</h4>
                         <div class="mb-2">
                             <canvas id="chartId"></canvas>
+                            <script>
+                                var chrt = document.getElementById("chartId").getContext("2d");
+                                var chartId = new Chart(chrt, {
+                                  type: "doughnut",
+                                  data: {
+                                    labels: ["Open", "Filtered", "Closed", "Open|Filtered"],
+                                    datasets: [{
+                                        label: "Char",
+                                        data: ['{{open|safe}}','{{filtered|safe}}','{{close|safe}}','{{open_filtered|safe}}'], 
+                                        backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'], 
+                                        hoverOffset: 3}],
+                                  },
+                                  options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
+                                });
+                            </script>
                         </div>
                     </div> <!-- end card-box-->
                 </div> <!-- end col -->
@@ -643,35 +675,8 @@
     <script src="{% static 'server/js/pages/dashboardess.init.js' %}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
-
-    <script type="text/javascript" src="{% static 'server/charss.js' %}"></script>
     <!-- App js -->
     <script src="{% static 'server/js/app.min.js' %}"></script>
-    <script>
-        function getJson(){
-            $.getJSON('/get_json/', function(data){
-                chartId.data.datasets = [{
-                    label: "Char", data: data, backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'], hoverOffset: 3,
-                }]
-            })
-            chartId.update()
-        }
-        getJson();
-    </script>
-    <script>
-        function getClient(){
-            $.getJSON('/get_client/', function(data){
-                myChart.data.datasets = [{
-                    data: data,
-                    label: "Выполнено задач",
-                    backgroundColor: "#00CED1",
-                }]
-            })
-            myChart.update()
-        }
-        getClient();
-    </script>
-
 </body>
 
 </html>
