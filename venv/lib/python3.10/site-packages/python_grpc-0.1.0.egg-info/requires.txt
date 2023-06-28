@@ -1,0 +1,3 @@
+grpcio>=1.23.0
+protobuf>=3.9.1
+tezign>=0.1.0
