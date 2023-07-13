@@ -380,20 +380,44 @@
                         <h4 class="header-title mt-1 mb-3">Статистика состояния портов</h4>
                         <div class="mb-2">
                             <canvas id="chartId"></canvas>
-                            <script>
-                                var chrt = document.getElementById("chartId").getContext("2d");
-                                var chartId = new Chart(chrt, {
-                                  type: "doughnut",
-                                  data: {
-                                    labels: ["Open", "Filtered", "Closed", "Open|Filtered"],
-                                    datasets: [{
-                                        label: "Char",
-                                        data: ['{{open|safe}}','{{filtered|safe}}','{{close|safe}}','{{open_filtered|safe}}'], 
-                                        backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'], 
-                                        hoverOffset: 3}],
-                                  },
-                                  options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
-                                });
+                            <script>                           
+            var socket = new WebSocket('ws://' + window.location.host + '/ws/my_socket/');
+            var chart;
+                                        
+            socket.onopen = function () {
+                console.log('Соединение установлено.');
+            };
+            
+            socket.onmessage = function (e) {
+                var value = JSON.parse(e.data);
+                updateChart(value);
+            };
+            
+            socket.onclose = function () {
+                console.log('Соединение закрыто.');
+            };
+            
+            function updateChart(value) {
+                if (!chart) {
+                    var chrt = document.getElementById("chartId").getContext("2d");
+                    var chart  = new Chart(chrt, {
+                type: "doughnut",
+                data: {
+                    labels: ["Open", "Filtered", "Closed", "Open|Filtered"],
+                    datasets: [{
+                        data: [],  // Начальный пустой массив данных
+                        backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'],
+                        hoverOffset: 3
+                    }],
+                },
+                options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
+            });
+            
+            chart.data.datasets[0].data.push(value[0],value[1],value[2],value[3]);
+            chart.update();
+            }
+              };
+
                             </script>
                         </div>
                     </div> <!-- end card-box-->

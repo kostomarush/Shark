@@ -20,7 +20,7 @@ def scan(stub, ip_address, port, mode, id_cl):
     #SYN ACK Scan:
     nm = nmap.PortScanner()
     if mode == 'SYN':
-        nm.scan(ip_address,port, '-v -sS')
+        nm.scan(ip_address,port, '-v -sS',sudo=True)
         ip_status = nm[ip_address].state()
         protocols = nm[ip_address].all_protocols()[0]
         open_ports = nm[ip_address]['tcp'].keys()

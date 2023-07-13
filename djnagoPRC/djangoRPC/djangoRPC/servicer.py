@@ -4,6 +4,7 @@ import prot_pb2_grpc
 from server.models import ScanInfo, DataServer, ClientBD
 
 
+
 def grpc_hook(server):
     prot_pb2_grpc.add_RPCServicer_to_server(RPCServicer(), server)
 
@@ -22,6 +23,8 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 state=request.state,vendor=request.vendor,os_family=request.os_family,
                 osgen=request.osgen)
                 data_in.save()
+                channel_layer = get_channel_layer()
+                
                 # if request.message == 'End':
                 #     DataServer.objects.filter(id = id).update(tag = 'Done')
                 return response
