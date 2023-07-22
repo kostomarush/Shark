@@ -2,6 +2,8 @@
 import prot_pb2
 import prot_pb2_grpc
 from server.models import ScanInfo, DataServer, ClientBD
+from asgiref.sync import sync_to_async
+from server.consumers import GraphConsumer
 
 
 
@@ -23,7 +25,15 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 state=request.state,vendor=request.vendor,os_family=request.os_family,
                 osgen=request.osgen)
                 data_in.save()
-                channel_layer = get_channel_layer()
+                # Обновление данных для графика
+                #chart_data = sync_to_async(GraphConsumer.get_date())
+                
+                # Передача обновленных данных для графика всем подключенным клиентам через WebSockets
+                #channel_layer = get_channel_layer()
+                #async_to_sync(channel_layer.group_send)('chart_group', {
+                #    'type': 'send_chart_data',
+                #    'chart_data': chart_data,
+                #})
                 
                 # if request.message == 'End':
                 #     DataServer.objects.filter(id = id).update(tag = 'Done')
@@ -36,4 +46,4 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 mode = data_server[id].mode
                 response_start = prot_pb2.DataServer(ip=ip, port=port, mode=mode)
                 return response_start
-            
+                

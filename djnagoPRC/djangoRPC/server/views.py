@@ -25,8 +25,8 @@ def data(request):
     client_2 = 0
     data_server = DataServer.objects.in_bulk()
     for id in data_server:
-        a = data_server[id].tag
-        b = data_server[id].client.id
+        #a = data_server[id].tag
+        #b = data_server[id].client.id
         if data_server[id].tag=='Done' and data_server[id].client.id == 1:
             client_1+=1
         if data_server[id].tag=='Done' and data_server[id].client.id == 2:
