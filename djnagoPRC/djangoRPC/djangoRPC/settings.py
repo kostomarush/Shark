@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+from channels.layers import get_channel_layer
 from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -78,7 +79,6 @@ TEMPLATES = [
 ]
 
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -87,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'shark',
         'USER': 'postgres',
-        'PASSWORD': '12345678',
+        'PASSWORD': '1',
         'HOST': 'localhost',
         'PORT': '5432',
     }
@@ -120,6 +120,29 @@ GRPCSERVER = {
 }
 
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+""" LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',  # Установите правильный уровень здесь
+    },
+} """
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -139,7 +162,7 @@ ASGI_APPLICATION = 'djangoRPC.asgi.application'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, 'server/static/')
+    os.path.join(BASE_DIR, 'server/static/')
 ]
 
 # Default primary key field type

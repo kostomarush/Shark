@@ -1,37 +1,42 @@
-import json
-import asyncio
+# В вашем consumers.py
+
 from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import sync_to_async
-from .models import ScanInfo
+
 
 class GraphConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
-        
-        data = await sync_to_async(self.get_graph_data)()  # Получение данных для графика из базы данных
-        await self.send(json.dumps(data))
-        
+
+        await self.channel_layer.group_add(
+            'real_time_graphs',
+            self.channel_name
+        )
 
     async def disconnect(self, close_code):
-        pass
+        # Отсоедините клиента от группы WebSocket при разрыве соединения
+        await self.channel_layer.group_discard(
+            'real_time_graphs',
+            self.channel_name
+        )
 
-    async def receive(self, text_data):
-        pass
+    async def graph_data_update(self, event):
+        await self.send(event['data'])
 
 
-    async def get_date(self):
-        data = await sync_to_async(self.get_graph_data)()  # Получение данных для графика из базы данных
-        await self.send(json.dumps(data))
+class ClientConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
 
-    @staticmethod
-    def get_graph_data():
-        open = GraphConsumer.get_scan_info_count('open')
-        filtered = GraphConsumer.get_scan_info_count('filtered')
-        close = GraphConsumer.get_scan_info_count('closed')
-        open_filtered = GraphConsumer.get_scan_info_count('open|filtered')
-        return [open, filtered, close, open_filtered]
+        await self.channel_layer.group_add(
+            'send_client_data',
+            self.channel_name
+        )
 
-    @staticmethod
-    def get_scan_info_count(state):
-        count = ScanInfo.objects.filter(state=state).count()
-        return count
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            'send_client_data',
+            self.channel_name
+        )
+
+    async def client_data_update(self, event):
+        await self.send(event['client_1'])

@@ -16,10 +16,7 @@ message DataClient {
     string protocols = 3;
     string open_ports = 4;
     string state = 5;
-    string vendor = 6;
-    string os_family = 7;
-    string osgen = 8;
-    string id_client = 9;
+    string id_client = 6;
 
 }
 

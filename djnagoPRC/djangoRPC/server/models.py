@@ -1,14 +1,11 @@
 from django.db import models
 
+
 class ScanInfo(models.Model):
     ip_status = models.CharField(max_length=20)
     protocols = models.CharField(max_length=20)
     open_ports = models.CharField(max_length=20)
     state = models.CharField(max_length=20)
-    os_detection = models.CharField(max_length=20)
-    vendor = models.CharField(max_length=20)
-    os_family = models.CharField(max_length=20)
-    osgen = models.CharField(max_length=20)
 
 
 class ClientBD(models.Model):
@@ -16,6 +13,7 @@ class ClientBD(models.Model):
 
     def __str__(self):
         return self.ip_client
+
 
 class DataServer(models.Model):
     client = models.ForeignKey(ClientBD, on_delete=models.SET_NULL, null=True)

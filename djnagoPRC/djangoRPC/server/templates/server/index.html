@@ -340,23 +340,48 @@
                     </div><!-- end card-box-->
                     <div class="card-box">
                         <h4 class="header-title">Гистограмма</h4>
-                            <canvas id="myChart" height="125" ></canvas>
-                            <script>
-                                var ctx = document.getElementById("myChart").getContext("2d");
-                                var myChart = new Chart(ctx, {
-                                  type: "bar",
-                                  data: {
-                                    labels: ["Клиент 1", "Клиент 2"],
-                                    datasets: [
-                                      {
-                                        data: ['{{client_1|safe}}','{{client_2|safe}}'],
-                                        label: "Выполнено задач",
-                                        backgroundColor: "#00CED1",
-                                      },
-                                    ],
-                                  },
-                                });
-                            </script>   
+                        <canvas id="barChart" width="400" height="170"></canvas>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                            var ctx = document.getElementById("barChart").getContext("2d");
+                    
+                            // Инициализируем начальные данные для графика
+                            var initialData = {
+                                labels: ["Клиент 1", "Клиент 2"],
+                                datasets: [{
+                                    label: "Клиенты",
+                                    data: [],
+                                    backgroundColor: ["#00CED1", "#00CED1"],
+                                }],
+                            };
+                    
+                            var barChart = new Chart(ctx, {
+                                type: "bar",
+                                data: initialData,
+                            });
+                    
+                            // Создаем WebSocket соединение
+                            var socket2 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_2/');  // Замените URL на ваш сервер и путь WebSocket
+                    
+                            socket2.onopen = function () {
+                                console.log('Соединение WebSocket установлено.');
+                            };
+                    
+                            socket2.onmessage = function (e) {
+                                var newData = JSON.parse(e.data);
+                                console.log(e.data)
+                    
+                                // Обновляем данные в графике
+                                barChart.data.datasets[0].data.push(newData.client_1, newData.client_2);
+                                barChart.update();
+                            };
+                    
+                            socket2.onclose = function () {
+                                console.log('Соединение WebSocket закрыто.');
+                            };
+                        });
+                        </script> 
                     </div> <!-- end card-box -->
                 </div> <!-- end col -->
                 <div class="col-xl-4">
@@ -380,45 +405,49 @@
                         <h4 class="header-title mt-1 mb-3">Статистика состояния портов</h4>
                         <div class="mb-2">
                             <canvas id="chartId"></canvas>
-                            <script>                           
-            var socket = new WebSocket('ws://' + window.location.host + '/ws/my_socket/');
-            var chart;
-                                        
-            socket.onopen = function () {
-                console.log('Соединение установлено.');
-            };
-            
-            socket.onmessage = function (e) {
-                var value = JSON.parse(e.data);
-                updateChart(value);
-            };
-            
+                            <script>
+                                // Создаем WebSocket соединение
+                                var socket = new WebSocket('ws://' + window.location.host + '/ws/my_socket/');
+                                                                // Обработчик события открытия WebSocket соединения
+                                socket.onopen = function () {
+                                console.log('Соединение установлено.');
+                                };
+                                socket.onmessage = function (e) {
+                                    console.log('Cчитывание установлено.');
+                                var value = JSON.parse(e.data);
+                                updateChart(value);
+                            };
             socket.onclose = function () {
                 console.log('Соединение закрыто.');
             };
             
+            var chart;
+
             function updateChart(value) {
-                if (!chart) {
-                    var chrt = document.getElementById("chartId").getContext("2d");
-                    var chart  = new Chart(chrt, {
-                type: "doughnut",
-                data: {
-                    labels: ["Open", "Filtered", "Closed", "Open|Filtered"],
-                    datasets: [{
-                        data: [],  // Начальный пустой массив данных
-                        backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'],
-                        hoverOffset: 3
-                    }],
-                },
-                options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
-            });
-            
-            chart.data.datasets[0].data.push(value[0],value[1],value[2],value[3]);
-            chart.update();
-            }
-              };
+    if (chart) {
+        chart.destroy(); // Уничтожаем существующий объект Chart, если он существует
+    }
+    
+    var chrt = document.getElementById("chartId").getContext("2d");
+    chart = new Chart(chrt, {
+        type: "doughnut",
+        data: {
+            labels: ["Open", "Filtered", "Closed", "Open|Filtered"],
+            datasets: [{
+                data: [],  // Начальный пустой массив данных
+                backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'],
+                hoverOffset: 3
+            }],
+        },
+        options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
+    });
+
+    chart.data.datasets[0].data.push(value.open, value.filtered, value.close, value.open_filtered);
+    chart.update();
+};
 
                             </script>
+                            
                         </div>
                     </div> <!-- end card-box-->
                 </div> <!-- end col -->

@@ -1,0 +1,2 @@
+django_grpc
+django_grpc_testtools
