@@ -1,6 +1,9 @@
 # В вашем consumers.py
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+import json
+from asgiref.sync import sync_to_async
+from .models import ScanInfo, DataServer
 
 
 class GraphConsumer(AsyncWebsocketConsumer):
@@ -12,6 +15,31 @@ class GraphConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
+    async def receive(self, text_data):
+        message = json.loads(text_data)
+
+        if message['type'] == 'get_initial_data':
+            # Здесь вы можете выполнить логику для получения начальных данных
+
+            open = await sync_to_async(ScanInfo.objects.filter(state='open').count)()
+            filtered = await sync_to_async(ScanInfo.objects.filter(state='filtered').count)()
+            close = await sync_to_async(ScanInfo.objects.filter(state='closed').count)()
+            open_filtered = await sync_to_async(ScanInfo.objects.filter(state='open|filtered').count)()
+            print(open)
+
+            initial_data = {
+                'open': open,
+                'filtered': filtered,
+                'close': close,
+                'open_filtered': open_filtered,
+            }
+
+            # Отправляем начальные данные обратно клиенту
+            await self.send(json.dumps({
+                'type': 'initial_data',
+                'data': initial_data,
+            }))
+
     async def disconnect(self, close_code):
         # Отсоедините клиента от группы WebSocket при разрыве соединения
         await self.channel_layer.group_discard(
@@ -20,7 +48,7 @@ class GraphConsumer(AsyncWebsocketConsumer):
         )
 
     async def graph_data_update(self, event):
-        await self.send(event['data'])
+        await self.send(json.dumps({'data': event['data']}))
 
 
 class ClientConsumer(AsyncWebsocketConsumer):
@@ -32,6 +60,39 @@ class ClientConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
+    async def receive(self, text_data):
+        message = json.loads(text_data)
+
+        if message['type'] == 'get_cl_data':
+            # Здесь вы можете выполнить логику для получения начальных данных
+
+            @sync_to_async
+            def get_cl_data():
+                client_1 = 0
+                client_2 = 0
+                data_server = DataServer.objects.in_bulk()
+                for id in data_server:
+                    if data_server[id].tag == 'Done' and data_server[id].client.id == 1:
+                        client_1 += 1
+                    if data_server[id].tag == 'Done' and data_server[id].client.id == 2:
+                        client_2 += 1
+                return {
+                    'client_1': client_1,
+                    'client_2': client_2
+                }
+
+            # Внутри вашего обработчика или функции, где требуется получить client_data:
+
+            client_data = await get_cl_data()
+
+            print(client_data)
+
+            # Отправляем начальные данные обратно клиенту
+            await self.send(json.dumps({
+                'type': 'initial_data',
+                'data': client_data,
+            }))
+
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             'send_client_data',
@@ -39,4 +100,4 @@ class ClientConsumer(AsyncWebsocketConsumer):
         )
 
     async def client_data_update(self, event):
-        await self.send(event['client_1'])
+        await self.send(json.dumps({'data': event['client']}))

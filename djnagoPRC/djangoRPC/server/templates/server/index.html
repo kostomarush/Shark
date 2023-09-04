@@ -350,7 +350,7 @@
                             var initialData = {
                                 labels: ["Клиент 1", "Клиент 2"],
                                 datasets: [{
-                                    label: "Клиенты",
+                                    label: "Задачи",
                                     data: [],
                                     backgroundColor: ["#00CED1", "#00CED1"],
                                 }],
@@ -366,14 +366,14 @@
                     
                             socket2.onopen = function () {
                                 console.log('Соединение WebSocket установлено.');
+                                socket2.send(JSON.stringify({ 'type': 'get_cl_data' }));
                             };
                     
                             socket2.onmessage = function (e) {
                                 var newData = JSON.parse(e.data);
-                                console.log(e.data)
-                    
+                                console.log(newData.data.client_2)
                                 // Обновляем данные в графике
-                                barChart.data.datasets[0].data.push(newData.client_1, newData.client_2);
+                                barChart.data.datasets[0].data.push(newData.data.client_1, newData.data.client_2);
                                 barChart.update();
                             };
                     
@@ -403,18 +403,20 @@
                             </div>
                         </div>
                         <h4 class="header-title mt-1 mb-3">Статистика состояния портов</h4>
-                        <div class="mb-2">
-                            <canvas id="chartId"></canvas>
+                        <div class="mb-3">
+                            <canvas id="chartId" height="470"></canvas>
                             <script>
                                 // Создаем WebSocket соединение
                                 var socket = new WebSocket('ws://' + window.location.host + '/ws/my_socket/');
                                                                 // Обработчик события открытия WebSocket соединения
                                 socket.onopen = function () {
                                 console.log('Соединение установлено.');
+                                socket.send(JSON.stringify({ 'type': 'get_initial_data' }));
                                 };
                                 socket.onmessage = function (e) {
                                     console.log('Cчитывание установлено.');
                                 var value = JSON.parse(e.data);
+                                console.log(value)
                                 updateChart(value);
                             };
             socket.onclose = function () {
@@ -424,25 +426,25 @@
             var chart;
 
             function updateChart(value) {
-    if (chart) {
-        chart.destroy(); // Уничтожаем существующий объект Chart, если он существует
-    }
-    
-    var chrt = document.getElementById("chartId").getContext("2d");
-    chart = new Chart(chrt, {
-        type: "doughnut",
-        data: {
-            labels: ["Open", "Filtered", "Closed", "Open|Filtered"],
-            datasets: [{
-                data: [],  // Начальный пустой массив данных
-                backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'],
-                hoverOffset: 3
-            }],
-        },
-        options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
-    });
+            if (chart) {
+                chart.destroy(); // Уничтожаем существующий объект Chart, если он существует
+            }
 
-    chart.data.datasets[0].data.push(value.open, value.filtered, value.close, value.open_filtered);
+            var chrt = document.getElementById("chartId").getContext("2d");
+            chart = new Chart(chrt, {
+                type: "doughnut",
+                data: {
+                    labels: ["Open", "Filtered", "Closed", "Open|Filtered"],
+                    datasets: [{
+                        data: [],  // Начальный пустой массив данных
+                        backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'],
+                        hoverOffset: 3
+                    }],
+                },
+                options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
+            });
+    setTimeout(1)
+    chart.data.datasets[0].data.push(value.data.open, value.data.filtered, value.data.close, value.data.open_filtered);
     chart.update();
 };
 

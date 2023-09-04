@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -22,7 +22,7 @@ def update_client_data(sender, instance, **kwargs):
             client_1 += 1
         if data_server[id].tag == 'Done' and data_server[id].client.id == 2:
             client_2 += 1
-
+    print(client_1)
     client_data = {
 
         'client_1': client_1,
@@ -42,7 +42,7 @@ def update_client_data(sender, instance, **kwargs):
     async_to_sync(send_client_data)()
 
 
-@receiver(post_save, sender=ScanInfo)
+@receiver(post_save,  sender=ScanInfo)
 def update_graph_data(sender, instance, **kwargs):
 
     def get_scan_info_count(state):
@@ -70,3 +70,4 @@ def update_graph_data(sender, instance, **kwargs):
         )
 
     async_to_sync(send_graph_data)()
+

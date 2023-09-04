@@ -2,6 +2,7 @@
 import prot_pb2
 import prot_pb2_grpc
 from server.models import ScanInfo, DataServer
+import time
 
 
 def grpc_hook(server):
