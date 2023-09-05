@@ -35,7 +35,7 @@ def update_client_data(sender, instance, **kwargs):
             'send_client_data',
             {
                 'type': 'client_data.update',
-                'client': json.dumps(client_data)
+                'client': client_data
             }
         )
 
@@ -65,7 +65,7 @@ def update_graph_data(sender, instance, **kwargs):
             'real_time_graphs',
             {
                 'type': 'graph_data.update',
-                'data': json.dumps(graph_data)
+                'data': graph_data
             }
         )
 

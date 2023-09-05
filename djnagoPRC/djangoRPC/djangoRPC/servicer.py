@@ -31,9 +31,6 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 ip = data_server[id].ip
                 port = data_server[id].port
                 mode = data_server[id].mode
-                isinstance(ip, str)
-                isinstance(port, str)
-                isinstance(mode, str)
                 response_start = prot_pb2.DataServer(
                     ip=ip, port=port, mode=mode)
                 return response_start

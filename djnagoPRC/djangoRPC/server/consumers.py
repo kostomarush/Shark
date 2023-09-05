@@ -101,3 +101,31 @@ class ClientConsumer(AsyncWebsocketConsumer):
 
     async def client_data_update(self, event):
         await self.send(json.dumps({'data': event['client']}))
+
+
+class TableConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
+
+    async def send_data_to_clients(self):
+        data_serv = DataServer.objects.all()
+        data_to_send = []
+        for item in data_serv:
+            data_to_send.append({
+                'id': item.id,
+                'ip': item.ip,
+                'port': item.port,
+                'mode': item.mode,
+                'client_scan': item.client,
+                'tag': item.tag,  # Включите информацию о теге
+            })
+        await self.channel_layer.group_send(
+            'table_update_group',
+            {
+                'type': 'table.update',
+                'data': json.dumps(data_to_send),
+            }
+        )
+
+    async def disconnect(self, close_code):
+        await self.close()

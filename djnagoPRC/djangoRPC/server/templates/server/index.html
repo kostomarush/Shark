@@ -373,7 +373,7 @@
                                 var newData = JSON.parse(e.data);
                                 console.log(newData.data.client_2)
                                 // Обновляем данные в графике
-                                barChart.data.datasets[0].data.push(newData.data.client_1, newData.data.client_2);
+                                barChart.data.datasets[0].data = [newData.data.client_1, newData.data.client_2];
                                 barChart.update();
                             };
                     
@@ -444,7 +444,7 @@
                 options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
             });
     setTimeout(1)
-    chart.data.datasets[0].data.push(value.data.open, value.data.filtered, value.data.close, value.data.open_filtered);
+    chart.data.datasets[0].data = [value.data.open, value.data.filtered, value.data.close, value.data.open_filtered];
     chart.update();
 };
 
@@ -472,6 +472,26 @@
                         </div>
                     </div>
                     <h4 class="header-title mb-3">Таблица Задач</h4>
+                    <script>
+                        var socket3 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_table/');
+                        console.log('Устн соед');
+                        socket3.onmessage = function (e) {
+                        var newData = JSON.parse(e.data);
+                        console.log(newData.tag);
+                                            
+                        // Идентификатор записи
+                        var recordId = newData.id;
+                                            
+                        // Найдите соответствующую строку и ячейку "tag" по идентификатору
+                        var row = document.getElementById('row-' + recordId);
+                        var tagCell = document.getElementById('tag-' + recordId);
+                                            
+                        // Если строка и ячейка "tag" существуют, обновите значение "tag"
+                        if (row && tagCell) {
+                            tagCell.innerText = newData.tag;
+                        }
+                    };
+                    </script>
                     <table class="table table-bordered dt-responsive nowrap" id = 'datatables'>
                         <thead>
                             <tr>
@@ -486,18 +506,13 @@
                         </thead>
                         <tbody>
                             {% for i in data_serv %}
-                            <tr>
+                            <tr id="row-{{ i.pk }}"> 
                                 <th>{{forloop.counter}}</th>
                                 <th>{{i.ip}}</th>
                                 <th>{{i.port}}</th>
                                 <th>{{i.mode}}</th>
                                 <th>{{i.client}}</th>
-                                <!-- {% if i.tag != 'Done' %}
-                                <script>
-                                    setInterval('location.reload()', 5000);
-                                </script>
-                                {% endif%} -->
-                                <th>{{i.tag}}</th>
+                                <th id="tag-{{ i.pk }}">{{ i.tag }}</th>
                                 <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a>
                                 </th>
                             </tr>
