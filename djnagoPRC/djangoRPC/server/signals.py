@@ -30,6 +30,17 @@ def update_client_data(sender, instance, **kwargs):
 
     }
 
+    new_tag = instance.tag
+
+    # Отправьте это значение через WebSocket
+
+    async def send_update():
+        await channel_layer.group_send('my_table_group', {
+            'type': 'update_tag',
+            'tag': new_tag,
+            'id': instance.pk,  # Идентификатор записи, которую вы обновили
+        })
+
     async def send_client_data():
         await channel_layer.group_send(
             'send_client_data',
@@ -38,6 +49,8 @@ def update_client_data(sender, instance, **kwargs):
                 'client': client_data
             }
         )
+
+    async_to_sync(send_update)()
 
     async_to_sync(send_client_data)()
 
@@ -70,4 +83,3 @@ def update_graph_data(sender, instance, **kwargs):
         )
 
     async_to_sync(send_graph_data)()
-

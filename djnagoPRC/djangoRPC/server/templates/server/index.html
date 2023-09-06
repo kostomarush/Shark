@@ -474,23 +474,24 @@
                     <h4 class="header-title mb-3">Таблица Задач</h4>
                     <script>
                         var socket3 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_table/');
-                        console.log('Устн соед');
-                        socket3.onmessage = function (e) {
-                        var newData = JSON.parse(e.data);
-                        console.log(newData.tag);
-                                            
-                        // Идентификатор записи
-                        var recordId = newData.id;
-                                            
-                        // Найдите соответствующую строку и ячейку "tag" по идентификатору
-                        var row = document.getElementById('row-' + recordId);
-                        var tagCell = document.getElementById('tag-' + recordId);
-                                            
-                        // Если строка и ячейка "tag" существуют, обновите значение "tag"
-                        if (row && tagCell) {
-                            tagCell.innerText = newData.tag;
-                        }
-                    };
+                        
+                        socket3.onmessage = function(e) {
+                            var newData = JSON.parse(e.data);
+                            var recordId = newData.id;
+                            var tagCell = document.getElementById('tag-' + recordId);
+                            console.log(newData)
+                            if (tagCell) {
+                                tagCell.innerText = newData.tag;
+                            }
+                        };
+                    
+                        socket3.onopen = function() {
+                            console.log('WebSocket connected');
+                        };
+                    
+                        socket3.onclose = function() {
+                            console.log('WebSocket closed');
+                        };
                     </script>
                     <table class="table table-bordered dt-responsive nowrap" id = 'datatables'>
                         <thead>
