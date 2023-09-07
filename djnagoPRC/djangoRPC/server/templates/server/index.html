@@ -19,6 +19,7 @@
     <link href="{% static 'server/libs/datatables/responsive.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'server/libs/datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'server/libs/datatables/select.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'server/css/cve.css' %}" rel="stylesheet" type="text/css" />
     <!-- App css -->
     <link href="{% static 'server/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'server/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
@@ -340,7 +341,7 @@
                     </div><!-- end card-box-->
                     <div class="card-box">
                         <h4 class="header-title">Гистограмма</h4>
-                        <canvas id="barChart" width="400" height="170"></canvas>
+                        <canvas id="barChart" width="400" height="167"></canvas>
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
@@ -403,7 +404,7 @@
                             </div>
                         </div>
                         <h4 class="header-title mt-1 mb-3">Статистика состояния портов</h4>
-                        <div class="mb-3">
+                        <div class="mb-2">
                             <canvas id="chartId" height="470"></canvas>
                             <script>
                                 // Создаем WebSocket соединение
@@ -629,6 +630,24 @@
                     </div>
                 </div>
                 <h4 class="header-title mb-4">CVE</h4>
+                <!-- Консольное окно -->
+    <div id="console" class="console-window">
+        <!-- Здесь будет выводиться информация -->
+    </div>
+                <script>
+                    // Функция для вывода информации в консольное окно
+                    function writeToConsole(message) {
+                        var consoleWindow = document.getElementById("console");
+                        var currentText = consoleWindow.innerHTML;
+                        var newText = currentText + message + "<br>";
+                        consoleWindow.innerHTML = newText;
+                        consoleWindow.scrollTop = consoleWindow.scrollHeight;
+                    }
+            
+                    // Пример использования
+                    writeToConsole("Привет, это первое сообщение в консоли.");
+                    writeToConsole("И вот еще одно сообщение.");
+                </script>
 
                         </div>
                     </div>

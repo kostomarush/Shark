@@ -14,7 +14,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         data_server = DataServer.objects.in_bulk()
         response = prot_pb2.DataServer()
         for id in data_server:
-            if data_server[id].tag == 'Processing' and f'{data_server[id].client.id}' == request.id_client:
+            if data_server[id].tag == 'Proc' and f'{data_server[id].client.id}' == request.id_client:
                 if request.message == 'End':
                     save_cl = DataServer.objects.get(id=id)
                     save_cl.tag = 'Done'
@@ -27,7 +27,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 return response
             elif data_server[id].tag == 'False':
                 DataServer.objects.filter(id=id).update(
-                    client=request.id_client, tag='Processing')
+                    client=request.id_client, tag='Proc')
                 ip = data_server[id].ip
                 port = data_server[id].port
                 mode = data_server[id].mode
