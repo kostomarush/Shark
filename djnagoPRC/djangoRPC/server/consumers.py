@@ -123,3 +123,22 @@ class TableConsumer(AsyncWebsocketConsumer):
             'id': record_id,
             'tag': tag,
         }))
+
+class TaskConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        # Присоедините клиента к группе WebSocket
+        await self.channel_layer.group_add('send_task_done', self.channel_name)
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        # Отсоедините клиента от группы WebSocket при разрыве соединения
+        await self.channel_layer.group_discard('send_task_done', self.channel_name)
+
+    async def task_done_update(self, event):
+        # Этот метод вызывается, когда сигнал об обновлении "tag" отправляется
+        task = event['task']
+
+        # Отправьте обновленные данные клиенту
+        await self.send(json.dumps({
+            'task': task,
+        }))

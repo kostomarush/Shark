@@ -30,6 +30,8 @@ def update_client_data(sender, instance, **kwargs):
 
     }
 
+    task_done = DataServer.objects.filter(tag='Done').count()
+
     new_tag = instance.tag
 
     # Отправьте это значение через WebSocket
@@ -50,10 +52,20 @@ def update_client_data(sender, instance, **kwargs):
             }
         )
 
+    async def send_task_done():
+        await channel_layer.group_send(
+            'send_task_done',
+            {
+                'type': 'task_done.update',
+                'task': task_done
+            }
+        )
+
     async_to_sync(send_update)()
 
     async_to_sync(send_client_data)()
 
+    async_to_sync(send_task_done)()
 
 @receiver(post_save,  sender=ScanInfo)
 def update_graph_data(sender, instance, **kwargs):

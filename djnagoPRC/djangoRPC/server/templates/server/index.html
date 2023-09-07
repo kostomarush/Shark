@@ -523,11 +523,33 @@
                     </div> <!-- end card-box-->
                     <div class="card-box widget-chart-one gradient-success bx-shadow-lg">
                         <div class="float-left" dir="ltr">
+                            <script>
+                            var socket4 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_task/');
+                        
+                            socket4.onmessage = function (e) {
+                            var data = JSON.parse(e.data);
+                            console.log(data)
+
+                            var taskKnob = document.getElementById('task_done');
+                            if (taskKnob) {
+                                taskKnob.value = data.task;
+                            }
+                        };
+                    
+                        socket4.onopen = function() {
+                            console.log('WebSocket task connected');
+                        };
+                    
+                        socket4.onclose = function() {
+                            console.log('WebSocket closed');
+                        };
+
+                            </script>
                             <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
                                     data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" data-max="{% for i in data_serv %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}" 
                                     value="{{ task_done|safe  }}" 
                                     data-skin="tron" data-angleOffset="180"
-                                    data-readOnly=true data-thickness=".2"/>
+                                    data-readOnly=true data-thickness=".2" id='task_done'/>
                         </div>
                         <div class="widget-chart-one-content text-right">
                             <p class="text-white mb-0">Выполнено задач из</p>
@@ -537,7 +559,8 @@
                 </div> <!-- end col -->
             </div>
             <!-- end row -->
-                <div>
+            <div class="row">
+                <div class="col-xl-6">
                     <div class="card-box">
                         <div class="dropdown float-right">
                             <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
@@ -565,9 +588,6 @@
                                         <th class="border-top-0">Протокол</th>
                                         <th class="border-top-0">Рабочие порты</th>
                                         <th class="border-top-0">Состояние портов</th>
-                                        <th class="border-top-0">ОС</th>
-                                        <th class="border-top-0">Вендор</th>
-                                        <th class="border-top-0">Версия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -583,15 +603,40 @@
                                                 {% elif i.state == 'closed' %}badge-danger{% elif i.state == 'open|filtered' %}badge-info{% endif %}">
                                                 {{i.state}}</span>
                                         </td>
-                                        <td><span class="ml-2">{{i.vendor}}</span></td>
-                                        <td><span class="ml-2">{{i.os_family}}</span></td>
-                                        <td><span class="ml-2">{{i.osgen}}</span></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
+                    </div>
             </div>
+            <div class="col-xl-6">
+            <div class="card-box">
+                <div class="dropdown float-right">
+                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="mdi mdi-dots-horizontal"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <!-- item-->
+                        <a href="javascript:void(0);" class="dropdown-item">Настройки</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" class="dropdown-item">Download</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" class="dropdown-item">Upload</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                    </div>
+                </div>
+                <h4 class="header-title mb-4">CVE</h4>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            </div>
+            
             <!-- end row -->
 
         </div> <!-- end container -->
