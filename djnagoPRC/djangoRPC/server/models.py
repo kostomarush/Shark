@@ -6,6 +6,7 @@ class ScanInfo(models.Model):
     protocols = models.CharField(max_length=20)
     open_ports = models.CharField(max_length=20)
     state = models.CharField(max_length=20)
+    data_chunk = models.CharField(max_length=1000)
 
 
 class ClientBD(models.Model):

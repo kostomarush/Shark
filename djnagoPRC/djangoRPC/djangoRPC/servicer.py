@@ -13,6 +13,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
         response = prot_pb2.DataServer()
+
         for id in data_server:
             if data_server[id].tag == 'Proc' and f'{data_server[id].client.id}' == request.id_client:
                 if request.message == 'End':
@@ -20,9 +21,13 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_cl.tag = 'Done'
                     save_cl.save()
                     return response
+                large_string = ""
+                for req in request:
+                    large_string += req.data_chunk
                 data_in = ScanInfo(ip_status=request.ip_status,
                                    protocols=request.protocols, open_ports=request.open_ports,
-                                   state=request.state)
+                                   state=request.state, data_chunk=request.data_chunk)
+
                 data_in.save()
                 return response
             elif data_server[id].tag == 'False':

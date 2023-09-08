@@ -1,0 +1,15 @@
+        /* Стили для рамки и консольного окна */
+        .console-frame {
+            border: 2px solid #000;
+            padding: 10px;
+            display: inline-block;
+            background-color: black; /* Черный фон */
+        }
+
+        .console-window {
+            border: 1px solid #000;
+            padding: 10px;
+            overflow: auto;
+            background-color: #222; /* Черный фон */
+            color: #fff; /* Белый текст для контраста */
+        }

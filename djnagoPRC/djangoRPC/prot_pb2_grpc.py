@@ -14,8 +14,8 @@ class RPCStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.scan = channel.unary_unary(
-                '/RPC/scan',
+        self.scan = channel.stream_unary(
+                '/mygrpc.RPC/scan',
                 request_serializer=prot__pb2.DataClient.SerializeToString,
                 response_deserializer=prot__pb2.DataServer.FromString,
                 )
@@ -24,7 +24,7 @@ class RPCStub(object):
 class RPCServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def scan(self, request, context):
+    def scan(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -33,14 +33,14 @@ class RPCServicer(object):
 
 def add_RPCServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'scan': grpc.unary_unary_rpc_method_handler(
+            'scan': grpc.stream_unary_rpc_method_handler(
                     servicer.scan,
                     request_deserializer=prot__pb2.DataClient.FromString,
                     response_serializer=prot__pb2.DataServer.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'RPC', rpc_method_handlers)
+            'mygrpc.RPC', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -49,7 +49,7 @@ class RPC(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def scan(request,
+    def scan(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -59,7 +59,7 @@ class RPC(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RPC/scan',
+        return grpc.experimental.stream_unary(request_iterator, target, '/mygrpc.RPC/scan',
             prot__pb2.DataClient.SerializeToString,
             prot__pb2.DataServer.FromString,
             options, channel_credentials,
