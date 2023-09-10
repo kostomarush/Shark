@@ -2,12 +2,6 @@ syntax = "proto3";
 
 package mygrpc;
 
-service RPC {
-
-    rpc scan(stream DataClient) returns (DataServer);
-
-}
-
 message DataServer {
 
     string ip = 1;
@@ -25,5 +19,11 @@ message DataClient {
     string state = 5;
     string id_client = 6;
     string data_chunk = 7;
+
+}
+
+service RPC {
+
+    rpc scan(DataServer) returns (stream DataClient);
 
 }

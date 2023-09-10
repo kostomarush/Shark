@@ -14,17 +14,17 @@ class RPCStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.scan = channel.stream_unary(
+        self.scan = channel.unary_stream(
                 '/mygrpc.RPC/scan',
-                request_serializer=prot__pb2.DataClient.SerializeToString,
-                response_deserializer=prot__pb2.DataServer.FromString,
+                request_serializer=prot__pb2.DataServer.SerializeToString,
+                response_deserializer=prot__pb2.DataClient.FromString,
                 )
 
 
 class RPCServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def scan(self, request_iterator, context):
+    def scan(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -33,10 +33,10 @@ class RPCServicer(object):
 
 def add_RPCServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'scan': grpc.stream_unary_rpc_method_handler(
+            'scan': grpc.unary_stream_rpc_method_handler(
                     servicer.scan,
-                    request_deserializer=prot__pb2.DataClient.FromString,
-                    response_serializer=prot__pb2.DataServer.SerializeToString,
+                    request_deserializer=prot__pb2.DataServer.FromString,
+                    response_serializer=prot__pb2.DataClient.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -49,7 +49,7 @@ class RPC(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def scan(request_iterator,
+    def scan(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,8 +59,8 @@ class RPC(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.stream_unary(request_iterator, target, '/mygrpc.RPC/scan',
-            prot__pb2.DataClient.SerializeToString,
-            prot__pb2.DataServer.FromString,
+        return grpc.experimental.unary_stream(request, target, '/mygrpc.RPC/scan',
+            prot__pb2.DataServer.SerializeToString,
+            prot__pb2.DataClient.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
