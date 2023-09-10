@@ -24,15 +24,18 @@ def scan(stub, ip_address, port, mode, id_cl):
     # SYN ACK Scan:
     nm = nmap.PortScanner()
     if mode == 'SYN':
-        nm.scan(ip_address, port, '-v -sS', sudo='True')
+        nm.scan(ip_address, port, '-v -sS --script vulscan/ --script-args vulscandb=cve.csv', sudo='True')
         ip_status = nm[ip_address].state()
         protocols = nm[ip_address].all_protocols()[0]
         open_ports = nm[ip_address]['tcp'].keys()
         for ports in open_ports:
-            # if ports == list(open_ports)[-1]:
-            #     command = 'End'
+            script = nm[ip_address]['tcp'][ports].get('script','')
+            if script!='':
+                all_chunk = script.get('vulscan','')
+            else:
+                all_chunk = None
             stub.scan(prot_pb2.DataClient(id_client=id_cl, ip_status=ip_status, protocols=protocols, open_ports=f'{ports}',
-                                          state=nm[ip_address]['tcp'][ports]['state']))
+                                          state=nm[ip_address]['tcp'][ports]['state'], data_chunk=chunk) for chunk in all_chunk)
     # UDP Scan
     if mode == 'UDP':
         nm.scan(ip_address, port, '-v -sU')
