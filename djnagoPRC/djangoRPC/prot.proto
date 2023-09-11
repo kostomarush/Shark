@@ -24,6 +24,6 @@ message DataClient {
 
 service RPC {
 
-    rpc scan(DataServer) returns (stream DataClient);
+    rpc scan(stream DataClient) returns (DataServer);
 
 }
