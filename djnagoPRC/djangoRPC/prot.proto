@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package mygrpc;
-
 message DataServer {
 
     string ip = 1;
