@@ -14,35 +14,28 @@ class RPCStub(object):
         Args:
             channel: A grpc.Channel.
         """
-<<<<<<< HEAD
         self.scan = channel.unary_unary(
                 '/RPC/scan',
                 request_serializer=prot__pb2.DataClient.SerializeToString,
                 response_deserializer=prot__pb2.DataServer.FromString,
                 )
-        self.chunk = channel.unary_stream(
+        self.chunk = channel.stream_unary(
                 '/RPC/chunk',
-                request_serializer=prot__pb2.DataClient.SerializeToString,
-                response_deserializer=prot__pb2.DataChunk.FromString,
-=======
-        self.scan = channel.stream_unary(
-                '/RPC/scan',
-                request_serializer=prot__pb2.DataClient.SerializeToString,
-                response_deserializer=prot__pb2.DataServer.FromString,
->>>>>>> refs/remotes/origin/master
+                request_serializer=prot__pb2.DataChunk.SerializeToString,
+                response_deserializer=prot__pb2.Empty.FromString,
                 )
 
 
 class RPCServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def scan(self, request_iterator, context):
+    def scan(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def chunk(self, request, context):
+    def chunk(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -51,22 +44,15 @@ class RPCServicer(object):
 
 def add_RPCServicer_to_server(servicer, server):
     rpc_method_handlers = {
-<<<<<<< HEAD
             'scan': grpc.unary_unary_rpc_method_handler(
                     servicer.scan,
                     request_deserializer=prot__pb2.DataClient.FromString,
                     response_serializer=prot__pb2.DataServer.SerializeToString,
             ),
-            'chunk': grpc.unary_stream_rpc_method_handler(
+            'chunk': grpc.stream_unary_rpc_method_handler(
                     servicer.chunk,
-                    request_deserializer=prot__pb2.DataClient.FromString,
-                    response_serializer=prot__pb2.DataChunk.SerializeToString,
-=======
-            'scan': grpc.stream_unary_rpc_method_handler(
-                    servicer.scan,
-                    request_deserializer=prot__pb2.DataClient.FromString,
-                    response_serializer=prot__pb2.DataServer.SerializeToString,
->>>>>>> refs/remotes/origin/master
+                    request_deserializer=prot__pb2.DataChunk.FromString,
+                    response_serializer=prot__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -79,7 +65,7 @@ class RPC(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def scan(request_iterator,
+    def scan(request,
             target,
             options=(),
             channel_credentials=None,
@@ -89,7 +75,6 @@ class RPC(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-<<<<<<< HEAD
         return grpc.experimental.unary_unary(request, target, '/RPC/scan',
             prot__pb2.DataClient.SerializeToString,
             prot__pb2.DataServer.FromString,
@@ -97,7 +82,7 @@ class RPC(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def chunk(request,
+    def chunk(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -107,13 +92,8 @@ class RPC(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/RPC/chunk',
-            prot__pb2.DataClient.SerializeToString,
-            prot__pb2.DataChunk.FromString,
-=======
-        return grpc.experimental.stream_unary(request_iterator, target, '/RPC/scan',
-            prot__pb2.DataClient.SerializeToString,
-            prot__pb2.DataServer.FromString,
->>>>>>> refs/remotes/origin/master
+        return grpc.experimental.stream_unary(request_iterator, target, '/RPC/chunk',
+            prot__pb2.DataChunk.SerializeToString,
+            prot__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

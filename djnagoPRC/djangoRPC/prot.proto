@@ -15,6 +15,7 @@ message DataChunk {
 
 }
 
+message Empty {}
 
 message DataClient {
 
@@ -30,6 +31,6 @@ service RPC {
 
     rpc scan(DataClient) returns (DataServer);
 
-    rpc chunk(DataClient) returns (stream DataChunk);
+    rpc chunk(stream DataChunk) returns (Empty);
 
 }

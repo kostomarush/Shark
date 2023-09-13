@@ -11,9 +11,15 @@ def grpc_hook(server):
 
 class RPCServicer(prot_pb2_grpc.RPCServicer):
 
+
     def chunk(self, request, context):
+        response = prot_pb2.Empty()
+        large_string = ''
         for req in request:
-            yield req.data_chunk
+            large_string += req.data_chunk
+        print(large_string)
+        yield response
+
 
 
     def scan(self, request, context):
@@ -27,21 +33,13 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_cl.tag = 'Done'
                     save_cl.save()
                     return response
-<<<<<<< HEAD
-                large_string = ''
-                large_string += self.chunk()
+            
                 data_in = ScanInfo(ip_status=request.ip_status,
-=======
-                large_string = ""
-                for req in request:
-                    large_string += req.data_chunk
-                    data_in = ScanInfo(ip_status=request.ip_status,
->>>>>>> refs/remotes/origin/master
                                    protocols=request.protocols, open_ports=request.open_ports,
-                                   state=request.state, data_chunk=large_string)
+                                   state=request.state)
 
-                    data_in.save()
-                    yield response
+                data_in.save()
+                return response
             elif data_server[data_id].tag == 'False':
                 DataServer.objects.filter(id=data_id).update(
                 client=request.id_client, tag='Proc')

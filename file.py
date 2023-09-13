@@ -1,6 +1,6 @@
 
 import nmap
-ip = '10.33.102.39'
+ip = '127.0.0.1'
 nm = nmap.PortScanner()
 nm.scan(ip,'22', '-sV --script vulscan/ --script-args vulscandb=cve.csv')
 
