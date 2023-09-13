@@ -14,8 +14,8 @@ class RPCStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.scan = channel.unary_unary(
-                '/RPC/scan',
+        self.scan = channel.stream_unary(
+                '/mygrpc.RPC/scan',
                 request_serializer=prot__pb2.DataClient.SerializeToString,
                 response_deserializer=prot__pb2.DataServer.FromString,
                 )
@@ -75,7 +75,7 @@ class RPC(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RPC/scan',
+        return grpc.experimental.stream_unary(request_iterator, target, '/mygrpc.RPC/scan',
             prot__pb2.DataClient.SerializeToString,
             prot__pb2.DataServer.FromString,
             options, channel_credentials,

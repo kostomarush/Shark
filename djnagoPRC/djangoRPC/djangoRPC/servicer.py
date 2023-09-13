@@ -20,28 +20,34 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         data_server = DataServer.objects.in_bulk()
         response = prot_pb2.DataServer()
 
-
-        for id in data_server:
-            if data_server[id].tag == 'Proc' and f'{data_server[id].client.id}' == request.id_client:
+        for data_id in data_server:
+            if data_server[data_id].tag == 'Proc' and f'{data_server[data_id].client.id}' == request.id_client:
                 if request.message == 'End':
-                    save_cl = DataServer.objects.get(id=id)
+                    save_cl = DataServer.objects.get(id=data_id)
                     save_cl.tag = 'Done'
                     save_cl.save()
                     return response
+<<<<<<< HEAD
                 large_string = ''
                 large_string += self.chunk()
                 data_in = ScanInfo(ip_status=request.ip_status,
+=======
+                large_string = ""
+                for req in request:
+                    large_string += req.data_chunk
+                    data_in = ScanInfo(ip_status=request.ip_status,
+>>>>>>> refs/remotes/origin/master
                                    protocols=request.protocols, open_ports=request.open_ports,
                                    state=request.state, data_chunk=large_string)
 
-                data_in.save()
-                return response
-            elif data_server[id].tag == 'False':
-                DataServer.objects.filter(id=id).update(
+                    data_in.save()
+                    yield response
+            elif data_server[data_id].tag == 'False':
+                DataServer.objects.filter(id=data_id).update(
                 client=request.id_client, tag='Proc')
-                ip = data_server[id].ip
-                port = data_server[id].port
-                mode = data_server[id].mode
+                ip = data_server[data_id].ip
+                port = data_server[data_id].port
+                mode = data_server[data_id].mode
                 response_start = prot_pb2.DataServer(
                     ip=ip, port=port, mode=mode)
                 return response_start
