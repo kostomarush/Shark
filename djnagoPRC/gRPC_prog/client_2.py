@@ -10,14 +10,11 @@ def connect():
         'localhost:50051', options=(('grpc.enable_http_proxy', 0),))
     stub = prot_pb2_grpc.RPCStub(channel)
     while True:
-        try:
-            response = stub.scan(prot_pb2.DataClient(id_client=id_cl))
-            ip_address = response.ip
-            port = response.port
-            mode = response.mode
-            scan(stub, ip_address, port, mode, id_cl)
-        except:
-            pass
+        response = stub.scan(prot_pb2.DataClient(id_client=id_cl))
+        ip_address = response.ip
+        port = response.port
+        mode = response.mode
+        scan(stub, ip_address, port, mode, id_cl)
 
 
 def scan(stub, ip_address, port, mode, id_cl):
@@ -35,7 +32,9 @@ def scan(stub, ip_address, port, mode, id_cl):
             else:
                 all_chunk = None
             stub.scan(prot_pb2.DataClient(id_client=id_cl, ip_status=ip_status, protocols=protocols, open_ports=f'{ports}',
-                                          state=nm[ip_address]['tcp'][ports]['state'], data_chunk=chunk) for chunk in all_chunk)
+                                          state=nm[ip_address]['tcp'][ports]['state']))
+
+            stub.chunk(prot_pb2.DataChunk(data_chunk=chunk)for chunk in all_chunk)
     # UDP Scan
     if mode == 'UDP':
         nm.scan(ip_address, port, '-v -sU')

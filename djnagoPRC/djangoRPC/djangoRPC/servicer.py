@@ -10,6 +10,12 @@ def grpc_hook(server):
 
 
 class RPCServicer(prot_pb2_grpc.RPCServicer):
+
+    def chunk(self, request, context):
+        for req in request:
+            yield req.data_chunk
+
+
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
         response = prot_pb2.DataServer()
@@ -22,12 +28,11 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_cl.tag = 'Done'
                     save_cl.save()
                     return response
-                large_string = ""
-                for req in request:
-                    large_string += req.data_chunk
+                large_string = ''
+                large_string += self.chunk()
                 data_in = ScanInfo(ip_status=request.ip_status,
                                    protocols=request.protocols, open_ports=request.open_ports,
-                                   state=request.state, data_chunk=request.data_chunk)
+                                   state=request.state, data_chunk=large_string)
 
                 data_in.save()
                 return response
