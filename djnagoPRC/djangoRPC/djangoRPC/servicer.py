@@ -13,12 +13,10 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
 
 
     def chunk(self, request, context):
-        response = prot_pb2.Empty()
-        large_string = ''
+        
         for req in request:
-            large_string += req.data_chunk
-        print(large_string)
-        yield response
+            print(req.data_chunk)
+            yield prot_pb2.Empty()
 
 
 
