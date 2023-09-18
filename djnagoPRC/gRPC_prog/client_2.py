@@ -32,7 +32,9 @@ def scan(stub, ip_address, port, mode, id_cl):
             stub.scan(prot_pb2.DataClient(id_client=id_cl, ip_status=ip_status, protocols=protocols, open_ports=f'{ports}',
                                           state=nm[ip_address]['tcp'][ports]['state']))
 
-            stub.chunk(prot_pb2.DataChunk(data_chunk=data)for data in all_chunk)
+            for data in all_chunk:
+                stub.chunk(prot_pb2.DataChunk(data_chunk=data))
+                           
     # UDP Scan
     if mode == 'UDP':
         nm.scan(ip_address, port, '-v -sU')
