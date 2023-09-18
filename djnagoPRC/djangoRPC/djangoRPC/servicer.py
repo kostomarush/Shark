@@ -12,14 +12,6 @@ def grpc_hook(server):
 class RPCServicer(prot_pb2_grpc.RPCServicer):
 
 
-    def chunk(self, request, context):
-        
-        for req in request:
-            print(req.data_chunk)
-            yield prot_pb2.Empty()
-
-
-
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
         response = prot_pb2.DataServer()
@@ -47,3 +39,12 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 response_start = prot_pb2.DataServer(
                     ip=ip, port=port, mode=mode)
                 return response_start
+
+    def chunk(self, request, context):
+        text = '2'
+        
+        for req in request:
+            text += req.data_chunk
+            response = prot_pb2.Empty()
+            print(text)
+            yield response

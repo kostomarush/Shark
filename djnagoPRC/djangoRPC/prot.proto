@@ -15,7 +15,11 @@ message DataChunk {
 
 }
 
-message Empty {}
+message Empty {
+
+    string result = 1;
+
+}
 
 message DataClient {
 
