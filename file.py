@@ -9,8 +9,11 @@ for ports in open_ports:
     print(f'Port:{ports}')
     script = nm[ip]['tcp'][ports].get('script','')
     if script!='':
-        print(script.get('vulscan',''))
+        a = script.get('vulscan','')
+        for i in a:
+            print(i)
     else:
         print(nm[ip]['tcp'][ports]['state'])
+
 
 
