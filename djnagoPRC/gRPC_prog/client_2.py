@@ -14,6 +14,17 @@ def connect():
     mode = response.mode
     scan(stub, ip_address, port, mode, id_cl)
 
+def generate_chunk(chunks):
+    for data in chunks:
+        yield prot_pb2.DataChunk(data_chunk=data)
+
+def split_string(input_string, chunk_size):
+    chunks = []
+    for i in range(0, len(input_string), chunk_size):
+        chunk = input_string[i:i + chunk_size]
+        chunks.append(chunk)
+    return chunks
+
 
 def scan(stub, ip_address, port, mode, id_cl):
     # SYN ACK Scan:
@@ -24,19 +35,21 @@ def scan(stub, ip_address, port, mode, id_cl):
         protocols = nm[ip_address].all_protocols()[0]
         open_ports = nm[ip_address]['tcp'].keys()
         for ports in open_ports:
-    
-            stub.scan(prot_pb2.DataClient(id_client=id_cl, ip_status=ip_status, protocols=protocols, open_ports=f'{ports}',
-                                          state=nm[ip_address]['tcp'][ports]['state']))
 
             script = nm[ip_address]['tcp'][ports].get('script','')
             if script!='':
-                all_chunk = ['1', '2', '3']
-                print(all_chunk)
+                all_chunk = script.get('vulscan','')
+                chunk_size = 4 * 1024 * 1024 # 4 МБ
+                chunks = split_string(all_chunk, chunk_size)
+                text = generate_chunk(chunks)
+                result = stub.chunk(text)
+                print(result.result)
             else:
                 all_chunk = 'No'
-            for data in all_chunk:
-                request = prot_pb2.DataChunk(data_chunk=data)
-                response = stub.chunk(request)
+            
+            stub.scan(prot_pb2.DataClient(id_client=id_cl, ip_status=ip_status, protocols=protocols, open_ports=f'{ports}',
+                                          state=nm[ip_address]['tcp'][ports]['state']))
+                
                 
 
 

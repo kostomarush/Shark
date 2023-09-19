@@ -633,21 +633,53 @@
                 <!-- Консольное окно -->
     <div id="console" class="console-window">
         <!-- Здесь будет выводиться информация -->
+    <script>
+        // Функция для вывода информации в консольное окно
+        function writeToConsole(message) {
+            var consoleWindow = document.getElementById("console");
+            var currentText = consoleWindow.innerHTML;
+            var newText = currentText + message + "<br>";
+            consoleWindow.innerHTML = newText;
+            consoleWindow.scrollTop = consoleWindow.scrollHeight;
+        }
+    
+        // Создаем WebSocket соединение
+        var socket_cve = new WebSocket('ws://' + window.location.host + '/ws/my_socket_cve/');
+    
+        // Обработка открытия соединения
+        socket_cve.onopen = function(event) {
+            writeToConsole("WebSocket соединение установлено.");
+        };
+    
+        // Обработка входящих сообщений
+        socket_cve.onmessage = function(event) {
+            var message = event.data;
+            writeToConsole("Получено сообщение: " + message);
+        };
+    
+        // Обработка закрытия соединения
+        socket_cve.onclose = function(event) {
+            if (event.wasClean) {
+                writeToConsole("WebSocket соединение закрыто чисто, код=" + event.code + " причина=" + event.reason);
+            } else {
+                writeToConsole("WebSocket соединение прервано");
+            }
+        };
+    
+        // Обработка ошибок
+        socket_cve.onerror = function(error) {
+            writeToConsole("WebSocket ошибка: " + error.message);
+        };
+    
+        // Отправка сообщения на сервер
+        function sendMessage() {
+            var messageInput = document.getElementById("messageInput");
+            var message = messageInput.value;
+            socket_cve.send(message);
+            messageInput.value = "";  // Очищаем поле ввода после отправки
+        }
+    </script>
     </div>
-                <script>
-                    // Функция для вывода информации в консольное окно
-                    function writeToConsole(message) {
-                        var consoleWindow = document.getElementById("console");
-                        var currentText = consoleWindow.innerHTML;
-                        var newText = currentText + message + "<br>";
-                        consoleWindow.innerHTML = newText;
-                        consoleWindow.scrollTop = consoleWindow.scrollHeight;
-                    }
-            
-                    // Пример использования
-                    writeToConsole("Привет, это первое сообщение в консоли.");
-                    writeToConsole("И вот еще одно сообщение.");
-                </script>
 
                         </div>
                     </div>
