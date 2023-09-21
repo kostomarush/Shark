@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import ScanInfo, DataServer
 from .forms import DataServerForm
-from django.http import JsonResponse
-from django.core import serializers
 from django.contrib.auth.decorators import login_required
 
 
@@ -11,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 def remove_item(request, pk):
     item = DataServer.objects.get(pk=pk)
     item.delete()
-    return redirect('index')
+    return redirect('aim')
 
 @login_required(redirect_field_name=None, login_url='/')
 def data(request):
@@ -39,7 +37,7 @@ def data(request):
         form = DataServerForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('index')
+            return redirect('aim')
         else:
             error = 'Форма не верна'
     form = DataServerForm()
@@ -56,4 +54,9 @@ def data(request):
         'client_1':client_1,
         'client_2':client_2,
     }
-    return render(request, 'server/index.html', tasks)
+    return render(request, 'server/aim.html', tasks)
+
+
+login_required(redirect_field_name=None, login_url='/')
+def segment(requset):
+    return render(requset, 'server/segment.html')
