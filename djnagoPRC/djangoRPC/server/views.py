@@ -1,15 +1,25 @@
-from django.shortcuts import render, redirect
-from .models import ScanInfo, DataServer
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import ScanInfo, DataServer, SegmentScan
 from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
 
 
+@login_required(redirect_field_name=None, login_url='/')
+def detail_view(request, pk):
+    item = get_object_or_404(YourModel, pk=pk)  # Замените на вашу модель
+    return render(request, 'detail.html', {'item': item})  # Создайте шаблон detail.html для отображения подробной информации
 
 @login_required(redirect_field_name=None, login_url='/')
 def remove_item(request, pk):
     item = DataServer.objects.get(pk=pk)
     item.delete()
     return redirect('aim')
+
+@login_required(redirect_field_name=None, login_url='/')
+def remove_segment(request, pk):
+    item = SegmentScan.objects.get(pk=pk)
+    item.delete()
+    return redirect('segment')
 
 @login_required(redirect_field_name=None, login_url='/')
 def data(request):
@@ -58,9 +68,20 @@ def data(request):
 
 
 login_required(redirect_field_name=None, login_url='/')
-def segment(requset):
+def segment(request):
+    scan_segment = SegmentScan.objects.all()
+    error = ''
+    if request.method == 'POST':
+        form = SegmentScanForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('segment')
+        else:
+            error = 'Форма не верна'
     form_segment = SegmentScanForm()
     seg = {
-        'form_segment': form_segment
+        'form_segment': form_segment,
+        'error': error,
+        'scan_segment': scan_segment,
     }
-    return render(requset, 'server/segment.html', seg)
+    return render(request, 'server/segment.html', seg)

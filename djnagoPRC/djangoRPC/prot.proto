@@ -8,7 +8,6 @@ message DataServer {
 
 }
 
-
 message DataChunk {
 
     string data_chunk = 1; 
@@ -31,10 +30,28 @@ message DataClient {
     string id_client = 6;
 }
 
+message DataSegment{
+
+    string ip_address = 1;
+    string mask = 2;
+    string mode = 3;
+
+}
+
+message DataClientSegment{
+
+    string ip_address = 1;
+    string mask = 2;
+    string mode = 3;
+
+}
+
 service RPC {
 
     rpc scan(DataClient) returns (DataServer);
 
     rpc chunk(stream DataChunk) returns (Empty);
+
+    rpc segment_scan (DataSegment) returns (DataClientSegment);
 
 }

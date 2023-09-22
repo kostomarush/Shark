@@ -41,15 +41,9 @@
                                     {{ form_segment.mode }}
                                 </div>
                             </div>
-                            <div class="form-group row mb-3">
-                                <label class="col-sm-3 col-form-label">Клиенты</label>
-                                <div class="col-sm-9">
-                                    
-                                </div>
-                            </div>
                         </div>
                         <div class="form-group mb-0 justify-content-end row">
-                            <div class="col-sm-7">
+                            <div class="col-sm-8">
                                 <button type="submit"
                                     class="btn btn-success waves-effect waves-light">Создать</button>
                             </div>
@@ -60,7 +54,31 @@
                 <div class="col-xl-8">
                     <div class="card-box">
                         <h4 class="header-title mb-3">Таблица заданий</h4>
+                        <table id="selection-datatable" class="table table-bordered">
+                        <thead>
+                            <th>№</th>
+                            <th>Ip Адрес</th>
+                            <th>Маска</th>
+                            <th>Режим</th>
+                            <th>Состояние</th>
+                            <th>Резульаты сканирования</th>
+                            <th>Удалить</th>
+                        </thead>
+                        <tbody>
+                            {% for i in scan_segment %}
+                        <tr>
+                            <td><span class="ml-2">{{forloop.counter}}</span></td>
+                            <td><span class="ml-2">{{i.ip}}</span></td>
+                            <td><span class="ml-2">{{i.mask}}</span></td>
+                            <td><span class="ml-2">{{i.mode}}</span></td>
+                            <td><span class="ml-2">{{i.state_scan}}</span></td>
+                            <td><a href="{% url 'detail_view' pk=item.pk %}" class="btn btn-info">Подробнее</a></td>
+                            <td><a href="{% url 'segment_delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a></td>
 
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                        </table>
                     </div>
                 </div>
         </div>
