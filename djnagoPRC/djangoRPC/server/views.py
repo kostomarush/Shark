@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import ScanInfo, DataServer
-from .forms import DataServerForm
+from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -59,4 +59,8 @@ def data(request):
 
 login_required(redirect_field_name=None, login_url='/')
 def segment(requset):
-    return render(requset, 'server/segment.html')
+    form_segment = SegmentScanForm()
+    seg = {
+        'form_segment': form_segment
+    }
+    return render(requset, 'server/segment.html', seg)
