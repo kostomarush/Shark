@@ -1,18 +1,22 @@
 syntax = "proto3";
 
-package mygrpc;
-
-service RPC {
-
-    rpc scan(stream DataClient) returns (DataServer);
-
-}
-
 message DataServer {
 
     string ip = 1;
     string port = 2;
     string mode = 3;
+
+}
+
+message DataChunk {
+
+    string data_chunk = 1; 
+
+}
+
+message Empty {
+
+    string result = 1;
 
 }
 
@@ -24,6 +28,30 @@ message DataClient {
     string open_ports = 4;
     string state = 5;
     string id_client = 6;
-    string data_chunk = 7;
+}
+
+message DataSegment{
+
+    string ip_address = 1;
+    string mask = 2;
+    string mode = 3;
+
+}
+
+message DataClientSegment{
+
+    string ip_address = 1;
+    string mask = 2;
+    string mode = 3;
+
+}
+
+service RPC {
+
+    rpc scan(DataClient) returns (DataServer);
+
+    rpc chunk(stream DataChunk) returns (Empty);
+
+    rpc segment_scan (DataSegment) returns (DataClientSegment);
 
 }

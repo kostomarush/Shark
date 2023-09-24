@@ -129,7 +129,7 @@ CHANNEL_LAYERS = {
     },
 }
 
-""" LOGGING = {
+LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
@@ -141,7 +141,7 @@ CHANNEL_LAYERS = {
         'handlers': ['console'],
         'level': 'INFO',  # Установите правильный уровень здесь
     },
-} """
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

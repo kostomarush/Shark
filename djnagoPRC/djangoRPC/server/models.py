@@ -6,7 +6,7 @@ class ScanInfo(models.Model):
     protocols = models.CharField(max_length=20)
     open_ports = models.CharField(max_length=20)
     state = models.CharField(max_length=20)
-    data_chunk = models.CharField(max_length=1000)
+    data_chunk = models.TextField()
 
 
 class ClientBD(models.Model):
@@ -22,3 +22,16 @@ class DataServer(models.Model):
     ip = models.CharField(max_length=20)
     port = models.CharField(max_length=20)
     mode = models.CharField(max_length=20)
+
+
+class SegmentScan(models.Model):
+    ip = models.CharField(max_length=20)
+    mask = models.CharField(max_length=20)
+    mode = models.CharField(max_length=20)
+    state_scan = models.CharField(max_length=20, default=False)
+
+class SegmentResult(models.Model):
+    ip = models.CharField(max_length=20)
+    mask = models.CharField(max_length=20)
+    mode = models.CharField(max_length=20)
+    state_scan = models.CharField(max_length=20, default=False)

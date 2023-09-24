@@ -22,7 +22,6 @@ def update_client_data(sender, instance, **kwargs):
             client_1 += 1
         if data_server[id].tag == 'Done' and data_server[id].client.id == 2:
             client_2 += 1
-    print(client_1)
     client_data = {
 
         'client_1': client_1,
@@ -61,6 +60,7 @@ def update_client_data(sender, instance, **kwargs):
             }
         )
 
+
     async_to_sync(send_update)()
 
     async_to_sync(send_client_data)()
@@ -69,6 +69,12 @@ def update_client_data(sender, instance, **kwargs):
 
 @receiver(post_save,  sender=ScanInfo)
 def update_graph_data(sender, instance, **kwargs):
+
+
+    values = ScanInfo.objects.values('data_chunk')
+
+    for val in values:    
+        all_val = val['data_chunk']
 
     def get_scan_info_count(state):
         count = ScanInfo.objects.filter(state=state).count()
@@ -94,4 +100,15 @@ def update_graph_data(sender, instance, **kwargs):
             }
         )
 
+    async def send_cve():
+        await channel_layer.group_send(
+            'send_cve',
+            {
+                'type': 'send_cve.update',
+                'send_cve': all_val
+            }
+        )
+
     async_to_sync(send_graph_data)()
+
+    async_to_sync(send_cve)()

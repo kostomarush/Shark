@@ -19,12 +19,23 @@ class RPCStub(object):
                 request_serializer=prot__pb2.DataClient.SerializeToString,
                 response_deserializer=prot__pb2.DataServer.FromString,
                 )
+        self.chunk = channel.stream_unary(
+                '/RPC/chunk',
+                request_serializer=prot__pb2.DataChunk.SerializeToString,
+                response_deserializer=prot__pb2.Empty.FromString,
+                )
 
 
 class RPCServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def scan(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def chunk(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_RPCServicer_to_server(servicer, server):
                     servicer.scan,
                     request_deserializer=prot__pb2.DataClient.FromString,
                     response_serializer=prot__pb2.DataServer.SerializeToString,
+            ),
+            'chunk': grpc.stream_unary_rpc_method_handler(
+                    servicer.chunk,
+                    request_deserializer=prot__pb2.DataChunk.FromString,
+                    response_serializer=prot__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class RPC(object):
         return grpc.experimental.unary_unary(request, target, '/RPC/scan',
             prot__pb2.DataClient.SerializeToString,
             prot__pb2.DataServer.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def chunk(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(request_iterator, target, '/RPC/chunk',
+            prot__pb2.DataChunk.SerializeToString,
+            prot__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
