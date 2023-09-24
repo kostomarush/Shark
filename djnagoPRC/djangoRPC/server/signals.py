@@ -73,8 +73,6 @@ def update_graph_data(sender, instance, **kwargs):
 
     values = ScanInfo.objects.values('data_chunk')
 
-    for val in values:    
-        all_val = val['data_chunk']
 
     def get_scan_info_count(state):
         count = ScanInfo.objects.filter(state=state).count()
@@ -105,7 +103,7 @@ def update_graph_data(sender, instance, **kwargs):
             'send_cve',
             {
                 'type': 'send_cve.update',
-                'send_cve': all_val
+                'send_cve': values
             }
         )
 

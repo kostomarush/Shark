@@ -635,6 +635,7 @@
         <!-- Здесь будет выводиться информация -->
     <script>
         // Функция для вывода информации в консольное окно
+        
         function writeToConsole(message) {
             var consoleWindow = document.getElementById("console");
             var currentText = consoleWindow.innerHTML;
@@ -653,8 +654,8 @@
     
         // Обработка входящих сообщений
         socket_cve.onmessage = function(event) {
-            var message = event.data;
-            writeToConsole("Получено сообщение: " + message);
+            var message = JSON.parse(event.data);
+            writeToConsole("Получено сообщение: " + message['send_cve']);
         };
     
         // Обработка закрытия соединения
