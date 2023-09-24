@@ -22,3 +22,16 @@ class DataServer(models.Model):
     ip = models.CharField(max_length=20)
     port = models.CharField(max_length=20)
     mode = models.CharField(max_length=20)
+
+
+class SegmentScan(models.Model):
+    ip = models.CharField(max_length=20)
+    mask = models.CharField(max_length=20)
+    mode = models.CharField(max_length=20)
+    state_scan = models.CharField(max_length=20, default=False)
+
+class SegmentResult(models.Model):
+    ip = models.CharField(max_length=20)
+    mask = models.CharField(max_length=20)
+    mode = models.CharField(max_length=20)
+    state_scan = models.CharField(max_length=20, default=False)

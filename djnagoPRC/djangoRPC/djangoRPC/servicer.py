@@ -14,10 +14,13 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def __init__(self):
         self.text = ''
 
+
+    def segment_scan(self, request, context):
+        pass
+
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
         response = prot_pb2.DataServer()
-
         for data_id in data_server:
             if data_server[data_id].tag == 'Proc' and f'{data_server[data_id].client.id}' == request.id_client:
                 if request.message == 'End':
