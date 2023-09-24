@@ -1,0 +1,26 @@
+{% extends 'server/index.html' %} {% block title %} Результат
+сканирования{%endblock %} {% block content %}
+<div class="wrapper">
+  <div class="container-fluid">
+    <!-- start page title -->
+    <div class="page-title-alt-bg"></div>
+    <div class="page-title-box">
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item">
+            <a href="javascript: void(0);">Режимы сканирования</a>
+          </li>
+          <li class="breadcrumb-item active">Сегментированное</li>
+          <li class="breadcrumb-item active">Результаты сканирования</li>
+        </ol>
+      </div>
+      <h4 class="page-title">Результаты сканирования</h4>
+    </div>
+    <!-- end page title -->
+
+    <h1>Детали элемента</h1>
+    <p>Имя: {{ item.ip }}</p>
+    <p>Состояние: {{ item.state_scan }}</p>
+    {% endblock %}
+  </div>
+</div>

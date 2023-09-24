@@ -2,613 +2,239 @@
 <!DOCTYPE html>
 
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <title>{% block title %}Shark{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- App favicon -->
-    
-    <link rel="shortcut icon" href="{% static 'server/images/favicon.ico' %}">
-    <!-- jvectormap -->
-    <link href="{% static 'server/libs/jqvmap/jqvmap.min.css' %}" rel="stylesheet" />
-    <!-- DataTables -->
-    <link href="{% static 'server/libs/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'server/libs/datatables/responsive.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'server/libs/datatables/buttons.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'server/libs/datatables/select.bootstrap4.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'server/css/cvve.css' %}" rel="stylesheet" type="text/css" />
-    <!-- App css -->
-    <link href="{% static 'server/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'server/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
-    <link href="{% static 'server/css/app.min.css' %}" rel="stylesheet" type="text/css" />
-    <script src="{% static 'server/js/charss.js' %}"></script>
-</head>
 
-<body>
+    <link rel="shortcut icon" href="{% static 'server/images/favicon.ico' %}" />
+    <!-- jvectormap -->
+    <link
+      href="{% static 'server/libs/jqvmap/jqvmap.min.css' %}"
+      rel="stylesheet"
+    />
+    <!-- DataTables -->
+    <link
+      href="{% static 'server/libs/datatables/dataTables.bootstrap4.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'server/libs/datatables/responsive.bootstrap4.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'server/libs/datatables/buttons.bootstrap4.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'server/libs/datatables/select.bootstrap4.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'server/css/cvve.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <!-- App css -->
+    <link
+      href="{% static 'server/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'server/css/icons.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'server/css/app.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="{% static 'server/js/charss.js' %}"></script>
+  </head>
+
+  <body>
     <!-- Navigation Bar-->
     <header id="topnav">
-
-        <!-- Topbar Start -->
-        <div class="navbar-custom">
-            <div class="container-fluid">
-                <ul class="list-unstyled topnav-menu float-right mb-0">
-
-                    <li class="dropdown notification-list">
-                        <a class="nav-link dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#"
-                            role="button" aria-haspopup="false" aria-expanded="false">
-                            <i class="dripicons-bell noti-icon"></i>
-                            <span class="badge badge-info noti-icon-badge">11</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right dropdown-lg">
-
-                            <!-- item-->
-                            <div class="dropdown-item noti-title">
-                                <h5 class="m-0">
-                                    <span class="float-right">
-                                        <a href="" class="text-dark">
-                                            <small>Clear All</small>
-                                        </a>
-                                    </span>Notification
-                                </h5>
-                            </div>
-
-                            <div class="slimscroll noti-scroll">
-                            </div>
-
-
-                        </div>
-                    </li>
-
-                    <li class="dropdown notification-list">
-                        <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light"
-                            data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                            <img src="{% static 'server/images/users/avatar-4.jpg' %}" alt="user-image"
-                                class="rounded-circle">
-                            <span class="pro-user-name ml-1">
-                                Vlad K <i class="mdi mdi-chevron-down"></i>
-                            </span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <i class="dripicons-user"></i>
-                                <span>My Account</span>
-                            </a>
-
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                <i class="dripicons-power"></i>
-                                <span>Logout</span>
-                            </a>
-
-                        </div>
-                    </li>
-                </ul>
-
-                <ul class="list-unstyled menu-left mb-0">
-                    <li class="float-left logo-box">
-                        <a href="/" class="logo">
-                            <span class="logo-lg p-1">
-                                <img src="{% static 'server/images/logo-shark.png' %}" alt="" height="40">
-                            </span>
-                            <span class="logo-sm">
-                                <img src="{% static 'server/images/logo-sm.png' %}" alt="" height="24">
-                            </span>
-                        </a>
-                    </li>
-
-                    <li class="app-search d-none d-md-block">
-                        <form>
-                            <input type="text" placeholder="Search..." class="form-control">
-                            <button type="submit" class="sr-only"></button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- end Topbar -->
-
-        <div class="topbar-menu">
-            <div class="container-fluid">
-                <div id="navigation">
-                    <!-- Navigation Menu-->
-                    <ul class="navigation-menu">
-
-                        <li class="has-submenu">
-                            <a href="index.html">
-                                <i class="dripicons-meter"></i>Главное меню
-                            </a>
-                        </li>
-                        <li class="has-submenu">
-                            <a href="#">
-                                <i class="dripicons-crosshair"></i>Режимы сканирования<div class="arrow-down"></div></a>
-                            <ul class="submenu">
-                                <li>
-                                    <a href="{% url 'aim' %}">Целевое</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'segment' %}">Сегментированное</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="has-submenu">
-                            <a href="#">
-                                <i class="dripicons-mail"></i>Информация <div class="arrow-down"></div></a>
-                            <ul class="submenu">
-                                <li>
-                                    <a href="email-inbox.html">SYN-ASK</a>
-                                </li>
-                                <li>
-                                    <a href="email-read.html">UDP</a>
-                                </li>
-                                <li>
-                                    <a href="email-compose.html">CS</a>
-                                </li>
-                                <li>
-                                    <a href="email-compose.html">OS</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <!-- End navigation menu -->
-
-                    <div class="clearfix"></div>
+      <!-- Topbar Start -->
+      <div class="navbar-custom">
+        <div class="container-fluid">
+          <ul class="list-unstyled topnav-menu float-right mb-0">
+            <li class="dropdown notification-list">
+              <a
+                class="nav-link dropdown-toggle waves-effect waves-light"
+                data-toggle="dropdown"
+                href="#"
+                role="button"
+                aria-haspopup="false"
+                aria-expanded="false"
+              >
+                <i class="dripicons-bell noti-icon"></i>
+                <span class="badge badge-info noti-icon-badge">11</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right dropdown-lg">
+                <!-- item-->
+                <div class="dropdown-item noti-title">
+                  <h5 class="m-0">
+                    <span class="float-right">
+                      <a href="" class="text-dark">
+                        <small>Clear All</small>
+                      </a> </span
+                    >Notification
+                  </h5>
                 </div>
-                <!-- end #navigation -->
-            </div>
-            <!-- end container -->
+
+                <div class="slimscroll noti-scroll"></div>
+              </div>
+            </li>
+
+            <li class="dropdown notification-list">
+              <a
+                class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light"
+                data-toggle="dropdown"
+                href="#"
+                role="button"
+                aria-haspopup="false"
+                aria-expanded="false"
+              >
+                <img
+                  src="{% static 'server/images/users/avatar-4.jpg' %}"
+                  alt="user-image"
+                  class="rounded-circle"
+                />
+                <span class="pro-user-name ml-1">
+                  Vlad K <i class="mdi mdi-chevron-down"></i>
+                </span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right profile-dropdown">
+                <!-- item-->
+                <a href="javascript:void(0);" class="dropdown-item notify-item">
+                  <i class="dripicons-user"></i>
+                  <span>My Account</span>
+                </a>
+
+                <!-- item-->
+                <a href="javascript:void(0);" class="dropdown-item notify-item">
+                  <i class="dripicons-power"></i>
+                  <span>Logout</span>
+                </a>
+              </div>
+            </li>
+          </ul>
+
+          <ul class="list-unstyled menu-left mb-0">
+            <li class="float-left logo-box">
+              <a href="/" class="logo">
+                <span class="logo-lg p-1">
+                  <img
+                    src="{% static 'server/images/logo-shark.png' %}"
+                    alt=""
+                    height="40"
+                  />
+                </span>
+                <span class="logo-sm">
+                  <img
+                    src="{% static 'server/images/logo-sm.png' %}"
+                    alt=""
+                    height="24"
+                  />
+                </span>
+              </a>
+            </li>
+
+            <li class="app-search d-none d-md-block">
+              <form>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  class="form-control"
+                />
+                <button type="submit" class="sr-only"></button>
+              </form>
+            </li>
+          </ul>
         </div>
-        <!-- end navbar-custom -->
+      </div>
+      <!-- end Topbar -->
+
+      <div class="topbar-menu">
+        <div class="container-fluid">
+          <div id="navigation">
+            <!-- Navigation Menu-->
+            <ul class="navigation-menu">
+              <li class="has-submenu">
+                <a href="index.html">
+                  <i class="dripicons-meter"></i>Главное меню
+                </a>
+              </li>
+              <li class="has-submenu">
+                <a href="#">
+                  <i class="dripicons-crosshair"></i>Режимы сканирования
+                  <div class="arrow-down"></div
+                ></a>
+                <ul class="submenu">
+                  <li>
+                    <a href="{% url 'aim' %}">Целевое</a>
+                  </li>
+                  <li>
+                    <a href="{% url 'segment' %}">Сегментированное</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="has-submenu">
+                <a href="#">
+                  <i class="dripicons-mail"></i>Информация
+                  <div class="arrow-down"></div
+                ></a>
+                <ul class="submenu">
+                  <li>
+                    <a href="email-inbox.html">SYN-ASK</a>
+                  </li>
+                  <li>
+                    <a href="email-read.html">UDP</a>
+                  </li>
+                  <li>
+                    <a href="email-compose.html">CS</a>
+                  </li>
+                  <li>
+                    <a href="email-compose.html">OS</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <!-- End navigation menu -->
+
+            <div class="clearfix"></div>
+          </div>
+          <!-- end #navigation -->
+        </div>
+        <!-- end container -->
+      </div>
+      <!-- end navbar-custom -->
     </header>
     <!-- End Navigation Bar-->
 
     <!-- ============================================================== -->
     <!-- Start Page Content here -->
     <!-- ============================================================== -->
-<<<<<<< HEAD
-
-    <div class="wrapper">
-        <div class="container-fluid">
-
-            <!-- start page title -->
-            <div class="page-title-alt-bg"></div>
-            <div class="page-title-box">
-                <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Shark</a></li>
-                        <li class="breadcrumb-item active">Главное меню</li>
-                    </ol>
-                </div>
-                <h4 class="page-title">Главное меню</h4>
-            </div>
-            <!-- end page title -->
-
-            <div class="row">
-                <div class="col-xl-4">
-                    <div class="card-box">
-                        <div class="dropdown float-right">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="mdi mdi-dots-horizontal"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                            </div>
-                        </div>
-                        <h4 class="header-title mb-3">Ввести задачу</h4>
-                        <form class="form-horizontal" method="post" id="post-form">
-                            {% csrf_token %}
-                            <div id="result">
-                                <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Ip address</label>
-                                    <div class="col-sm-9">
-                                        {{ form.ip }}
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="inputPassword3" class="col-sm-3 col-form-label">Port</label>
-                                    <div class="col-sm-9">
-                                        {{ form.port }}
-                                    </div>
-                                </div>
-                                <div class="form-group row mb-3">
-                                    <label class="col-sm-3 col-form-label">Mode</label>
-                                    <div class="col-sm-9">
-                                        {{ form.mode }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-0 justify-content-end row">
-                                <div class="col-sm-9">
-                                    <button type="submit"
-                                        class="btn btn-success waves-effect waves-light">Ввести</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div><!-- end card-box-->
-                    <div class="card-box">
-                        <h4 class="header-title">Гистограмма</h4>
-                        <canvas id="barChart" width="400" height="167"></canvas>
-
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                            var ctx = document.getElementById("barChart").getContext("2d");
-                    
-                            // Инициализируем начальные данные для графика
-                            var initialData = {
-                                labels: ["Клиент 1", "Клиент 2"],
-                                datasets: [{
-                                    label: "Задачи",
-                                    data: [],
-                                    backgroundColor: ["#00CED1", "#00CED1"],
-                                }],
-                            };
-                    
-                            var barChart = new Chart(ctx, {
-                                type: "bar",
-                                data: initialData,
-                            });
-                    
-                            // Создаем WebSocket соединение
-                            var socket2 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_2/');  // Замените URL на ваш сервер и путь WebSocket
-                    
-                            socket2.onopen = function () {
-                                console.log('Соединение WebSocket установлено.');
-                                socket2.send(JSON.stringify({ 'type': 'get_cl_data' }));
-                            };
-                    
-                            socket2.onmessage = function (e) {
-                                var newData = JSON.parse(e.data);
-                                console.log(newData.data.client_2)
-                                // Обновляем данные в графике
-                                barChart.data.datasets[0].data = [newData.data.client_1, newData.data.client_2];
-                                barChart.update();
-                            };
-                    
-                            socket2.onclose = function () {
-                                console.log('Соединение WebSocket закрыто.');
-                            };
-                        });
-                        </script> 
-                    </div> <!-- end card-box -->
-                </div> <!-- end col -->
-                <div class="col-xl-4">
-                    <div class="card-box">
-                        <div class="dropdown float-right">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="mdi mdi-dots-horizontal"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                            </div>
-                        </div>
-                        <h4 class="header-title mt-1 mb-3">Статистика состояния портов</h4>
-                        <div class="mb-2">
-                            <canvas id="chartId" height="470"></canvas>
-                            <script>
-                                // Создаем WebSocket соединение
-                                var socket = new WebSocket('ws://' + window.location.host + '/ws/my_socket/');
-                                                                // Обработчик события открытия WebSocket соединения
-                                socket.onopen = function () {
-                                console.log('Соединение установлено.');
-                                socket.send(JSON.stringify({ 'type': 'get_initial_data' }));
-                                };
-                                socket.onmessage = function (e) {
-                                    console.log('Cчитывание установлено.');
-                                var value = JSON.parse(e.data);
-                                console.log(value)
-                                updateChart(value);
-                            };
-            socket.onclose = function () {
-                console.log('Соединение закрыто.');
-            };
-            
-            var chart;
-
-            function updateChart(value) {
-            if (chart) {
-                chart.destroy(); // Уничтожаем существующий объект Chart, если он существует
-            }
-
-            var chrt = document.getElementById("chartId").getContext("2d");
-            chart = new Chart(chrt, {
-                type: "doughnut",
-                data: {
-                    labels: ["Open", "Filtered", "Closed", "Open|Filtered"],
-                    datasets: [{
-                        data: [],  // Начальный пустой массив данных
-                        backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'],
-                        hoverOffset: 3
-                    }],
-                },
-                options: { responsive: true, cutout: "60%", radius: "90%", weight: 100 },
-            });
-    setTimeout(1)
-    chart.data.datasets[0].data = [value.data.open, value.data.filtered, value.data.close, value.data.open_filtered];
-    chart.update();
-};
-
-                            </script>
-                            
-                        </div>
-                    </div> <!-- end card-box-->
-                </div> <!-- end col -->
-            <div class="col-xl-4">
-                <div class="card-box">
-                    <div class="dropdown float-right">
-                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="mdi mdi-dots-horizontal"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                        </div>
-                    </div>
-                    <h4 class="header-title mb-3">Таблица Задач</h4>
-                    <script>
-                        var socket3 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_table/');
-                        
-                        socket3.onmessage = function(e) {
-                            var newData = JSON.parse(e.data);
-                            var recordId = newData.id;
-                            var tagCell = document.getElementById('tag-' + recordId);
-                            console.log(newData)
-                            if (tagCell) {
-                                tagCell.innerText = newData.tag;
-                            }
-                        };
-                    
-                        socket3.onopen = function() {
-                            console.log('WebSocket connected');
-                        };
-                    
-                        socket3.onclose = function() {
-                            console.log('WebSocket closed');
-                        };
-                    </script>
-                    <table class="table table-bordered dt-responsive nowrap" id = 'datatables'>
-                        <thead>
-                            <tr>
-                                <th>id</th>
-                                <th>ip</th>
-                                <th>port</th>
-                                <th>mode</th>
-                                <th>client_scan</th>
-                                <th>tag</th>
-                                <th>delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for i in data_serv %}
-                            <tr id="row-{{ i.pk }}"> 
-                                <th>{{forloop.counter}}</th>
-                                <th>{{i.ip}}</th>
-                                <th>{{i.port}}</th>
-                                <th>{{i.mode}}</th>
-                                <th>{{i.client}}</th>
-                                <th id="tag-{{ i.pk }}">{{ i.tag }}</th>
-                                <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a>
-                                </th>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    </div> <!-- end card-box-->
-                    <div class="card-box widget-chart-one gradient-success bx-shadow-lg">
-                        <div class="float-left" dir="ltr">
-                            <script>
-                            var socket4 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_task/');
-                        
-                            socket4.onmessage = function (e) {
-                            var data = JSON.parse(e.data);
-                            console.log(data)
-
-                            var taskKnob = document.getElementById('task_done');
-                            if (taskKnob) {
-                                taskKnob.value = data.task;
-                            }
-                        };
-                    
-                        socket4.onopen = function() {
-                            console.log('WebSocket task connected');
-                        };
-                    
-                        socket4.onclose = function() {
-                            console.log('WebSocket closed');
-                        };
-
-                            </script>
-                            <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
-                                    data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" data-max="{% for i in data_serv %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}" 
-                                    value="{{ task_done|safe  }}" 
-                                    data-skin="tron" data-angleOffset="180"
-                                    data-readOnly=true data-thickness=".2" id='task_done'/>
-                        </div>
-                        <div class="widget-chart-one-content text-right">
-                            <p class="text-white mb-0">Выполнено задач из</p>
-                            <h3 class="text-white">{% for i in data_serv %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}</h3>
-                        </div>
-                    </div> <!-- end card-box-->
-                </div> <!-- end col -->
-            </div>
-            <!-- end row -->
-            <div class="row">
-                <div class="col-xl-6">
-                    <div class="card-box">
-                        <div class="dropdown float-right">
-                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="mdi mdi-dots-horizontal"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Настройки</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                                <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                            </div>
-                        </div>
-                        <h4 class="header-title mb-4">Таблица сканирования</h4>
-                        <div class="table-responsive">
-                            <table class="table table-centered table-hover mb-0" id="selection-datatable">
-                                <thead>
-                                    <tr>
-                                        <th class="border-top-0">№</th>
-                                        <th class="border-top-0">Состояние Сети</th>
-                                        <th class="border-top-0">Протокол</th>
-                                        <th class="border-top-0">Рабочие порты</th>
-                                        <th class="border-top-0">Состояние портов</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for i in section %}
-                                    <tr>
-                                        <td><span class="ml-2">{{forloop.counter}}</span></td>
-                                        <td><span class="ml-2">{{i.ip_status}}</span></td>
-                                        <td><span class="ml-2">{{i.protocols}}</span></td>
-                                        <td><span class="ml-2">{{i.open_ports}}</span></td>
-                                        <td>
-                                            <span
-                                                class="badge badge-pill {% if i.state == 'open' %}badge-success{% elif i.state == 'filtered' %}badge-warning
-                                                {% elif i.state == 'closed' %}badge-danger{% elif i.state == 'open|filtered' %}badge-info{% endif %}">
-                                                {{i.state}}</span>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-            </div>
-            <div class="col-xl-6">
-            <div class="card-box">
-                <div class="dropdown float-right">
-                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="mdi mdi-dots-horizontal"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item">Настройки</a>
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                    </div>
-                </div>
-                <h4 class="header-title mb-4">CVE</h4>
-                <!-- Консольное окно -->
-    <div id="console" class="console-window">
-        <!-- Здесь будет выводиться информация -->
-    <script>
-        // Функция для вывода информации в консольное окно
-        
-        function writeToConsole(message) {
-            var consoleWindow = document.getElementById("console");
-            var currentText = consoleWindow.innerHTML;
-            var newText = currentText + message + "<br>";
-            consoleWindow.innerHTML = newText;
-            consoleWindow.scrollTop = consoleWindow.scrollHeight;
-        }
-    
-        // Создаем WebSocket соединение
-        var socket_cve = new WebSocket('ws://' + window.location.host + '/ws/my_socket_cve/');
-    
-        // Обработка открытия соединения
-        socket_cve.onopen = function(event) {
-            writeToConsole("WebSocket соединение установлено.");
-        };
-    
-        // Обработка входящих сообщений
-        socket_cve.onmessage = function(event) {
-            var message = JSON.parse(event.data);
-            writeToConsole("Получено сообщение: " + message['send_cve']);
-        };
-    
-        // Обработка закрытия соединения
-        socket_cve.onclose = function(event) {
-            if (event.wasClean) {
-                writeToConsole("WebSocket соединение закрыто чисто, код=" + event.code + " причина=" + event.reason);
-            } else {
-                writeToConsole("WebSocket соединение прервано");
-            }
-        };
-    
-        // Обработка ошибок
-        socket_cve.onerror = function(error) {
-            writeToConsole("WebSocket ошибка: " + error.message);
-        };
-    
-        // Отправка сообщения на сервер
-        function sendMessage() {
-            var messageInput = document.getElementById("messageInput");
-            var message = messageInput.value;
-            socket_cve.send(message);
-            messageInput.value = "";  // Очищаем поле ввода после отправки
-        }
-    </script>
-    </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            </div>
-            </div>
-            
-            <!-- end row -->
-
-        </div> <!-- end container -->
-    </div>
-    <!-- end wrapper -->
-
-=======
-    {% block content %}
-    {% endblock %}
->>>>>>> 15641914b3654da030f532e81440de7ac193bec7
+    {% block content %} {% endblock %}
     <!-- ============================================================== -->
     <!-- End Page content -->
     <!-- ============================================================== -->
 
     <!-- Footer Start -->
     <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    2023 &copy; Shark
-                </div>
-            </div>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12 text-center">2023 &copy; Shark</div>
         </div>
+      </div>
     </footer>
     <!-- end Footer -->
 
@@ -624,17 +250,16 @@
     <script src="{% static 'server/libs/datatables/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'server/libs/datatables/dataTables.bootstrap4.min.js' %}"></script>
     <script src="{% static 'server/libs/datatables/dataTables.responsive.min.js' %}"></script>
-    <script src="{% static 'server/libs/datatables/responsive.bootstrap4.min.js' %}"></script>      
+    <script src="{% static 'server/libs/datatables/responsive.bootstrap4.min.js' %}"></script>
 
     <!-- Datatables init -->
-    <script src="{% static 'server/js/pages/datatables.init.js' %}"></script>     
-    
+    <script src="{% static 'server/js/pages/datatables.init.js' %}"></script>
+
     <!-- Dashboard Init JS -->
     <script src="{% static 'server/js/pages/dashboardess.init.js' %}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
     <!-- App js -->
     <script src="{% static 'server/js/app.min.js' %}"></script>
-</body>
-
+  </body>
 </html>

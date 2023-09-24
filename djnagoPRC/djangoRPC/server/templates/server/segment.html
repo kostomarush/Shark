@@ -1,87 +1,100 @@
-{% extends 'server/index.html' %}
-{% block title %}Сегментированное{% endblock %}
+{% extends 'server/index.html' %} {% block title %}Сегментированное{% endblock%}
 {% block content %}
 <div class="wrapper">
-    <div class="container-fluid">
-        <!-- start page title -->
-        <div class="page-title-alt-bg"></div>
-        <div class="page-title-box">
-            <div class="page-title-right">
-                <ol class="breadcrumb m-0">
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Режимы сканирования</a></li>
-                    <li class="breadcrumb-item active">Сегментированное</li>
-                </ol>
-            </div>
-            <h4 class="page-title">Сегментированное сканирование</h4>
-        </div>
-        <!-- end page title -->
-
-        <div class="row">
-            <div class="col-xl-4">
-                <div class="card-box">
-                    <h4 class="header-title mb-3">Создать задачу</h4>
-                    <form class="form-horizontal" method="post" id="post-form">
-                        {% csrf_token %}
-                        <div id="result">
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">Ip Address</label>
-                                <div class="col-sm-9">
-                                    {{ form_segment.ip }}
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="inputPassword3" class="col-sm-3 col-form-label">Mask</label>
-                                <div class="col-sm-9">
-                                    {{ form_segment.mask }}
-                                </div>
-                            </div>
-                            <div class="form-group row mb-3">
-                                <label class="col-sm-3 col-form-label">Mode</label>
-                                <div class="col-sm-9">
-                                    {{ form_segment.mode }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group mb-0 justify-content-end row">
-                            <div class="col-sm-8">
-                                <button type="submit"
-                                    class="btn btn-success waves-effect waves-light">Создать</button>
-                            </div>
-                        </div>
-                    </form>
-                </div><!-- end card-box-->
-            </div>
-                <div class="col-xl-8">
-                    <div class="card-box">
-                        <h4 class="header-title mb-3">Таблица заданий</h4>
-                        <table id="selection-datatable" class="table table-bordered">
-                        <thead>
-                            <th>№</th>
-                            <th>Ip Адрес</th>
-                            <th>Маска</th>
-                            <th>Режим</th>
-                            <th>Состояние</th>
-                            <th>Резульаты сканирования</th>
-                            <th>Удалить</th>
-                        </thead>
-                        <tbody>
-                            {% for i in scan_segment %}
-                        <tr>
-                            <td><span class="ml-2">{{forloop.counter}}</span></td>
-                            <td><span class="ml-2">{{i.ip}}</span></td>
-                            <td><span class="ml-2">{{i.mask}}</span></td>
-                            <td><span class="ml-2">{{i.mode}}</span></td>
-                            <td><span class="ml-2">{{i.state_scan}}</span></td>
-                            <td><a href="{% url 'detail_view' pk=item.pk %}" class="btn btn-info">Подробнее</a></td>
-                            <td><a href="{% url 'segment_delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a></td>
-
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                        </table>
-                    </div>
-                </div>
-        </div>
+  <div class="container-fluid">
+    <!-- start page title -->
+    <div class="page-title-alt-bg"></div>
+    <div class="page-title-box">
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item">
+            <a href="javascript: void(0);">Режимы сканирования</a>
+          </li>
+          <li class="breadcrumb-item active">Сегментированное</li>
+        </ol>
+      </div>
+      <h4 class="page-title">Сегментированное сканирование</h4>
     </div>
+    <!-- end page title -->
+
+    <div class="row">
+      <div class="col-xl-4">
+        <div class="card-box">
+          <h4 class="header-title mb-3">Создать задачу</h4>
+          <form class="form-horizontal" method="post" id="post-form">
+            {% csrf_token %}
+            <div id="result">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Ip Address</label>
+                <div class="col-sm-9">{{ form_segment.ip }}</div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword3" class="col-sm-3 col-form-label"
+                  >Mask</label
+                >
+                <div class="col-sm-9">{{ form_segment.mask }}</div>
+              </div>
+              <div class="form-group row mb-3">
+                <label class="col-sm-3 col-form-label">Mode</label>
+                <div class="col-sm-9">{{ form_segment.mode }}</div>
+              </div>
+            </div>
+            <div class="form-group mb-0 justify-content-end row">
+              <div class="col-sm-8">
+                <button
+                  type="submit"
+                  class="btn btn-success waves-effect waves-light"
+                >
+                  Создать
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- end card-box-->
+      </div>
+      <div class="col-xl-8">
+        <div class="card-box">
+          <h4 class="header-title mb-3">Таблица заданий</h4>
+          <table id="selection-datatable" class="table table-bordered">
+            <thead>
+              <th>№</th>
+              <th>Ip Адрес</th>
+              <th>Маска</th>
+              <th>Режим</th>
+              <th>Состояние</th>
+              <th>Резульаты сканирования</th>
+              <th>Удалить</th>
+            </thead>
+            <tbody>
+              {% for i in scan_segment %}
+              <tr>
+                <td><span class="ml-2">{{forloop.counter}}</span></td>
+                <td><span class="ml-2">{{i.ip}}</span></td>
+                <td><span class="ml-2">{{i.mask}}</span></td>
+                <td><span class="ml-2">{{i.mode}}</span></td>
+                <td><span class="ml-2">{{i.state_scan}}</span></td>
+                <td>
+                  <a
+                    class="btn btn-success"
+                    href="{% url 'detail_seg' pk=i.pk %}"
+                    >Подробнее</a
+                  >
+                </td>
+                <td>
+                  <a
+                    href="{% url 'segment_delete' i.pk %}"
+                    class="btn btn-danger mx-auto"
+                    >Удалить</a
+                  >
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
