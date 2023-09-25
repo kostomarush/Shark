@@ -33,7 +33,7 @@ message DataClient {
 message DataSegment{
 
     string ip_address = 1;
-    string mask = 2;
+    int mask = 2;
     string mode = 3;
 
 }
@@ -41,8 +41,10 @@ message DataSegment{
 message DataClientSegment{
 
     string ip_address = 1;
-    string mask = 2;
+    int mask = 2;
     string mode = 3;
+    string state = 4;
+
 
 }
 

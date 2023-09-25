@@ -1,8 +1,9 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer
+from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult
 import time
+import ipaddress
 
 
 def grpc_hook(server):
@@ -16,7 +17,33 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
 
 
     def segment_scan(self, request, context):
-        pass
+        # 1. Определите IP-диапазон вашей сети
+        data_segment = SegmentScan.objects.in_bulk()
+        response = prot_pb2.DataSegment()
+        for i in data_segment:
+            data_segment[i].state == 'Processing' and f'{data_segment[i].client.id}' == request.id_client:
+                if request.message == 'Compleate':
+                    pass
+                
+                result_segment_save = SegmentResult()
+
+                ip = SegmentScan.
+
+        
+        # Определите диапазон IP-адресов, который хотите разделить
+        network = ipaddress.IPv4Network('192.168.1.0/24')
+
+        # Разделите диапазон на 16 сегментов
+        segments = [ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
+
+
+        with transaction.atomic():
+            for segment in segments:
+                segment_obj = Segment.objects.create(
+                    start_ip=str(segment.network_address),
+                    end_ip=str(segment.broadcast_address),
+                )
+
 
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
@@ -28,7 +55,6 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_cl.tag = 'Done'
                     save_cl.save()
                     return response
-                data_in = ScanInfo.objects.all().delete()
                 data_in = ScanInfo(ip_status=request.ip_status,
                                    protocols=request.protocols, open_ports=request.open_ports,
                                    state=request.state, data_chunk=self.text)

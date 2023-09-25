@@ -33,7 +33,5 @@ class SegmentScan(models.Model):
 
 
 class SegmentResult(models.Model):
-    ip = models.CharField(max_length=20)
-    mask = models.CharField(max_length=20)
-    mode = models.CharField(max_length=20)
     state_scan = models.CharField(max_length=20, default=False)
+    
