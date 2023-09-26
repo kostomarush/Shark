@@ -9,10 +9,16 @@ def connect():
     channel = grpc.insecure_channel('localhost:50051', options=(('grpc.enable_http_proxy', 0),))
     stub = prot_pb2_grpc.RPCStub(channel)
     response = stub.scan(prot_pb2.DataClient(id_client=id_cl))
+    response_segment = stub.scan(prot_pb2.DataClientSegment(name_cl = id_cl))
+    ip_add_seg = response.ip_address
+    mode_seg = response.mode
     ip_address = response.ip
     port = response.port
     mode = response.mode
-    scan(stub, ip_address, port, mode, id_cl)
+    if ip_add_seg or mode_seg == None:
+        scan(stub, ip_address, port, mode, id_cl)
+    else:
+        segment_scan(stub, ip_add_seg, mode_seg, id_cl)
 
 def generate_chunk(chunks):
     for data in chunks:
@@ -24,7 +30,6 @@ def split_string(input_string, chunk_size):
         chunk = input_string[i:i + chunk_size]
         chunks.append(chunk)
     return chunks
-
 
 def scan(stub, ip_address, port, mode, id_cl):
     # SYN ACK Scan:
@@ -49,12 +54,6 @@ def scan(stub, ip_address, port, mode, id_cl):
             
             stub.scan(prot_pb2.DataClient(id_client=id_cl, ip_status=ip_status, protocols=protocols, open_ports=f'{ports}',
                                           state=nm[ip_address]['tcp'][ports]['state']))
-                
-                
-
-
-
-    
 
     # UDP Scan
     if mode == 'UDP':
@@ -86,6 +85,22 @@ def scan(stub, ip_address, port, mode, id_cl):
 
     stub.scan(prot_pb2.DataClient(id_client=id_cl, message='End'))
 
+def segment_scan(stub, ip_add_seg, mode_seg, id_cl):
+    nm = nmap.PortScanner()
+
+    # Список IP-адресов, которые вы хотите отсканировать
+    ip_addresses = ip_add_seg
+
+    # Проходим по списку IP-адресов и сканируем каждый
+    for ip in ip_addresses:
+        print(f"Scanning {ip}...")
+        nm.scan(ip, arguments='-v -sV --script vulscan/ --script-args vulscandb=cve.csv')  # Замените аргументы на необходимые
+
+        # Обработка результатов сканирования
+        for host in nm.all_hosts():
+            print(f"Host: {host}")
+            print(f"State: {nm[host].state()}")
+            print(f"Open Ports: {list(nm[host]['tcp'].keys())}")
 
 if __name__ == "__main__":
     connect()

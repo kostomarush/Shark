@@ -1,7 +1,7 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult
+from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress
 import time
 import ipaddress
 
@@ -21,28 +21,22 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         data_segment = SegmentScan.objects.in_bulk()
         response = prot_pb2.DataSegment()
         for i in data_segment:
-            data_segment[i].state == 'Processing' and f'{data_segment[i].client.id}' == request.id_client:
+            if data_segment[i].state == 'Processing' and f'{data_segment[i].client.id}' == request.id_client:
                 if request.message == 'Compleate':
                     pass
                 
-                result_segment_save = SegmentResult()
+                #result_segment_save = SegmentResult()
+            elif data_segment[i].tag == 'False':
+                net = SegmentScan.objects.all()
+                network = ipaddress.IPv4Network('192.168.1.0/24')
 
-                ip = SegmentScan.
+                segments = [ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
 
-        
-        # Определите диапазон IP-адресов, который хотите разделить
-        network = ipaddress.IPv4Network('192.168.1.0/24')
+                for addr in segments:
+                    IPAddress.objects.create(address='192.168.1.1', client=data_segment[i].client.id)
+                    IPAddress.objects.create(address='192.168.1.2', client=data_segment[i].client.id)
+    
 
-        # Разделите диапазон на 16 сегментов
-        segments = [ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
-
-
-        with transaction.atomic():
-            for segment in segments:
-                segment_obj = Segment.objects.create(
-                    start_ip=str(segment.network_address),
-                    end_ip=str(segment.broadcast_address),
-                )
 
 
     def scan(self, request, context):

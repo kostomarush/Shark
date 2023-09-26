@@ -33,17 +33,16 @@ message DataClient {
 message DataSegment{
 
     string ip_address = 1;
-    int mask = 2;
-    string mode = 3;
+    string mode = 2;
 
 }
 
 message DataClientSegment{
 
     string ip_address = 1;
-    int mask = 2;
-    string mode = 3;
-    string state = 4;
+    string mode = 2;
+    string state = 3;
+    string name_cl = 4;
 
 
 }
@@ -54,6 +53,6 @@ service RPC {
 
     rpc chunk(stream DataChunk) returns (Empty);
 
-    rpc segment_scan (DataSegment) returns (DataClientSegment);
+    rpc segment_scan (DataClientSegment) returns (stream DataSegment);
 
 }
