@@ -1,13 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ScanInfo, DataServer, SegmentScan
+from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress
 from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
+import ipaddress
+import math
 
 
 @login_required(redirect_field_name=None, login_url='/')
 def detail_seg(request, pk):
     item = get_object_or_404(SegmentScan, pk=pk)
-    return render(request, 'server/detail_seg.html', {'item': item})
+    all_ip = IPAddress.objects.all()
+
+    return render(request, 'server/detail_seg.html', {'item': item,
+                                                      'all_ip': all_ip,})
 
 
 @login_required(redirect_field_name=None, login_url='/')
@@ -84,6 +89,33 @@ def segment(request):
         else:
             error = 'Форма не верна'
     form_segment = SegmentScanForm()
+
+    data_segment = SegmentScan.objects.in_bulk()
+    for i in data_segment:
+        net = data_segment[i].ip
+        mask = data_segment[i].mask
+        network = ipaddress.IPv4Network(f'{net}/{mask}')
+        segments = [ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
+        num_parts = 2
+        # Вычисляем, сколько элементов нужно поместить в каждую часть
+        part_size = math.ceil(len(segments) / num_parts)
+        # Создаем список, в котором каждый элемент - это одна из частей
+        segment_parts = [segments[i:i + part_size] for i in range(0, len(segments), part_size)]
+        client_bd = ClientBD.objects.all()
+        
+        # Создаем словарь с метками для клиентов
+        client_processed = {alone_cl.id: False for alone_cl in client_bd}
+        for addr in segment_parts:
+            for alone_cl in client_bd:
+                if not client_processed[alone_cl.id]:
+                    for main_ip in addr:
+                        client_instance = ClientBD.objects.get(ip_client=alone_cl)
+                        IPAddress.objects.create(address=f'{main_ip}', client=client_instance)
+                        #SegmentScan.objects.filter(id=i).update(state='Processing')
+            # После обработки всех клиентов в данном сегменте, отмечаем их как обработанных
+            for alone_cl in client_bd:
+                client_processed[alone_cl.id] = True
+
     seg = {
         'form_segment': form_segment,
         'error': error,

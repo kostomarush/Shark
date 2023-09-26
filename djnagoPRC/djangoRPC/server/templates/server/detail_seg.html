@@ -21,6 +21,22 @@
     <h1>Детали элемента</h1>
     <p>Имя: {{ item.ip }}</p>
     <p>Состояние: {{ item.state_scan }}</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Клиент</th>
+          <th>IP</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in all_ip %}
+        <tr>
+          <td>{{ item.client }}</td>
+          <td>{{ item.address }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
     {% endblock %}
   </div>
 </div>

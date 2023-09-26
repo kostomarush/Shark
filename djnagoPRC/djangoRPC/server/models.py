@@ -18,7 +18,9 @@ class ClientBD(models.Model):
 class IPAddress(models.Model):
     address = models.GenericIPAddressField()
     client = models.ForeignKey(ClientBD, on_delete=models.CASCADE, related_name='ip_addresses')
+
     
+
 
 class DataServer(models.Model):
     client = models.ForeignKey(ClientBD, on_delete=models.SET_NULL, null=True)

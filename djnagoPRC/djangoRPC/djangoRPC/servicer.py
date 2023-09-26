@@ -1,8 +1,9 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress
+from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ClientBD
 import time
+import math
 import ipaddress
 
 
@@ -17,24 +18,20 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
 
 
     def segment_scan(self, request, context):
-        # 1. Определите IP-диапазон вашей сети
         data_segment = SegmentScan.objects.in_bulk()
         response = prot_pb2.DataSegment()
         for i in data_segment:
             if data_segment[i].state == 'Processing' and f'{data_segment[i].client.id}' == request.id_client:
                 if request.message == 'Compleate':
-                    pass
-                
-                #result_segment_save = SegmentResult()
-            elif data_segment[i].tag == 'False':
-                net = SegmentScan.objects.all()
-                network = ipaddress.IPv4Network('192.168.1.0/24')
+                    save_message = SegmentScan.objects.get()
 
-                segments = [ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
+                result_segment_save = SegmentResult(state_scan=request.state)
+                result_segment_save.save()
+                return response
 
-                for addr in segments:
-                    IPAddress.objects.create(address='192.168.1.1', client=data_segment[i].client.id)
-                    IPAddress.objects.create(address='192.168.1.2', client=data_segment[i].client.id)
+
+            elif data_segment[i].state == 'False':
+                pass
     
 
 
