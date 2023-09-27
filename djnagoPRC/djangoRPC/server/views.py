@@ -29,8 +29,8 @@ def detail_seg(request, pk):
                 ip_dict.append(ip_address)
     print(ip_dict)
     return render(request, 'server/detail_seg.html', {'item': item,
-                                                    'all_ip': ip_dict,
-                                                       })
+                                                      'all_ip': ip_dict,
+                                                      })
 
 
 @login_required(redirect_field_name=None, login_url='/')
@@ -124,15 +124,13 @@ def segment(request):
                         for main_ip in addr:
                             client_instance = ClientBD.objects.get(
                                 ip_client=alone_cl)
-                            ip_address = IPAddress.objects.create(
+                            IPAddress.objects.create(
                                 address=f'{main_ip}', client=client_instance, seg_scan=segment_scan_instance)
-                            # SegmentScan.objects.filter(id=i).update(state='Processing')
-                # После обработки всех клиентов в данном сегменте, отмечаем их как обработанных
-                for alone_cl in client_bd:
-                    client_processed[alone_cl.id] = True
+                        client_processed[alone_cl.id] = True
+                        break
         else:
             error = 'Форма не верна'
-            
+
     form_segment = SegmentScanForm()
 
     seg = {
