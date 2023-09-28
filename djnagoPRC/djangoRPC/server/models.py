@@ -8,6 +8,7 @@ class ScanInfo(models.Model):
     state = models.CharField(max_length=20)
     data_chunk = models.TextField()
 
+
 class ClientBD(models.Model):
 
     ip_client = models.CharField(max_length=20)
@@ -23,17 +24,21 @@ class DataServer(models.Model):
     port = models.CharField(max_length=20)
     mode = models.CharField(max_length=20)
 
+
 class SegmentScan(models.Model):
     ip = models.CharField(max_length=20)
     mask = models.CharField(max_length=20)
     mode = models.CharField(max_length=20)
     state_scan = models.CharField(max_length=20, default=False)
 
+
 class IPAddress(models.Model):
     address = models.GenericIPAddressField()
     client = models.ForeignKey(
         ClientBD, on_delete=models.CASCADE, related_name='ip_addresses')
+    #tag = models.CharField(max_length=20)
     seg_scan = models.ForeignKey(SegmentScan, on_delete=models.CASCADE)
+
 
 class SegmentResult(models.Model):
     state_scan = models.CharField(max_length=20, default=False)

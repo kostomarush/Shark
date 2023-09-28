@@ -100,12 +100,12 @@ def segment(request):
     scan_segment = SegmentScan.objects.all()
     error = ''
     if request.method == 'POST':
-        form = SegmentScanForm(request.POST)
+        form = SegmentScanForm(request.POST)    
         if form.is_valid():
             segment_scan_instance = form.save()
             net = segment_scan_instance.ip
             mask = segment_scan_instance.mask
-            network = ipaddress.IPv4Network(f'{net}/{mask}')
+            network = ipaddress.IPv4Network(f'{net}/{mask}', strict=False)
             segments = [
                 ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
             num_parts = 2

@@ -17,25 +17,110 @@
       <h4 class="page-title">Результаты сканирования</h4>
     </div>
     <!-- end page title -->
+    <h2>Детали элемента: {{item.ip}}/{{item.mask}}</h2>
+    <div class="row">
+      <div class="col-xl-4">
+        <div class="card-box">
+          <div class="dropdown float-right">
+            <a
+              href="#"
+              class="dropdown-toggle arrow-none card-drop"
+              data-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="mdi mdi-dots-horizontal"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Settings</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Download</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Upload</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Action</a>
+            </div>
+          </div>
+          <h4 class="header-title mb-3">График</h4>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-xl-4">
+        <div class="card-box">
+          <div class="dropdown float-right">
+            <a
+              href="#"
+              class="dropdown-toggle arrow-none card-drop"
+              data-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="mdi mdi-dots-horizontal"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Settings</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Download</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Upload</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Action</a>
+            </div>
+          </div>
+          <h4 class="header-title mb-3">График</h4>
 
-    <h1>Детали элемента</h1>
-    <p>Имя: {{ item.ip }}</p>
-    <table class="table-bordered">
-      <thead>
-        <tr>
-          <th>Клиент</th>
-          <th>IP</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in all_ip %}
-        <tr>
-          <td>{{ item.client }}</td>
-          <td>{{ item.address }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% endblock %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-xl-4">
+        <div class="card-box">
+          <div class="dropdown float-right">
+            <a
+              href="#"
+              class="dropdown-toggle arrow-none card-drop"
+              data-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="mdi mdi-dots-horizontal"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Settings</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Download</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Upload</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Action</a>
+            </div>
+          </div>
+          <h4 class="header-title mb-3">Таблица Адресов</h4>
+          <table class="table table-bordered" id="datatables">
+            <thead>
+              <tr>
+                <th>id</th>
+                <th>ip</th>
+                <th>Клиенты</th>
+                <th>Состояние</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in all_ip %}
+              <tr id="row-{{ i.pk }}">
+                <th>{{forloop.counter}}</th>
+                <th>{{i.address}}</th>
+                <th>{{i.client}}</th>
+                <th></th>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <!-- end card-box-->
+      </div>
+    </div>
   </div>
 </div>
+{% endblock %}
