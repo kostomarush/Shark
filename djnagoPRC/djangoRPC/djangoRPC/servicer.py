@@ -17,6 +17,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         self.text = ''
 
 
+
     def segment_scan(self, request, context):
         data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
