@@ -27,7 +27,7 @@ def detail_seg(request, pk):
         if segment_scan == item:
             for ip_address in ip_addresses:
                 ip_dict.append(ip_address)
-    print(ip_dict)
+
     return render(request, 'server/detail_seg.html', {'item': item,
                                                       'all_ip': ip_dict,
                                                       })
@@ -93,9 +93,7 @@ def data(request):
     return render(request, 'server/aim.html', tasks)
 
 
-login_required(redirect_field_name=None, login_url='/')
-
-
+@login_required(redirect_field_name=None, login_url='/')
 def segment(request):
     scan_segment = SegmentScan.objects.all()
     error = ''

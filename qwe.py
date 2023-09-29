@@ -1,11 +1,11 @@
 import ipaddress
 import math
 
-network = ipaddress.IPv4Network('192.168.10.0/24')
+network = ipaddress.IPv4Network('192.168.113.0/24')
 segments = [ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
 
 
-num_parts = 4
+num_parts = 2
 
 # Вычисляем, сколько элементов нужно поместить в каждую часть
 part_size = math.ceil(len(segments) / num_parts)
