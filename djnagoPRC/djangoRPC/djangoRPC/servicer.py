@@ -18,21 +18,29 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
 
 
     def segment_scan(self, request, context):
-        data_segment = SegmentScan.objects.in_bulk()
+        data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
         for i in data_segment:
-            if data_segment[i].state == 'Processing' and f'{data_segment[i].client.id}' == request.id_client:
+            if data_segment[i].tag == 'Processing':
                 if request.message == 'Compleate':
-                    save_message = SegmentScan.objects.get()
+                    save_message = SegmentScan.objects.get(id=i)
+                    save_message.tag = 'Done'
+                    save_message.save()
+                    return response
 
-                result_segment_save = SegmentResult(state_scan=request.state)
-                result_segment_save.save()
+                save_data_in_segment = SegmentResult(host=request.host, state_scan=request.state_scan, 
+                open_ports=request.open_ports)
+                save_data_in_segment.save()
                 return response
 
+            elif data_segment[i].tag == 'False' and f'{data_segment[i].client.id}' == request.name_cl:
+                IPAddress.objects.filter(client=i).update(tag='Processing')
+                ip_address = data_segment[i].address
+                mode = data_segment[i].seg_scan.mode
+                response_start = prot_pb2.DataSegment(
+                    ip_address=ip_address, mode=mode)
+                return response_start
 
-            elif data_segment[i].state == 'False':
-                pass
-    
 
 
 

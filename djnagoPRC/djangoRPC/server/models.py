@@ -36,9 +36,11 @@ class IPAddress(models.Model):
     address = models.GenericIPAddressField()
     client = models.ForeignKey(
         ClientBD, on_delete=models.CASCADE, related_name='ip_addresses')
-    #tag = models.CharField(max_length=20)
+    tag = models.CharField(max_length=20, default=False)
     seg_scan = models.ForeignKey(SegmentScan, on_delete=models.CASCADE)
 
 
 class SegmentResult(models.Model):
-    state_scan = models.CharField(max_length=20, default=False)
+    host = models.CharField(max_length=20)
+    state_scan = models.CharField(max_length=20)
+    open_ports = models.CharField(max_length=100)

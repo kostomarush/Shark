@@ -24,6 +24,11 @@ class RPCStub(object):
                 request_serializer=prot__pb2.DataChunk.SerializeToString,
                 response_deserializer=prot__pb2.Empty.FromString,
                 )
+        self.segment_scan = channel.unary_unary(
+                '/RPC/segment_scan',
+                request_serializer=prot__pb2.DataClientSegment.SerializeToString,
+                response_deserializer=prot__pb2.DataSegment.FromString,
+                )
 
 
 class RPCServicer(object):
@@ -41,6 +46,12 @@ class RPCServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def segment_scan(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RPCServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +64,11 @@ def add_RPCServicer_to_server(servicer, server):
                     servicer.chunk,
                     request_deserializer=prot__pb2.DataChunk.FromString,
                     response_serializer=prot__pb2.Empty.SerializeToString,
+            ),
+            'segment_scan': grpc.unary_unary_rpc_method_handler(
+                    servicer.segment_scan,
+                    request_deserializer=prot__pb2.DataClientSegment.FromString,
+                    response_serializer=prot__pb2.DataSegment.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +111,22 @@ class RPC(object):
         return grpc.experimental.stream_unary(request_iterator, target, '/RPC/chunk',
             prot__pb2.DataChunk.SerializeToString,
             prot__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def segment_scan(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RPC/segment_scan',
+            prot__pb2.DataClientSegment.SerializeToString,
+            prot__pb2.DataSegment.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

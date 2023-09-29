@@ -39,20 +39,16 @@ try:
             """Return a list of installed Distribution objects.
             Left for compatibility until direct pkg_resources uses are refactored out.
             """
-            from pip._internal.metadata import get_default_environment, get_environment
-            from pip._internal.metadata.pkg_resources import Distribution as _Dist
 
-            if paths is None:
-                env = get_default_environment()
-            else:
-                env = get_environment(paths)
-            dists = env.iter_installed_distributions(
+            from pip._internal.metadata import pkg_resources
+
+            dists = pkg_resources.Environment.from_paths(paths).iter_installed_distributions(
                 local_only=local_only,
                 include_editables=include_editables,
                 editables_only=editables_only,
                 user_only=user_only,
             )
-            return [cast(_Dist, dist)._dist for dist in dists]
+            return [cast(pkg_resources.Distribution, dist)._dist for dist in dists]
 except ImportError:
     # pip < 10
     try:
@@ -220,8 +216,8 @@ class Command(BaseCommand):
              curl -u 'rizumu' -d '{"scopes":["repo"], "note":"pipchecker"}' https://api.github.com/authorizations
 
         For more info on github api tokens:
-            https://help.github.com/articles/creating-an-oauth-token-for-command-line-use
-            http://developer.github.com/v3/oauth/#oauth-authorizations-api
+            https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+            https://docs.github.com/en/developers/apps/building-oauth-apps/authorizing-oauth-apps
 
         Requirement Format
         ------------------

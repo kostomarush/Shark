@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nprot.proto\"4\n\nDataServer\x12\n\n\x02ip\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\t\x12\x0c\n\x04mode\x18\x03 \x01(\t\"\x1f\n\tDataChunk\x12\x12\n\ndata_chunk\x18\x01 \x01(\t\"\x17\n\x05\x45mpty\x12\x0e\n\x06result\x18\x01 \x01(\t\"y\n\nDataClient\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\tip_status\x18\x02 \x01(\t\x12\x11\n\tprotocols\x18\x03 \x01(\t\x12\x12\n\nopen_ports\x18\x04 \x01(\t\x12\r\n\x05state\x18\x05 \x01(\t\x12\x11\n\tid_client\x18\x06 \x01(\t2F\n\x03RPC\x12 \n\x04scan\x12\x0b.DataClient\x1a\x0b.DataServer\x12\x1d\n\x05\x63hunk\x12\n.DataChunk\x1a\x06.Empty(\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nprot.proto\"4\n\nDataServer\x12\n\n\x02ip\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\t\x12\x0c\n\x04mode\x18\x03 \x01(\t\"\x1f\n\tDataChunk\x12\x12\n\ndata_chunk\x18\x01 \x01(\t\"\x17\n\x05\x45mpty\x12\x0e\n\x06result\x18\x01 \x01(\t\"y\n\nDataClient\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\tip_status\x18\x02 \x01(\t\x12\x11\n\tprotocols\x18\x03 \x01(\t\x12\x12\n\nopen_ports\x18\x04 \x01(\t\x12\r\n\x05state\x18\x05 \x01(\t\x12\x11\n\tid_client\x18\x06 \x01(\t\"/\n\x0b\x44\x61taSegment\x12\x12\n\nip_address\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\t\"f\n\x11\x44\x61taClientSegment\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\r\n\x05state\x18\x02 \x01(\t\x12\x12\n\nopen_ports\x18\x03 \x01(\t\x12\x0f\n\x07name_cl\x18\x04 \x01(\t\x12\x0f\n\x07message\x18\x05 \x01(\t2x\n\x03RPC\x12 \n\x04scan\x12\x0b.DataClient\x1a\x0b.DataServer\x12\x1d\n\x05\x63hunk\x12\n.DataChunk\x1a\x06.Empty(\x01\x12\x30\n\x0csegment_scan\x12\x12.DataClientSegment\x1a\x0c.DataSegmentb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'prot_pb2', globals())
@@ -28,6 +28,10 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _EMPTY._serialized_end=124
   _DATACLIENT._serialized_start=126
   _DATACLIENT._serialized_end=247
-  _RPC._serialized_start=249
-  _RPC._serialized_end=319
+  _DATASEGMENT._serialized_start=249
+  _DATASEGMENT._serialized_end=296
+  _DATACLIENTSEGMENT._serialized_start=298
+  _DATACLIENTSEGMENT._serialized_end=400
+  _RPC._serialized_start=402
+  _RPC._serialized_end=522
 # @@protoc_insertion_point(module_scope)

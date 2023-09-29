@@ -39,10 +39,11 @@ message DataSegment{
 
 message DataClientSegment{
 
-    string ip_address = 1;
-    string mode = 2;
-    string state = 3;
+    string host = 1;
+    string state = 2;
+    string open_ports = 3;
     string name_cl = 4;
+    string message = 5;
 
 
 }
@@ -53,6 +54,6 @@ service RPC {
 
     rpc chunk(stream DataChunk) returns (Empty);
 
-    rpc segment_scan (DataClientSegment) returns (stream DataSegment);
+    rpc segment_scan (DataClientSegment) returns (DataSegment);
 
 }
