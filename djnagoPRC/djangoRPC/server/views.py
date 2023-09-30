@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress
+from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult
 from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
 import ipaddress
@@ -11,6 +11,7 @@ def detail_seg(request, pk):
     item = get_object_or_404(SegmentScan, pk=pk)
     # Получите все объекты SegmentScan
     segment_scans = SegmentScan.objects.all()
+    result = SegmentResult.objects.all()
 
     # Создайте словарь, где ключами будут объекты SegmentScan, а значениями будут связанные IP-адреса
     ip_addresses_by_segment = {}
@@ -30,6 +31,7 @@ def detail_seg(request, pk):
 
     return render(request, 'server/detail_seg.html', {'item': item,
                                                       'all_ip': ip_dict,
+                                                      'result': result
                                                       })
 
 
@@ -96,9 +98,15 @@ def data(request):
 @login_required(redirect_field_name=None, login_url='/')
 def segment(request):
     scan_segment = SegmentScan.objects.all()
+    all_done = IPAddress.objects.filter(
+        tag='Done').count() == IPAddress.objects.count()
+    if all_done:
+        SegmentScan.objects.update(state_scan='Done')
+    else:
+        pass
     error = ''
     if request.method == 'POST':
-        form = SegmentScanForm(request.POST)    
+        form = SegmentScanForm(request.POST)
         if form.is_valid():
             segment_scan_instance = form.save()
             net = segment_scan_instance.ip
@@ -106,7 +114,7 @@ def segment(request):
             network = ipaddress.IPv4Network(f'{net}/{mask}', strict=False)
             segments = [
                 ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
-            num_parts = 2
+            num_parts = 3
             # Вычисляем, сколько элементов нужно поместить в каждую часть
             part_size = math.ceil(len(segments) / num_parts)
             # Создаем список, в котором каждый элемент - это одна из частей

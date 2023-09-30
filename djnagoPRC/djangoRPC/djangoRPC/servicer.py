@@ -16,34 +16,33 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def __init__(self):
         self.text = ''
 
-
-
     def segment_scan(self, request, context):
         data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
+
         for i in data_segment:
-            if data_segment[i].tag == 'Processing':
-                if request.message == 'Compleate':
-                    save_message = SegmentScan.objects.get(id=i)
-                    save_message.tag = 'Done'
-                    save_message.save()
+            if data_segment[i].tag == 'Proc' and f'{data_segment[i].client}' == request.name_cl:
+                if request.message == 'Done':
+                    save_data_seg = IPAddress.objects.get(id=i)
+                    save_data_seg.tag = 'Done'
+                    save_data_seg.save()
                     return response
 
-                save_data_in_segment = SegmentResult(host=request.host, state_scan=request.state_scan, 
-                open_ports=request.open_ports)
+                save_data_in_segment = SegmentResult(host=request.host, state_scan=request.state,
+                                                     open_ports=request.open_ports)
                 save_data_in_segment.save()
                 return response
 
-            elif data_segment[i].tag == 'False' and f'{data_segment[i].client.id}' == request.name_cl:
-                IPAddress.objects.filter(client=i).update(tag='Processing')
+        for i in data_segment:
+            if data_segment[i].tag == 'False' and f'{data_segment[i].client}' == request.name_cl:
+                IPAddress.objects.filter(id=i).update(
+                    client=request.name_cl, tag='Proc')
                 ip_address = data_segment[i].address
                 mode = data_segment[i].seg_scan.mode
+                id_task = data_segment[i].id
                 response_start = prot_pb2.DataSegment(
                     ip_address=ip_address, mode=mode)
                 return response_start
-
-
-
 
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
@@ -63,7 +62,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 return response
             elif data_server[data_id].tag == 'False':
                 DataServer.objects.filter(id=data_id).update(
-                client=request.id_client, tag='Proc')
+                    client=request.id_client, tag='Proc')
                 ip = data_server[data_id].ip
                 port = data_server[data_id].port
                 mode = data_server[data_id].mode

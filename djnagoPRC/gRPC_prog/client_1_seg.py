@@ -3,9 +3,9 @@ import prot_pb2
 import prot_pb2_grpc
 import nmap
 
-
+    
 def connect():
-    name_cl = '2'
+    name_cl = '1'
     channel = grpc.insecure_channel(
         'localhost:50051', options=(('grpc.enable_http_proxy', 0),))
     stub = prot_pb2_grpc.RPCStub(channel)

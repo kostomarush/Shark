@@ -44,3 +44,5 @@ class SegmentResult(models.Model):
     host = models.CharField(max_length=20)
     state_scan = models.CharField(max_length=20)
     open_ports = models.CharField(max_length=100)
+    result = models.ForeignKey(
+        SegmentScan, on_delete=models.CASCADE, null=True)
