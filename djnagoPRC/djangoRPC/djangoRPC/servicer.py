@@ -27,9 +27,9 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_data_seg.tag = 'Done'
                     save_data_seg.save()
                     return response
-
+                result = IPAddress.objects.get(id=data_segment[i].id)
                 save_data_in_segment = SegmentResult(host=request.host, state_scan=request.state,
-                                                     open_ports=request.open_ports)
+                                                     open_ports=request.open_ports, result=result)
                 save_data_in_segment.save()
                 return response
 
