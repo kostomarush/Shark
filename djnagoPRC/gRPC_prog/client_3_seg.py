@@ -30,6 +30,7 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
             State = nm[host].state()
             if 'tcp' in nm[host]:
                 Open_ports = list(nm[host]['tcp'].keys())
+                print(Open_ports)
             else:
                 print("No open TCP ports found.")
 

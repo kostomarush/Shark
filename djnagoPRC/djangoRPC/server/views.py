@@ -9,12 +9,24 @@ import math
 @login_required(redirect_field_name=None, login_url='/')
 def detail_seg(request, pk):
     item = get_object_or_404(SegmentScan, pk=pk)
-    # Получите все объекты SegmentScan
     segment_scans = SegmentScan.objects.all()
-    result = SegmentResult.objects.all()
+    all_ip_addresses = IPAddress.objects.all()
 
     # Создайте словарь, где ключами будут объекты SegmentScan, а значениями будут связанные IP-адреса
     ip_addresses_by_segment = {}
+    segment_results_by_segment = {}
+
+    for all_ip_address in all_ip_addresses:
+
+        segment_results = SegmentResult.objects.filter(result=all_ip_address)
+
+        segment_results_by_segment[all_ip_address] = segment_results
+
+    result_dict = []
+    for all_ip_address, segment_results in segment_results_by_segment.items():
+        if all_ip_address.seg_scan == item:
+            for result in segment_results:
+                result_dict.append(result)
 
     # Пройдите по каждому объекту SegmentScan
     for segment_scan in segment_scans:
@@ -31,7 +43,7 @@ def detail_seg(request, pk):
 
     return render(request, 'server/detail_seg.html', {'item': item,
                                                       'all_ip': ip_dict,
-                                                      'result': result
+                                                      'result': result_dict
                                                       })
 
 

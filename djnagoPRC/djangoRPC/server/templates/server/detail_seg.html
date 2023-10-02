@@ -108,7 +108,7 @@
             </thead>
             <tbody>
               {% for i in all_ip %}
-              <tr id="row-{{ i.pk }}">
+              <tr>
                 <th>{{forloop.counter}}</th>
                 <th>{{i.address}}</th>
                 <th>{{i.client}}</th>
@@ -156,7 +156,7 @@
             </thead>
             <tbody>
               {% for i in result %}
-              <tr id="row-{{ i.pk }}">
+              <tr>
                 <th>{{forloop.counter}}</th>
                 <th>{{i.host}}</th>
                 <th>{{i.state_scan}}</th>

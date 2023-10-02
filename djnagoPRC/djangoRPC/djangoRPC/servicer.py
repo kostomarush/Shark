@@ -19,6 +19,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def segment_scan(self, request, context):
         data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
+        serialized_empty_message = response.SerializeToString()
 
         for i in data_segment:
             if data_segment[i].tag == 'Proc' and f'{data_segment[i].client}' == request.name_cl:
@@ -26,12 +27,19 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_data_seg = IPAddress.objects.get(id=i)
                     save_data_seg.tag = 'Done'
                     save_data_seg.save()
-                    return response
-                result = IPAddress.objects.get(id=data_segment[i].id)
-                save_data_in_segment = SegmentResult(host=request.host, state_scan=request.state,
-                                                     open_ports=request.open_ports, result=result)
-                save_data_in_segment.save()
-                return response
+                    return serialized_empty_message
+                elif request.host=='':
+                    IPAddress.objects.filter(id=i).update(
+                    client=request.name_cl, tag='False')
+                    break
+                else:
+                    result = IPAddress.objects.get(id=data_segment[i].id)
+                    save_data_in_segment = SegmentResult(host=request.host, state_scan=request.state,
+                                                 open_ports=request.open_ports, result=result)
+                    save_data_in_segment.save()
+                    return serialized_empty_message
+            else:
+                pass
 
         for i in data_segment:
             if data_segment[i].tag == 'False' and f'{data_segment[i].client}' == request.name_cl:
@@ -43,6 +51,8 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 response_start = prot_pb2.DataSegment(
                     ip_address=ip_address, mode=mode)
                 return response_start
+            else:
+                pass
 
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
