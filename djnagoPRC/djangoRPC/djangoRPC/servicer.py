@@ -23,28 +23,36 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
 
         for i in data_segment:
             if data_segment[i].tag == 'Proc' and f'{data_segment[i].client}' == request.name_cl:
-                if request.message == 'Done':
+                if request.message:
                     save_data_seg = IPAddress.objects.get(id=i)
                     save_data_seg.tag = 'Done'
                     save_data_seg.save()
                     return serialized_empty_message
-                elif request.host=='':
-                    IPAddress.objects.filter(id=i).update(
-                    client=request.name_cl, tag='False')
-                    break
-                else:
+                elif request.host:
                     result = IPAddress.objects.get(id=data_segment[i].id)
-                    save_data_in_segment = SegmentResult(host=request.host, state_scan=request.state,
-                                                 open_ports=request.open_ports, result=result)
-                    save_data_in_segment.save()
+                    all_info = request.host
+                    for host, info in all_info.items():
+                        save_data_in_segment = SegmentResult(host=info['host'], state_scan=info['state'],
+                                             open_ports=info['open_ports'], result=result)
+                        save_data_in_segment.save()
                     return serialized_empty_message
+                else:
+                    ip_address = IPAddress.objects.get(id=i)
+                    ip_address.tag = 'False'
+                    ip_address.save()
+                    break
             else:
                 pass
 
         for i in data_segment:
             if data_segment[i].tag == 'False' and f'{data_segment[i].client}' == request.name_cl:
-                IPAddress.objects.filter(id=i).update(
-                    client=request.name_cl, tag='Proc')
+                try:
+                    ip_address = IPAddress.objects.get(id=i)
+                    ip_address.tag = 'Proc'
+                    ip_address.save()
+                except IPAddress.DoesNotExist:
+                    print('объект с заданным ID не найден')
+                    pass
                 ip_address = data_segment[i].address
                 mode = data_segment[i].seg_scan.mode
                 id_task = data_segment[i].id

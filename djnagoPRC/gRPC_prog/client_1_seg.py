@@ -25,17 +25,24 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
     nm = nmap.PortScanner()
     if mode_seg == 'SYN':
         nm.scan(ip_add_seg, arguments='-sV')
-        for host in nm.all_hosts():
-            Host = host
-            State = nm[host].state()
-            if 'tcp' in nm[host]:
-                Open_ports = list(nm[host]['tcp'].keys())
-                print(Open_ports)
-            else:
-                print("No open TCP ports found.")
-
+        all_hosts = nm.all_hosts()
+        host_info = {}
+        if all_hosts:
+            for host in all_hosts:
+                host_info[host] = {}
+                host_info[host]['host'] = host
+                host_info[host]['state'] = nm[host].state()
+                if 'tcp' in nm[host]:
+                    host_info[host]['open_ports'] = list(nm[host]['tcp'].keys())
+                else:
+                    host_info[host]['open_ports'] = 'down'
+                    print("No open TCP ports found.")
+                
+                print(host_info)
             stub.segment_scan(prot_pb2.DataClientSegment(
-                name_cl=name_cl, host=Host, state=State, open_ports=f'{Open_ports}'))
+                    name_cl=name_cl, host=host_info))
+        else:
+            print('hosts is down')
 
     stub.segment_scan(prot_pb2.DataClientSegment(
         name_cl=name_cl, message='Done'))
