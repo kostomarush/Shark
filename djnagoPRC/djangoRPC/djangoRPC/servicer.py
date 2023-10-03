@@ -30,7 +30,8 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     return serialized_empty_message
                 elif request.host:
                     result = IPAddress.objects.get(id=data_segment[i].id)
-                    all_info = request.host
+                    alls_info = request.host
+                    all_info=eval(alls_info)
                     for host, info in all_info.items():
                         save_data_in_segment = SegmentResult(host=info['host'], state_scan=info['state'],
                                              open_ports=info['open_ports'], result=result)

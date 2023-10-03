@@ -22,4 +22,7 @@ for host in nm.all_hosts():
         host_info[host]['open_ports'] = 'down'
         print("No open TCP ports found.")
 
-print(host_info)
+qwe = f'{host_info}'
+b = qwe.strip("'")
+
+print(b)
