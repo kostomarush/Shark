@@ -71,7 +71,7 @@ def update_client_data(sender, instance, **kwargs):
 def update_graph_data(sender, instance, **kwargs):
 
 
-    values = ScanInfo.objects.values('data_chunk')
+    values = instance.data_chunk
 
 
     def get_scan_info_count(state):

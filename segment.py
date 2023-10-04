@@ -1,7 +1,7 @@
 import ipaddress
 
 
-network_address = "10.0.0.1/24"
+network_address = "190.10.0.0/16"
 
 
 def split_network(network_address, num_segments):
@@ -11,7 +11,8 @@ def split_network(network_address, num_segments):
     return subnet_list
 
 
-num_segments = 4
+num_segments = 10
+
 
 
 segments = split_network(network_address, num_segments)

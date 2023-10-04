@@ -382,7 +382,9 @@ chart.update();
     // Обработка входящих сообщений
     socket_cve.onmessage = function(event) {
         var message = event.data;
-        writeToConsole("Получено сообщение: " + message);
+        var mes = JSON.parse(message)
+
+        writeToConsole("Получено сообщение: " + mes['send_cve']);
     };
 
     // Обработка закрытия соединения
