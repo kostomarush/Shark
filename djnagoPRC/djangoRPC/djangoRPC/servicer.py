@@ -3,6 +3,7 @@ import prot_pb2
 import prot_pb2_grpc
 from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ClientBD
 import time
+import json
 import math
 import ipaddress
 
@@ -19,7 +20,6 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def segment_scan(self, request, context):
         data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
-        serialized_empty_message = response.SerializeToString()
 
         for i in data_segment:
             if data_segment[i].tag == 'Proc' and f'{data_segment[i].client}' == request.name_cl:
@@ -27,8 +27,8 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_data_seg = IPAddress.objects.get(id=i)
                     save_data_seg.tag = 'Done'
                     save_data_seg.save()
-                    return serialized_empty_message
-                elif request.host:
+                    return response
+                if request.host:
                     result = IPAddress.objects.get(id=data_segment[i].id)
                     alls_info = request.host
                     all_info=eval(alls_info)
@@ -36,7 +36,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                         save_data_in_segment = SegmentResult(host=info['host'], state_scan=info['state'],
                                              open_ports=info['open_ports'], result=result)
                         save_data_in_segment.save()
-                    return serialized_empty_message
+                    return response
                 else:
                     ip_address = IPAddress.objects.get(id=i)
                     ip_address.tag = 'False'
