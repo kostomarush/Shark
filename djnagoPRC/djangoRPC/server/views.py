@@ -126,26 +126,9 @@ def segment(request):
             network = ipaddress.IPv4Network(f'{net}/{mask}', strict=False)
             segments = [
                 ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
-            num_parts = 3
-            # Вычисляем, сколько элементов нужно поместить в каждую часть
-            part_size = math.ceil(len(segments) / num_parts)
-            # Создаем список, в котором каждый элемент - это одна из частей
-            segment_parts = [segments[i:i + part_size]
-                             for i in range(0, len(segments), part_size)]
-            client_bd = ClientBD.objects.all()
-            # Создаем словарь с метками для клиентов
-            client_processed = {
-                alone_cl.id: False for alone_cl in client_bd}
-            for addr in segment_parts:
-                for alone_cl in client_bd:
-                    if not client_processed[alone_cl.id]:
-                        for main_ip in addr:
-                            client_instance = ClientBD.objects.get(
-                                ip_client=alone_cl)
-                            IPAddress.objects.create(
-                                address=f'{main_ip}', client=client_instance, seg_scan=segment_scan_instance)
-                        client_processed[alone_cl.id] = True
-                        break
+            for addr in segments:
+                IPAddress.objects.create(
+                    address=f'{addr}', seg_scan=segment_scan_instance)
         else:
             error = 'Форма не верна'
 

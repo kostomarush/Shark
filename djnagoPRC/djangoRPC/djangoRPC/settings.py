@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
     'django_grpc',
     'server',
     'psycopg2',
@@ -112,13 +111,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# settings.py
+
 GRPCSERVER = {
+    'options': [
+        ('grpc.keepalive_time_ms', 10000),  # Интервал времени между проверками активности
+        ('grpc.keepalive_timeout_ms', 5000),  # Время ожидания для keep-alive
+        ('grpc.keepalive_permit_without_calls', 1)  # Разрешить keep-alive, даже если нет активных вызовов
+    ],
     'servicers': ['djangoRPC.servicer.grpc_hook'],
     'maximum_concurrent_rpcs': None,
     'options': [("grpc.max_receive_message_length", 1024 * 1024 * 100)],
     'async': True  # Default: False, if True then gRPC server will start in ASYNC mode
 }
 
+GRPC_SERVER_PUBLIC_HOST = '0.0.0.0'
+GRPC_SERVER_PUBLIC_PORT = 50051
 
 CHANNEL_LAYERS = {
     "default": {

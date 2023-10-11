@@ -1,16 +1,14 @@
 
 import prot_pb2
 import prot_pb2_grpc
+from concurrent import futures
 from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ClientBD
-import time
 import json
-import math
 import ipaddress
 
 
 def grpc_hook(server):
     prot_pb2_grpc.add_RPCServicer_to_server(RPCServicer(), server)
-
 
 class RPCServicer(prot_pb2_grpc.RPCServicer):
 
@@ -28,7 +26,8 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_data_seg.tag = 'Done'
                     save_data_seg.save()
                     return response
-                if request.host:
+
+                elif request.host:
                     result = IPAddress.objects.get(id=data_segment[i].id)
                     alls_info = request.host
                     all_info=eval(alls_info)
@@ -37,31 +36,15 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                              open_ports=info['open_ports'], result=result)
                         save_data_in_segment.save()
                     return response
-                else:
-                    ip_address = IPAddress.objects.get(id=i)
-                    ip_address.tag = 'False'
-                    ip_address.save()
-                    break
-            else:
-                pass
 
-        for i in data_segment:
-            if data_segment[i].tag == 'False' and f'{data_segment[i].client}' == request.name_cl:
-                try:
-                    ip_address = IPAddress.objects.get(id=i)
-                    ip_address.tag = 'Proc'
-                    ip_address.save()
-                except IPAddress.DoesNotExist:
-                    print('объект с заданным ID не найден')
-                    pass
+            elif data_segment[i].tag == 'False':
+                IPAddress.objects.filter(id=i).update(client=request.name_cl, tag='Proc')
                 ip_address = data_segment[i].address
                 mode = data_segment[i].seg_scan.mode
                 id_task = data_segment[i].id
                 response_start = prot_pb2.DataSegment(
                     ip_address=ip_address, mode=mode)
                 return response_start
-            else:
-                pass
 
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
@@ -88,8 +71,12 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 response_start = prot_pb2.DataServer(
                     ip=ip, port=port, mode=mode)
                 return response_start
+    
 
     def chunk(self, request, context):
         for req in request:
             self.text += req.data_chunk
         return prot_pb2.Empty(result='done')
+
+
+
