@@ -35,7 +35,7 @@ class SegmentScan(models.Model):
 class IPAddress(models.Model):
     address = models.GenericIPAddressField()
     client = models.ForeignKey(
-        ClientBD, on_delete=models.CASCADE, related_name='ip_addresses')
+        ClientBD, on_delete=models.SET_NULL, null=True)
     tag = models.CharField(max_length=20, default=False)
     seg_scan = models.ForeignKey(SegmentScan, on_delete=models.CASCADE)
 

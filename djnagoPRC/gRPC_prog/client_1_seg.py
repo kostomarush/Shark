@@ -17,6 +17,8 @@ def connect():
             mode_seg = response_segment.mode
 
             segment_scan(stub, ip_add_seg, mode_seg, name_cl)
+            stub.segment_scan(prot_pb2.DataClientSegment(
+        name_cl=name_cl, message='Done'))
         except:
             pass
 
@@ -43,9 +45,6 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
                     name_cl=name_cl, host=f'{host_info}'))
         else:
             print('hosts is down')
-
-    stub.segment_scan(prot_pb2.DataClientSegment(
-        name_cl=name_cl, message='Done'))
 
 
 if __name__ == "__main__":
