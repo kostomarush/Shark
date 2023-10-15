@@ -94,18 +94,18 @@ def check_ping_thread(my_service):
 
 
 def grpc_hook(server):
-    my_service = RPCServicer()
-
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    prot_pb2_grpc.add_RPCServicer_to_server(my_service, server)
-    server.add_insecure_port('[::]:50051')
-    server.start()
-    # Создаем и запускаем поток для проверки PING
-    ping_check_thread = threading.Thread(
-        target=check_ping_thread, args=(my_service,))
-    ping_check_thread.start()
-
     try:
-        ping_check_thread.join()
+        my_service = RPCServicer()
+
+        prot_pb2_grpc.add_RPCServicer_to_server(my_service, server)
+
+        # Создаем и запускаем поток для проверки PING
+        ping_check_thread = threading.Thread(target=check_ping_thread, args=(my_service,))
+        ping_check_thread.daemon = True
+        ping_check_thread.start()
+
     except KeyboardInterrupt:
-        server.stop(0)
+        import sys
+        sys.exit()
+        
+

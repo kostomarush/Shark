@@ -1,8 +1,6 @@
 import grpc
-import asyncio
 import prot_pb2
 import prot_pb2_grpc
-import grpc.experimental.aio
 import time
 import nmap
 import threading
@@ -46,19 +44,16 @@ def send_keep_alive_messages(stub):
 
 def run():
 
-    with grpc.insecure_channel(
-        target="localhost:50051"
-    ) as channel:
-        stub = prot_pb2_grpc.RPCStub(channel)
-        name_cl = '2'
-        ping_thread = threading.Thread(
-            target=send_keep_alive_messages, args=(stub,))
-        ping_thread.daemon = True
-        ping_thread.start()
-
-        # Запускаем отдельный поток для отправки пингов
-        while True:
-            connect(stub, name_cl)
+    channel = grpc.insecure_channel('localhost:50051', options=(('grpc.enable_http_proxy', 0),))
+    stub = prot_pb2_grpc.RPCStub(channel)
+    name_cl = '2'
+    ping_thread = threading.Thread(
+        target=send_keep_alive_messages, args=(stub,))
+    ping_thread.daemon = True
+    ping_thread.start()
+    # Запускаем отдельный поток для отправки пингов
+    while True:
+        connect(stub, name_cl)
 
 
 if __name__ == "__main__":
