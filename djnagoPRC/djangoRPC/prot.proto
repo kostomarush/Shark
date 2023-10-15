@@ -48,6 +48,17 @@ message DataClientSegment{
 
 }
 
+message HelloRequest{
+
+    string name = 1;
+}
+
+message HelloReply{
+
+    string message = 1;
+
+}
+
 service RPC {
 
     rpc scan(DataClient) returns (DataServer);
@@ -55,5 +66,7 @@ service RPC {
     rpc chunk(stream DataChunk) returns (Empty);
 
     rpc segment_scan (DataClientSegment) returns (DataSegment);
+
+    rpc SayHello (HelloRequest) returns (HelloReply);
 
 }
