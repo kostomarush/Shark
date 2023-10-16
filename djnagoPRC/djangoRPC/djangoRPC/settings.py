@@ -115,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
 GRPCSERVER = {
     'servicers': ['djangoRPC.servicer.grpc_hook'],
     'options': [("grpc.max_receive_message_length", 1024 * 1024 * 100)],
-    'async': True  # Default: False, if True then gRPC server will start in ASYNC mode
 }
 
 

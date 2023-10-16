@@ -12,13 +12,13 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
 
     def __init__(self):
         self.text = ''
-        self.last_ping_time = time.time()
+        self.last_ping_times = {}
 
     def segment_scan(self, request, context):
         data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
         for i in data_segment:
-            if data_segment[i].tag == 'Proc' and f'{data_segment[i].client}' == request.name_cl:
+            if f'{data_segment[i].client}' == request.name_cl:
                 if request.message:
                     save_data_seg = IPAddress.objects.get(id=i)
                     save_data_seg.tag = 'Done'
@@ -34,8 +34,8 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                                              open_ports=info['open_ports'], result=result)
                         save_data_in_segment.save()
                     return response
-
-            elif data_segment[i].tag == 'False':
+        for i in data_segment:
+            if data_segment[i].tag == 'False':
                 IPAddress.objects.filter(id=i).update(
                     client=request.name_cl, tag='Proc')
                 ip_address = data_segment[i].address
@@ -77,19 +77,36 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         return prot_pb2.Empty(result='done')
 
     def SayHello(self, request, context):
-        if request.name == "Ping":
+        if request.message == "Ping":
             # Обработка сообщения PING
-            self.last_ping_time = time.time()
-            return prot_pb2.HelloReply(message="Received PING")
+            self.last_ping_times[request.name] = time.time()
+            return prot_pb2.HelloReply(message="Received PING", name=request.name)
         else:
-            # Обработка других сообщений
-            return prot_pb2.HelloReply(message="Received")
+            pass
 
 
-def check_ping_thread(my_service):
+def check_ping_thread(my_service, elements_on_delete):
     while True:
-        if time.time() - my_service.last_ping_time > 30:
-            print("Клиент не отправлял PING в течение 30 секунд")
+        current_time = time.time()
+        if not my_service.last_ping_times:
+            pass
+        else:
+            keys_to_remove = []
+            for client_name, last_ping_time in my_service.last_ping_times.items():
+                if current_time - last_ping_time > 60:
+                    print(
+                        f"Клиент {client_name} не отправлял PING в течение 1 минуты")
+                    keys_to_remove.append(client_name)
+                    for i in elements_on_delete:
+                        if elements_on_delete[i].client == client_name and elements_on_delete[i].tag == 'Proc':
+                            IPAddress.objects.filter(id=i).update(
+                                client=None, tag='False')
+                    print(
+                        f'Клиент {client_name} удален!')
+            # Удаляем элементы из словаря
+            for client_name in keys_to_remove:
+                del my_service.last_ping_times[client_name]
+
         time.sleep(1)
 
 
@@ -100,12 +117,12 @@ def grpc_hook(server):
         prot_pb2_grpc.add_RPCServicer_to_server(my_service, server)
 
         # Создаем и запускаем поток для проверки PING
-        ping_check_thread = threading.Thread(target=check_ping_thread, args=(my_service,))
+        elements_on_delete = IPAddress.objects.in_bulk()
+        ping_check_thread = threading.Thread(
+            target=check_ping_thread, args=(my_service, elements_on_delete))
         ping_check_thread.daemon = True
         ping_check_thread.start()
 
     except KeyboardInterrupt:
         import sys
         sys.exit()
-        
-

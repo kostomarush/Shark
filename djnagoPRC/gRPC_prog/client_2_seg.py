@@ -12,48 +12,57 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
     ip_add_seg = response_segment.ip_address
     mode_seg = response_segment.mode
     segment_scan(stub, ip_add_seg, mode_seg, name_cl)
+    stub.segment_scan(prot_pb2.DataClientSegment(
+        name_cl=name_cl, message='Done'))
 
 
 def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
     nm = nmap.PortScanner()
     if mode_seg == 'SYN':
         nm.scan(ip_add_seg, arguments='-sV')
-        for host in nm.all_hosts():
-            Host = host
-            State = nm[host].state()
-            if 'tcp' in nm[host]:
-                Open_ports = list(nm[host]['tcp'].keys())
-                print(Open_ports)
-            else:
-                print("No open TCP ports found.")
+        all_hosts = nm.all_hosts()
+        host_info = {}
+        if all_hosts:
+            for host in all_hosts:
+                host_info[host] = {}
+                host_info[host]['host'] = host
+                host_info[host]['state'] = nm[host].state()
+                if 'tcp' in nm[host]:
+                    host_info[host]['open_ports'] = list(
+                        nm[host]['tcp'].keys())
+                else:
+                    host_info[host]['open_ports'] = 'down'
+                    print("No open TCP ports found.")
 
+                print(host_info)
             stub.segment_scan(prot_pb2.DataClientSegment(
-                name_cl=name_cl, host=Host, state=State, open_ports=f'{Open_ports}'))
+                name_cl=name_cl, host=f'{host_info}'))
+        else:
+            print('hosts is down')
 
-    stub.segment_scan(prot_pb2.DataClientSegment(
-        name_cl=name_cl, message='Done'))
 
-
-def send_keep_alive_messages(stub):
+def send_keep_alive_messages(stub, name_cl):
     while True:
         # Отправляем служебное сообщение на сервер
-        request = prot_pb2.HelloRequest(name="Ping")
+        request = prot_pb2.HelloRequest(message="Ping", name=name_cl)
         stub.SayHello(request)
-        time.sleep(30)  # Отправляем сообщение каждые 10 секунд
 
 
 def run():
 
-    channel = grpc.insecure_channel('localhost:50051', options=(('grpc.enable_http_proxy', 0),))
+    channel = grpc.insecure_channel(
+        'localhost:50051', options=(('grpc.enable_http_proxy', 0),))
     stub = prot_pb2_grpc.RPCStub(channel)
     name_cl = '2'
     ping_thread = threading.Thread(
-        target=send_keep_alive_messages, args=(stub,))
+        target=send_keep_alive_messages, args=(stub, name_cl))
     ping_thread.daemon = True
     ping_thread.start()
-    # Запускаем отдельный поток для отправки пингов
-    while True:
-        connect(stub, name_cl)
+    try:
+        while True:  # Запускаем отдельный поток для отправки пингов
+            connect(stub, name_cl)
+    except:
+        pass
 
 
 if __name__ == "__main__":
