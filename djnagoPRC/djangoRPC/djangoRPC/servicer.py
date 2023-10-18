@@ -18,22 +18,24 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
         for i in data_segment:
-            if f'{data_segment[i].client}' == request.name_cl:
-                if request.message:
-                    save_data_seg = IPAddress.objects.get(id=i)
-                    save_data_seg.tag = 'Done'
-                    save_data_seg.save()
-                    return response
-
-                elif request.host:
-                    result = IPAddress.objects.get(id=data_segment[i].id)
-                    alls_info = request.host
-                    all_info = eval(alls_info)
-                    for host, info in all_info.items():
-                        save_data_in_segment = SegmentResult(host=info['host'], state_scan=info['state'],
-                                                             open_ports=info['open_ports'], result=result)
-                        save_data_in_segment.save()
-                    return response
+            try:
+                if data_segment[i].tag == 'Proc' and data_segment[i].client.ip_client == request.name_cl:
+                    if request.message:
+                        save_data_seg = IPAddress.objects.get(id=i)
+                        save_data_seg.tag = 'Done'
+                        save_data_seg.save()
+                        return response
+                    elif request.host:
+                        result = IPAddress.objects.get(id=data_segment[i].id)
+                        alls_info = request.host
+                        all_info = eval(alls_info)
+                        for host, info in all_info.items():
+                            save_data_in_segment = SegmentResult(host=info['host'], state_scan=info['state'],
+                                                                 open_ports=info['open_ports'], result=result)
+                            save_data_in_segment.save()
+                        return response
+            except:
+                pass
         for i in data_segment:
             if data_segment[i].tag == 'False':
                 IPAddress.objects.filter(id=i).update(
@@ -80,12 +82,12 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         if request.message == "Ping":
             # Обработка сообщения PING
             self.last_ping_times[request.name] = time.time()
-            return prot_pb2.HelloReply(message="Received PING", name=request.name)
+            return prot_pb2.HelloReply(message="Received PING")
         else:
             pass
 
 
-def check_ping_thread(my_service, elements_on_delete):
+def check_ping_thread(my_service):
     while True:
         current_time = time.time()
         if not my_service.last_ping_times:
@@ -93,16 +95,20 @@ def check_ping_thread(my_service, elements_on_delete):
         else:
             keys_to_remove = []
             for client_name, last_ping_time in my_service.last_ping_times.items():
-                if current_time - last_ping_time > 60:
+                if current_time - last_ping_time > 30:
                     print(
                         f"Клиент {client_name} не отправлял PING в течение 1 минуты")
                     keys_to_remove.append(client_name)
+                    elements_on_delete = IPAddress.objects.in_bulk()
                     for i in elements_on_delete:
-                        if elements_on_delete[i].client == client_name and elements_on_delete[i].tag == 'Proc':
-                            IPAddress.objects.filter(id=i).update(
-                                client=None, tag='False')
-                    print(
-                        f'Клиент {client_name} удален!')
+                        try:
+                            if elements_on_delete[i].client.ip_client == client_name and elements_on_delete[i].tag == 'Proc':
+                                IPAddress.objects.filter(id=i).update(
+                                    client=None, tag='False')
+                                print(
+                                    f'Клиент {client_name} удален!')
+                        except:
+                            pass
             # Удаляем элементы из словаря
             for client_name in keys_to_remove:
                 del my_service.last_ping_times[client_name]
@@ -117,9 +123,8 @@ def grpc_hook(server):
         prot_pb2_grpc.add_RPCServicer_to_server(my_service, server)
 
         # Создаем и запускаем поток для проверки PING
-        elements_on_delete = IPAddress.objects.in_bulk()
         ping_check_thread = threading.Thread(
-            target=check_ping_thread, args=(my_service, elements_on_delete))
+            target=check_ping_thread, args=(my_service,))
         ping_check_thread.daemon = True
         ping_check_thread.start()
 

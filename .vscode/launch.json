@@ -17,9 +17,7 @@
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/djnagoPRC/djangoRPC/manage.py",
-      "args": [
-        "grpcserver"
-      ],
+      "args": ["grpcserver"],
       "django": true
     }
   ]

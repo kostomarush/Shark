@@ -125,7 +125,7 @@ def segment(request):
             mask = segment_scan_instance.mask
             network = ipaddress.IPv4Network(f'{net}/{mask}', strict=False)
             segments = [
-                ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
+                ipaddr for ipaddr in network.subnets(prefixlen_diff=6)]
             for addr in segments:
                 IPAddress.objects.create(
                     address=f'{addr}', seg_scan=segment_scan_instance)

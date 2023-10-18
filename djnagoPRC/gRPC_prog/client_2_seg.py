@@ -58,11 +58,11 @@ def run():
         target=send_keep_alive_messages, args=(stub, name_cl))
     ping_thread.daemon = True
     ping_thread.start()
-    try:
-        while True:  # Запускаем отдельный поток для отправки пингов
+    while True:
+        try:  # Запускаем отдельный поток для отправки пингов
             connect(stub, name_cl)
-    except:
-        pass
+        except:
+            pass
 
 
 if __name__ == "__main__":
