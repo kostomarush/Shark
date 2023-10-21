@@ -140,3 +140,7 @@ def segment(request):
         'scan_segment': scan_segment,
     }
     return render(request, 'server/segment.html', seg)
+
+
+def port_information(request):
+    return render(request, 'server/port_information.html')

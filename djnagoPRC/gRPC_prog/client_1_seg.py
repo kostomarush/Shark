@@ -19,7 +19,7 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
 def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
     nm = nmap.PortScanner()
     if mode_seg == 'SYN':
-        nm.scan(ip_add_seg, arguments='-sV')
+        nm.scan(ip_add_seg, arguments='-sS')
         all_hosts = nm.all_hosts()
         host_info = {}
         if all_hosts:
@@ -33,6 +33,28 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
                 else:
                     host_info[host]['open_ports'] = 'down'
                     print("No open TCP ports found.")
+
+                print(host_info)
+            stub.segment_scan(prot_pb2.DataClientSegment(
+                name_cl=name_cl, host=f'{host_info}'))
+        else:
+            print('hosts is down')
+
+    elif mode_seg == 'UDP':
+        nm.scan(ip_add_seg, arguments='-sU')
+        all_hosts = nm.all_hosts()
+        host_info = {}
+        if all_hosts:
+            for host in all_hosts:
+                host_info[host] = {}
+                host_info[host]['host'] = host
+                host_info[host]['state'] = nm[host].state()
+                if 'udp' in nm[host]:
+                    host_info[host]['open_ports'] = list(
+                        nm[host]['tcp'].keys())
+                else:
+                    host_info[host]['open_ports'] = 'down'
+                    print("No open UDP ports found.")
 
                 print(host_info)
             stub.segment_scan(prot_pb2.DataClientSegment(
