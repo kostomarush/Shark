@@ -147,7 +147,7 @@
           <h4 class="header-title mb-3">Таблица Адресов</h4>
           <table class="table table-bordered" id="selection-datatable">
             <thead>
-              <tr>
+              <tr align="center">
                 <th>id</th>
                 <th>host</th>
                 <th>state_scan</th>
@@ -156,11 +156,16 @@
             </thead>
             <tbody>
               {% for i in result %}
-              <tr>
+              <tr align="center">
                 <th>{{forloop.counter}}</th>
                 <th>{{i.host}}</th>
                 <th>{{i.state_scan}}</th>
-                <th>{{i.open_ports}}</th>
+                <th>{% if i.state_ports == 'down' %}{{ "Порты закрыты" }}{% else %}<a
+                  class="btn btn-outline-info waves-effect waves-light width-md"
+                  href="{% url 'port_information' pk=i.pk %}"
+                  >Информация о портах</a>
+                  {% endif %}
+                </th>
               </tr>
               {% endfor %}
             </tbody>

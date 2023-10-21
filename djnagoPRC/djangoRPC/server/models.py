@@ -43,6 +43,13 @@ class IPAddress(models.Model):
 class SegmentResult(models.Model):
     host = models.CharField(max_length=20)
     state_scan = models.CharField(max_length=20)
-    open_ports = models.CharField(max_length=100)
+    state_ports = models.CharField(max_length=10)
     result = models.ForeignKey(
         IPAddress, on_delete=models.CASCADE)
+
+
+class ResultPorts(models.Model):
+    port = models.CharField(max_length=10)
+    reason = models.CharField(max_length=20)
+    service = models.CharField(max_length=20)
+    all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)

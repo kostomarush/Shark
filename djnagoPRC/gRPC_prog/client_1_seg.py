@@ -19,19 +19,27 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
 def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
     nm = nmap.PortScanner()
     if mode_seg == 'SYN':
-        nm.scan(ip_add_seg, arguments='-sS')
-        all_hosts = nm.all_hosts()
+        result = nm.scan(ip_add_seg, arguments='-sS')
         host_info = {}
-        if all_hosts:
-            for host in all_hosts:
+        open_ports = 0
+        if result:
+            for host, scan_result in result['scan'].items():
                 host_info[host] = {}
                 host_info[host]['host'] = host
                 host_info[host]['state'] = nm[host].state()
+                host_info[host]['open_ports'] = []
                 if 'tcp' in nm[host]:
-                    host_info[host]['open_ports'] = list(
-                        nm[host]['tcp'].keys())
+                    host_info[host]['state_ports'] = 'open'
+                    for port, info in scan_result['tcp'].items():
+                        port_data = {
+                            'port': f'{port}',
+                            'reason': info['reason'],
+                            'service': info['name']
+                        }
+                        host_info[host]['open_ports'].append(port_data)
+                        open_ports += 1
                 else:
-                    host_info[host]['open_ports'] = 'down'
+                    host_info[host]['state_ports'] = 'down'
                     print("No open TCP ports found.")
 
                 print(host_info)
@@ -41,20 +49,28 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
             print('hosts is down')
 
     elif mode_seg == 'UDP':
-        nm.scan(ip_add_seg, arguments='-sU')
-        all_hosts = nm.all_hosts()
+        result = nm.scan(ip_add_seg, arguments='-sU')
         host_info = {}
-        if all_hosts:
-            for host in all_hosts:
+        open_ports = 0
+        if result:
+            for host, scan_result in result['scan'].items():
                 host_info[host] = {}
                 host_info[host]['host'] = host
                 host_info[host]['state'] = nm[host].state()
+                host_info[host]['open_ports'] = []
                 if 'udp' in nm[host]:
-                    host_info[host]['open_ports'] = list(
-                        nm[host]['tcp'].keys())
+                    host_info[host]['state_ports'] = 'open'
+                    for port, info in scan_result['udp'].items():
+                        port_data = {
+                            'port': f'{port}',
+                            'reason': info['reason'],
+                            'service': info['name']
+                        }
+                        host_info[host]['open_ports'].append(port_data)
+                        open_ports += 1
                 else:
-                    host_info[host]['open_ports'] = 'down'
-                    print("No open UDP ports found.")
+                    host_info[host]['state_ports'] = 'down'
+                    print("No open TCP ports found.")
 
                 print(host_info)
             stub.segment_scan(prot_pb2.DataClientSegment(
