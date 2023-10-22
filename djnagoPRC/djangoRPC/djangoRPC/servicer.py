@@ -1,7 +1,7 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ClientBD, ResultPorts, ResultOs
+from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ClientBD, ResultPorts
 from concurrent import futures
 import threading
 import time
@@ -31,18 +31,17 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                         all_info = eval(alls_info)
                         for host, info in all_info.items():
                             if info['tag'] == 'OS':
-                                save_data_in_segment = SegmentResult(
-                                    host=info['host'], state_scan=info['state'], result=result)
-                                save_data_in_segment.save()
                                 for os, os_data in info.items():
                                     if os != 'host' and os != 'state' and os != 'tag':
                                         vendor = os_data['vendor']
                                         osfamily = os_data['osfamily']
                                         osgen = os_data['osgen']
                                         accuracy = os_data['accuracy']
-                                        save_data_in_segment_os = ResultOs(
-                                            full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, all_info=save_data_in_segment)
-                                        save_data_in_segment_os.save()
+                                        save_data_in_segment = SegmentResult(
+                                        host=info['host'], state_scan=info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, result=result)
+                                        save_data_in_segment.save()
+                                    else:
+                                        pass
                                         
                             else:
                                 save_data_in_segment = SegmentResult(

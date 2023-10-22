@@ -44,6 +44,11 @@ class SegmentResult(models.Model):
     host = models.CharField(max_length=20)
     state_scan = models.CharField(max_length=20)
     state_ports = models.CharField(max_length=10)
+    full_name = models.CharField(max_length=30)
+    vendor = models.CharField(max_length=20)
+    osfamily = models.CharField(max_length=20)
+    osgen = models.CharField(max_length=20)
+    accuracy = models.CharField(max_length=20)
     result = models.ForeignKey(
         IPAddress, on_delete=models.CASCADE)
 
@@ -55,11 +60,11 @@ class ResultPorts(models.Model):
     all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)
 
 
-class ResultOs(models.Model):
-    full_name = models.CharField(max_length=30)
-    vendor = models.CharField(max_length=20)
-    osfamily = models.CharField(max_length=20)
-    osgen = models.CharField(max_length=20)
-    accuracy = models.CharField(max_length=20)
-    all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)
+# class ResultOs(models.Model):
+#     full_name = models.CharField(max_length=30)
+#     vendor = models.CharField(max_length=20)
+#     osfamily = models.CharField(max_length=20)
+#     osgen = models.CharField(max_length=20)
+#     accuracy = models.CharField(max_length=20)
+#     all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)
 

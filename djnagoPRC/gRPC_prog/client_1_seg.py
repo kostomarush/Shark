@@ -82,7 +82,7 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
 
     elif mode_seg == 'OS':
         # Выполняем сканирование
-        result = nm.scan(hosts="127.0.0.1", arguments='-O')
+        result = nm.scan(ip_add_seg, arguments='-O')
 
         host_info = {}
         if result:
@@ -91,7 +91,8 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
                 host_info[host]['host'] = host
                 host_info[host]['tag'] = mode_seg
                 host_info[host]['state'] = nm[host].state()
-                if 'osmatch' in scan_result:
+                prob_osmatch = scan_result['osmatch']
+                if prob_osmatch:
                     osmatch = scan_result['osmatch'][0]
                     name = osmatch['name']
                     host_info[host][name] = {}

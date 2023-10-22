@@ -147,34 +147,42 @@
           <h4 class="header-title mb-3">Таблица Адресов</h4>
           <table class="table table-bordered" id="selection-datatable">
             <thead>
-              <tr align="center">
                 <th>id</th>
-                <th>host</th>
-                <th>state_scan</th>
-                <th>open_ports</th>
-              </tr>
+                <th>Хост</th>
+                <th>Состояние хоста</th>
+                {% if result.state_ports %}
+                <th>{{"Открытые порты"}}</th>
+                {% else %}
+                <th>Полное имя ОС</th>
+                <th>Вендор</th>
+                <th>Семейство</th>
+                <th>Версия</th>
+                <th>Точность сканирования</th>
+                {% endif %}
             </thead>
             <tbody>
               {% for i in result %}
-              <tr align="center">
+              <tr>
                 <th>{{forloop.counter}}</th>
                 <th>{{i.host}}</th>
                 <th>{{i.state_scan}}</th>
-                <th>{% if i.state_ports %}{% if i.state_ports == 'down' %}{{ "Порты закрыты" }}{% else %}<a
-                  class="btn btn-outline-info waves-effect waves-light width-md"
-                  href="{% url 'port_information' pk=i.pk %}"
-                  >Информация о портах</a>
-                  {% endif %}
-
+                {% if i.state_ports %}
+                  {% if i.state_ports == 'down' %}
+                    <th>{{ "Порты закрыты" }}</th>
                   {% else %}
-                  <a class="btn btn-outline-info waves-effect waves-light width-md"
-                  href="{% url 'os_information' pk=i.pk %}"
-                  >Информация об ОС</a>
+                    <th><a class="btn btn-outline-info waves-effect waves-light width-md"
+                      href="{% url 'port_information' pk=i.pk %}"> Информация о портах</a></th>
                   {% endif %}
-                </th>
-              </tr>
-              {% endfor %}
-            </tbody>
+                {% else %}
+                  <th>{{i.full_name}}</th>
+                  <th>{{i.vendor}}</th>
+                  <th>{{i.osfamily}}</th>
+                  <th>{{i.osgen}}</th>
+                  <th>{{i.accuracy}}</th>
+                {% endif %}
+                </tr>
+                {% endfor %}
+              </tbody>
           </table>
         </div>
       </div>

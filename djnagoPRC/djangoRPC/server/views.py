@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, ResultOs
+from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts
 from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
 import ipaddress
@@ -163,23 +163,23 @@ def port_information(request, pk):
     return render(request, 'server/port_information.html', {'item': item,
                                                             'port_dict': port_dict})
 
-def os_information(request, pk):
-    item = get_object_or_404(SegmentResult, pk=pk)
-    segment_results = SegmentResult.objects.all()
-    os_by_host = {}
-    # Пройдите по каждому объекту SegmentScan
-    for segment_result in segment_results:
-        # Получите связанные с этим объектом IPAddress
-        os = ResultOs.objects.filter(all_info=segment_result)
+# def os_information(request, pk):
+#     item = get_object_or_404(SegmentResult, pk=pk)
+#     segment_results = SegmentResult.objects.all()
+#     os_by_host = {}
+#     # Пройдите по каждому объекту SegmentScan
+#     for segment_result in segment_results:
+#         # Получите связанные с этим объектом IPAddress
+#         os = ResultOs.objects.filter(all_info=segment_result)
 
-        # Сохраните их в словаре
-        os_by_host[segment_result] = os
+#         # Сохраните их в словаре
+#         os_by_host[segment_result] = os
 
-    os_dict = []
-    for os, segment_result in os_by_host.items():
-        if os == item:
-            for i in segment_result:
-                os_dict.append(i)
+#     os_dict = []
+#     for os, segment_result in os_by_host.items():
+#         if os == item:
+#             for i in segment_result:
+#                 os_dict.append(i)
 
-    return render(request, 'server/os_information.html', {'item': item,
-                                                            'os_dict': os_dict})
+#     return render(request, 'server/os_information.html', {'item': item,
+#                                                             'os_dict': os_dict})
