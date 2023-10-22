@@ -53,3 +53,13 @@ class ResultPorts(models.Model):
     reason = models.CharField(max_length=20)
     service = models.CharField(max_length=20)
     all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)
+
+
+class ResultOs(models.Model):
+    full_name = models.CharField(max_length=30)
+    vendor = models.CharField(max_length=20)
+    osfamily = models.CharField(max_length=20)
+    osgen = models.CharField(max_length=20)
+    accuracy = models.CharField(max_length=20)
+    all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)
+

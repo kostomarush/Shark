@@ -160,10 +160,16 @@
                 <th>{{forloop.counter}}</th>
                 <th>{{i.host}}</th>
                 <th>{{i.state_scan}}</th>
-                <th>{% if i.state_ports == 'down' %}{{ "Порты закрыты" }}{% else %}<a
+                <th>{% if i.state_ports %}{% if i.state_ports == 'down' %}{{ "Порты закрыты" }}{% else %}<a
                   class="btn btn-outline-info waves-effect waves-light width-md"
                   href="{% url 'port_information' pk=i.pk %}"
                   >Информация о портах</a>
+                  {% endif %}
+
+                  {% else %}
+                  <a class="btn btn-outline-info waves-effect waves-light width-md"
+                  href="{% url 'os_information' pk=i.pk %}"
+                  >Информация об ОС</a>
                   {% endif %}
                 </th>
               </tr>

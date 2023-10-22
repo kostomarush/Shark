@@ -18,14 +18,15 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
 
 def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
     nm = nmap.PortScanner()
-    if mode_seg == 'SYN':
-        result = nm.scan(ip_add_seg, arguments='-sS')
+    if mode_seg == 'TCP':
+        result = nm.scan(ip_add_seg, arguments='-sT')
         host_info = {}
         open_ports = 0
         if result:
             for host, scan_result in result['scan'].items():
                 host_info[host] = {}
                 host_info[host]['host'] = host
+                host_info[host]['tag'] = mode_seg
                 host_info[host]['state'] = nm[host].state()
                 host_info[host]['open_ports'] = []
                 if 'tcp' in nm[host]:
@@ -56,6 +57,7 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
             for host, scan_result in result['scan'].items():
                 host_info[host] = {}
                 host_info[host]['host'] = host
+                host_info[host]['tag'] = mode_seg
                 host_info[host]['state'] = nm[host].state()
                 host_info[host]['open_ports'] = []
                 if 'udp' in nm[host]:
@@ -78,6 +80,32 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
         else:
             print('hosts is down')
 
+    elif mode_seg == 'OS':
+        # Выполняем сканирование
+        result = nm.scan(hosts="127.0.0.1", arguments='-O')
+
+        host_info = {}
+        if result:
+            for host, scan_result in result['scan'].items():
+                host_info[host] = {}
+                host_info[host]['host'] = host
+                host_info[host]['tag'] = mode_seg
+                host_info[host]['state'] = nm[host].state()
+                if 'osmatch' in scan_result:
+                    osmatch = scan_result['osmatch'][0]
+                    name = osmatch['name']
+                    host_info[host][name] = {}
+                    osclass = osmatch['osclass'][0]
+                    host_info[host][name]['vendor'] = osclass.get('vendor', 'N/A')
+                    host_info[host][name]['osfamily'] = osclass.get('osfamily', 'N/A')
+                    host_info[host][name]['osgen'] = osclass.get('osgen', 'N/A')
+                    host_info[host][name]['accuracy'] = osclass.get('accuracy', 'N/A')
+                else:
+                    print('OS None')
+            stub.segment_scan(prot_pb2.DataClientSegment(
+                name_cl=name_cl, host=f'{host_info}'))  
+        else:
+            print('hosts is down')
 
 def send_keep_alive_messages(stub, name_cl):
     while True:

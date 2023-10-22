@@ -11,6 +11,7 @@ urlpatterns = [
     path('data/<int:pk>/', views.remove_item, name='delete'),
     path('segment/<int:pk>/', views.remove_segment, name='segment_delete'),
     path('segment/port_information/<int:pk>/', views.port_information, name='port_information'),
+    path('segment/os_information/<int:pk>/', views.os_information, name='os_information'),
     path('', LoginView.as_view(next_page="/aim"), name="login"),
     path("logout/", LogoutView.as_view(next_page='/'), name="logout"),
 ]
