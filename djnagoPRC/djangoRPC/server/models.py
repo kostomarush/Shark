@@ -26,9 +26,17 @@ class DataServer(models.Model):
 
 
 class SegmentScan(models.Model):
+
+    MODE_CHOICES = (
+        ('', 'Выберите режим'), 
+        ('TCP', 'TCP'),
+        ('UDP', 'UDP'),
+        ('OS', 'OS')
+    )
+    
+    mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='')
     ip = models.CharField(max_length=20)
     mask = models.CharField(max_length=20)
-    mode = models.CharField(max_length=20)
     state_scan = models.CharField(max_length=20, default=False)
 
 

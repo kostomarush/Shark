@@ -17,7 +17,8 @@
       <h4 class="page-title">Результаты сканирования</h4>
     </div>
     <!-- end page title -->
-    <h2>Детали элемента: {{item.ip}}/{{item.mask}}</h2>
+    <h2>Детали элемента: {{item.ip}}/{{item.mask}} </h2>
+    <h2>Режим сканирования: {{item.mode}} </h2>
     <div class="row">
       <div class="col-xl-4">
         <div class="card-box">
@@ -150,7 +151,7 @@
                 <th>id</th>
                 <th>Хост</th>
                 <th>Состояние хоста</th>
-                {% if result.state_ports %}
+                {% if item.mode == 'TCP' or item.mode == 'UDP' %}
                 <th>{{"Открытые порты"}}</th>
                 {% else %}
                 <th>Полное имя ОС</th>
@@ -159,7 +160,7 @@
                 <th>Версия</th>
                 <th>Точность сканирования</th>
                 {% endif %}
-            </thead>
+              </thead>
             <tbody>
               {% for i in result %}
               <tr>

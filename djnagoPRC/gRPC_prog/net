@@ -1,4 +1,5 @@
 netstat -ano | findstr :50051   
+taskkill /PID 300 /F
 
 nmap -iL input.txt 
 Сканирование списка хостов/сетей из Файла
