@@ -14,12 +14,24 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
     segment_scan(stub, ip_add_seg, mode_seg, name_cl)
     stub.segment_scan(prot_pb2.DataClientSegment(
         name_cl=name_cl, message='Done'))
+    
+def generate_chunk(chunks):
+    for data in chunks:
+        yield prot_pb2.DataChunk(data_chunk=data)
+
+
+def split_string(input_string, chunk_size):
+    chunks = []
+    for i in range(0, len(input_string), chunk_size):
+        chunk = input_string[i:i + chunk_size]
+        chunks.append(chunk)
+    return chunks
 
 
 def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
     nm = nmap.PortScanner()
     if mode_seg == 'TCP':
-        result = nm.scan(ip_add_seg, arguments='-sT')
+        result = nm.scan(ip_add_seg, arguments='-sT --script vulscan/ --script-args vulscandb=cve.csv')
         host_info = {}
         open_ports = 0
         if result:

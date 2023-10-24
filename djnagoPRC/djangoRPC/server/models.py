@@ -38,6 +38,8 @@ class SegmentScan(models.Model):
     ip = models.CharField(max_length=20)
     mask = models.CharField(max_length=20)
     state_scan = models.CharField(max_length=20, default=False)
+    cve_report = models.BooleanField(default=False)
+    full_scan = models.BooleanField(default=False)
 
 
 class IPAddress(models.Model):
@@ -65,7 +67,10 @@ class ResultPorts(models.Model):
     port = models.CharField(max_length=10)
     reason = models.CharField(max_length=20)
     service = models.CharField(max_length=20)
+    cve_information = models.TextField()
     all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)
+
+
 
 
 # class ResultOs(models.Model):

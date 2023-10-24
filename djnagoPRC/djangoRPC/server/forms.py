@@ -1,5 +1,5 @@
 from .models import DataServer, SegmentScan
-from django.forms import ModelForm, Select, TextInput
+from django.forms import ModelForm, Select, TextInput, BooleanField, CheckboxInput
 
 class DataServerForm(ModelForm):
     class Meta:
@@ -27,7 +27,7 @@ class DataServerForm(ModelForm):
 class SegmentScanForm(ModelForm):
     class Meta:
         model = SegmentScan
-        fields = ['ip', 'mask', 'mode']
+        fields = ['ip', 'mask', 'mode', 'cve_report', 'full_scan']
 
         widgets = {
             'ip': TextInput(attrs={

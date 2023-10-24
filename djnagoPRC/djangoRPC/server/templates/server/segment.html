@@ -41,15 +41,21 @@
                 <div class="col-sm-9">{{ form_segment.mode }}</div>
               </div>
             </div>
-            <div class="form-group mb-0 justify-content-end row">
-              <div class="col-sm-8">
+              <div class="checkbox checkbox-info form-check-inline">
+                {{ form_segment.cve_report }}
+                <label>Отчет о CVE</label>
+            </div>
+            <div class="checkbox checkbox-info form-check-inline">
+                {{ form_segment.full_scan }}
+                <label>Все порты</label>
+            </div>
+              <div class="form-check-inline">
                 <button
                   type="submit"
                   class="btn btn-success waves-effect waves-light"
                 >
                   Создать задачу
                 </button>
-              </div>
             </div>
           </form>
         </div>
@@ -59,23 +65,28 @@
         <div class="card-box">
           <h4 class="header-title mb-3">Таблица заданий</h4>
           <table id="selection-datatable" class="table table-bordered">
-            <thead>
+            <thead align="center">
               <th>№</th>
               <th>Ip Адрес</th>
               <th>Маска</th>
               <th>Режим</th>
               <th>Состояние</th>
+              <th>CVE</th>
+              <th>Все порты</th>
               <th>Резульаты сканирования</th>
               <th>Удалить</th>
             </thead>
             <tbody>
               {% for i in scan_segment %}
-              <tr>
-                <td><span class="ml-2">{{forloop.counter}}</span></td>
-                <td><span class="ml-2">{{i.ip}}</span></td>
-                <td><span class="ml-2">{{i.mask}}</span></td>
-                <td><span class="ml-2">{{i.mode}}</span></td>
-                <td><span class="ml-2">{{i.state_scan}}</span></td>
+              <tr align="center">
+                <td><span>{{forloop.counter}}</span></td>
+                <td><span>{{i.ip}}</span></td>
+                <td><span>{{i.mask}}</span></td>
+                <td><span>{{i.mode}}</span></td>
+                <td><span>{{i.state_scan}}</span></td>
+                <td><span>{% if i.cve_report == True %}+{% else %}-{% endif %}</span></td>
+                <td><span>{% if i.full_scan == True %}+{% else %}-{% endif %}</span></td>
+                
                 <td>
                   <a
                     class="btn btn-outline-success waves-effect waves-light width-md"
