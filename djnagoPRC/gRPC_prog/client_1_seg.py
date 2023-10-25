@@ -44,6 +44,10 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
                 host_info[host]['open_ports'] = []
                 if 'tcp' in nm[host]:
                     host_info[host]['state_ports'] = 'open'
+                    if cve_report == 'True':
+                        cve_info(host)
+                    else:
+                        pass
                     for port, info in scan_result['tcp'].items():
                         port_data = {
                             'port': f'{port}',
@@ -56,10 +60,6 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
                     host_info[host]['state_ports'] = 'down'
                     print("No open TCP ports found.")
                     
-                if cve_report == 'True':
-                    cve_info(host)
-                else:
-                    pass
                 print(host_info)
 
             
@@ -130,7 +130,7 @@ def cve_info(host):
     if result['scan']:
         for host, scan_result in result['scan'].items():
             for port, info in scan_result['tcp'].items():
-                script = nm[ip_add_seg]['tcp'][ports].get('script', '')
+                script = [port].get('script', '')
                 if script != '':
                     all_chunk = script.get('vulscan', '')
                     chunk_size = 4 * 1024 * 1024  # 4 МБ
