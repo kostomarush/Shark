@@ -34,6 +34,9 @@ message DataSegment{
 
     string ip_address = 1;
     string mode = 2;
+    string cve_report = 3;
+    string full_scan = 4;
+
 
 }
 

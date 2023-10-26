@@ -29,6 +29,10 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                         result = IPAddress.objects.get(id=data_segment[i].id)
                         alls_info = request.host
                         all_info = eval(alls_info)
+                        if data_segment[i].seg_scan.cve_report:
+                            cve_report = self.text
+                        else:
+                            cve_report = 'Empty'
                         for host, info in all_info.items():
                             if info['tag'] == 'OS':
                                 for os, os_data in info.items():
@@ -38,14 +42,14 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                         osgen = os_data['osgen']
                                         accuracy = os_data['accuracy']
                                         save_data_in_segment = SegmentResult(
-                                        host=info['host'], state_scan=info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, result=result)
+                                        host=info['host'], state_scan=info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, cve_information=cve_report, result=result)
                                         save_data_in_segment.save()
                                     else:
                                         pass
                                         
                             else:
                                 save_data_in_segment = SegmentResult(
-                                    host=info['host'], state_ports = info['state_ports'], state_scan=info['state'], result=result)
+                                    host=info['host'], state_ports = info['state_ports'], state_scan=info['state'], cve_information=cve_report, result=result)
                                 save_data_in_segment.save()
 
                                 for port_info in info['open_ports']:
@@ -65,8 +69,10 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 ip_address = data_segment[i].address
                 mode = data_segment[i].seg_scan.mode
                 id_task = data_segment[i].id
+                cve_report = f'{data_segment[i].seg_scan.cve_report}'
+                full_scan = f'{data_segment[i].seg_scan.full_scan}'
                 response_start = prot_pb2.DataSegment(
-                    ip_address=ip_address, mode=mode)
+                    ip_address=ip_address, mode=mode, cve_report=cve_report, full_scan=full_scan)
                 return response_start
 
     def scan(self, request, context):
