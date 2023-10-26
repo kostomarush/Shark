@@ -12,20 +12,20 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
     ip_add_seg = response_segment.ip_address
     mode_seg = response_segment.mode
     cve_report = response_segment.cve_report
+    segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report)
     if cve_report == 'True':
         cve_info(stub, ip_add_seg)
     else:
         pass
-    segment_scan(stub, ip_add_seg, mode_seg, name_cl)
     stub.segment_scan(prot_pb2.DataClientSegment(
         name_cl=name_cl, message='Done'))
     
-def generate_chunk(chunks):
-    for data in chunks:
-        yield prot_pb2.DataChunk(data_chunk=data)
+# def generate_chunk(chunks):
+#     for data in chunks:
+#         yield prot_pb2.DataChunk(data_chunk=data)
 
 
-def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
+def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
     nm = nmap.PortScanner()
     host_info = {}
     if mode_seg == 'TCP':
@@ -47,7 +47,6 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
                             'service': info['name']
                         }
                         host_info[host]['open_ports'].append(port_data)
-                        open_ports += 1
                 else:
                     host_info[host]['state_ports'] = 'down'
                     print("No open TCP ports found.")

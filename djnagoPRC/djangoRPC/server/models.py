@@ -59,6 +59,7 @@ class SegmentResult(models.Model):
     osfamily = models.CharField(max_length=20)
     osgen = models.CharField(max_length=20)
     accuracy = models.CharField(max_length=20)
+    cve_information = models.TextField()
     result = models.ForeignKey(
         IPAddress, on_delete=models.CASCADE)
 
@@ -69,10 +70,10 @@ class ResultPorts(models.Model):
     service = models.CharField(max_length=20)
     all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)
 
-class CveInformation(models.Model):
-    host = models.CharField(max_length=20)
-    port = models.CharField(max_length=10)
-    cve_information = models.TextField()
+# class CveInformation(models.Model):
+#     host = models.CharField(max_length=20)
+#     port = models.CharField(max_length=10)
+#     cve_information = models.TextField()
 
 
 

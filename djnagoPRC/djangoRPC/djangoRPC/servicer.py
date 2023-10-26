@@ -100,15 +100,15 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     ip=ip, port=port, mode=mode)
                 return response_start
 
-    def chunk(self, request, context):
-        for req in request:
-            text += req.data_chunk
+    # def chunk(self, request, context):
+    #     for req in request:
+    #         text += req.data_chunk
 
-        for port, cve in text:
-            print(port)
-            print(cve)
+    #     for port, cve in text:
+    #         print(port)
+    #         print(cve)
             
-        return prot_pb2.Empty(result='done')
+        # return prot_pb2.Empty(result='done')
 
     def SayHello(self, request, context):
         if request.message == "Ping":
