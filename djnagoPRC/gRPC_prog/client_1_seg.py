@@ -12,7 +12,11 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
     ip_add_seg = response_segment.ip_address
     mode_seg = response_segment.mode
     cve_report = response_segment.cve_report
-    segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report)
+    if cve_report == 'True':
+        cve_info(stub, ip_add_seg)
+    else:
+        pass
+    segment_scan(stub, ip_add_seg, mode_seg, name_cl)
     stub.segment_scan(prot_pb2.DataClientSegment(
         name_cl=name_cl, message='Done'))
     
@@ -21,19 +25,11 @@ def generate_chunk(chunks):
         yield prot_pb2.DataChunk(data_chunk=data)
 
 
-def split_string(input_string, chunk_size):
-    chunks = []
-    for i in range(0, len(input_string), chunk_size):
-        chunk = input_string[i:i + chunk_size]
-        chunks.append(chunk)
-    return chunks
-
-
-def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
+def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
     nm = nmap.PortScanner()
     host_info = {}
     if mode_seg == 'TCP':
-        result = nm.scan(ip_add_seg, arguments='-sT')
+        result = nm.scan(ip_add_seg, arguments='-sS')
         open_ports = 0
         if result['scan']:
             for host, scan_result in result['scan'].items():
@@ -44,10 +40,6 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
                 host_info[host]['open_ports'] = []
                 if 'tcp' in nm[host]:
                     host_info[host]['state_ports'] = 'open'
-                    if cve_report == 'True':
-                        cve_info(host)
-                    else:
-                        pass
                     for port, info in scan_result['tcp'].items():
                         port_data = {
                             'port': f'{port}',
@@ -124,22 +116,30 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
         else:
             print('hosts is down')
 
-def cve_info(host): 
+def cve_info(stub, ip_add_seg): 
     nm = nmap.PortScanner()
-    result = nm.scan(host, arguments='-sV --script vulscan/ --script-args vulscandb=update_cve.csv')
+    host_info = {}
+    result = nm.scan(ip_add_seg, arguments='-sV --script vulscan/ --script-args vulscandb=update_cve.csv')
     if result['scan']:
-        for host, scan_result in result['scan'].items():
+        for ipadd, scan_result in result['scan'].items():
+            host_info[ipadd] = {}
+            host_info[ipadd]['host'] = ipadd
+            host_info[ipadd]['cve_ports'] = []
             for port, info in scan_result['tcp'].items():
-                script = [port].get('script', '')
-                if script != '':
-                    all_chunk = script.get('vulscan', '')
-                    chunk_size = 4 * 1024 * 1024  # 4 МБ
-                    chunks = split_string(all_chunk, chunk_size)
-                    text = generate_chunk(chunks)
-                    result = stub.chunk(text)
-                    print(result.result)
+                script = info['script']
+                if script:
+                    all_chunk = {
+                                'port': f'{port}',
+                                'cve': script.get('vulscan', ''),
+                            }
+                    host_info[ipadd]['cve_ports'].append(all_chunk)
                 else:
                     all_chunk = 'No'
+            try:
+                text = generate_chunk(f'{all_chunk}')
+                result = stub.chunk(text)
+            except:
+                print("WAR")
     else:
         print('hosts is down')
 

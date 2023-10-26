@@ -1,7 +1,7 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ClientBD, ResultPorts
+from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation
 from concurrent import futures
 import threading
 import time
@@ -11,7 +11,6 @@ import grpc
 class RPCServicer(prot_pb2_grpc.RPCServicer):
 
     def __init__(self):
-        self.text = ''
         self.last_ping_times = {}
 
     def segment_scan(self, request, context):
@@ -42,14 +41,14 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                         osgen = os_data['osgen']
                                         accuracy = os_data['accuracy']
                                         save_data_in_segment = SegmentResult(
-                                        host=info['host'], state_scan=info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, cve_information=cve_report, result=result)
+                                        host=info['host'], state_scan=info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, result=result)
                                         save_data_in_segment.save()
                                     else:
                                         pass
                                         
                             else:
                                 save_data_in_segment = SegmentResult(
-                                    host=info['host'], state_ports = info['state_ports'], state_scan=info['state'], cve_information=cve_report, result=result)
+                                    host=info['host'], state_ports = info['state_ports'], state_scan=info['state'], result=result)
                                 save_data_in_segment.save()
 
                                 for port_info in info['open_ports']:
@@ -87,7 +86,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     return response
                 data_in = ScanInfo(ip_status=request.ip_status,
                                    protocols=request.protocols, open_ports=request.open_ports,
-                                   state=request.state, data_chunk=self.text)
+                                   state=request.state)
 
                 data_in.save()
                 return response
@@ -103,7 +102,12 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
 
     def chunk(self, request, context):
         for req in request:
-            self.text += req.data_chunk
+            text += req.data_chunk
+
+        for port, cve in text:
+            print(port)
+            print(cve)
+            
         return prot_pb2.Empty(result='done')
 
     def SayHello(self, request, context):
