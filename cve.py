@@ -1,25 +1,11 @@
 import nmap
 
-host = '127.0.0.0/30'
+host = '127.0.0.1'
 host_info = {}
+port = 22
 nm = nmap.PortScanner()
-result = nm.scan(host, arguments='-sV --script vulscan/ --script-args vulscandb=update_cve.csv')
+result = nm.scan(host, ports=f'{port}', arguments='-sV --script vulscan/ --script-args vulscandb=update_cve.csv')
 if result['scan']:
-    for ipadd, scan_result in result['scan'].items():
-        host_info[ipadd] = {}
-        host_info[ipadd]['host'] = ipadd
-        host_info[ipadd]['cve_ports'] = []
-        for port, info in scan_result['tcp'].items():
-            script = info['script']
-            if script:
-                all_chunk = {
-                            'port': f'{port}',
-                            'cve': script.get('vulscan', ''),
-                        }
-                host_info[ipadd]['cve_ports'].append(all_chunk)
-            else:
-                all_chunk = 'No'
-else:
-    print('hosts is down')
+    a = result['scan'][host]['tcp'][port]['script']['vulscan']
 
-print (host_info)
+print (a)

@@ -1,7 +1,7 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation
+from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ResultPorts
 from concurrent import futures
 import threading
 import time
@@ -28,10 +28,6 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                         result = IPAddress.objects.get(id=data_segment[i].id)
                         alls_info = request.host
                         all_info = eval(alls_info)
-                        if data_segment[i].seg_scan.cve_report:
-                            cve_report = self.text
-                        else:
-                            cve_report = 'Empty'
                         for host, info in all_info.items():
                             if info['tag'] == 'OS':
                                 for os, os_data in info.items():
@@ -55,8 +51,9 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     port = port_info['port']
                                     reason = port_info['reason']
                                     service = port_info['service']
+                                    cve = port_info['cve']
                                     save_data_in_segment_ports = ResultPorts(
-                                        port=port, reason=reason, service=service, all_info=save_data_in_segment)
+                                        port=port, reason=reason, service=service, cve_information=cve, all_info=save_data_in_segment)
                                     save_data_in_segment_ports.save()
                         return response
             except:

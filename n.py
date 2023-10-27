@@ -4,7 +4,7 @@ import nmap
 nm = nmap.PortScanner()
 # Выполните сканирование UDP-портов
 closed_ports = 0
-result = nm.scan(hosts='127.0.0.1', arguments='-sS')
+result = nm.scan(hosts='127.0.0.1', arguments='-sT')
 a = 0
 b = 1000
 host_info = {}
