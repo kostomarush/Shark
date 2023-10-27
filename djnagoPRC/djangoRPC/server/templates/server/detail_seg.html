@@ -160,7 +160,6 @@
                 <th>Версия</th>
                 <th>Точность сканирования</th>
                 {% endif %}
-                <th> Отчет о CVE </th>
               </thead>
             <tbody>
               {% for i in result %}
@@ -182,7 +181,6 @@
                   <th>{{i.osgen}}</th>
                   <th>{{i.accuracy}}</th>
                 {% endif %}
-                  <th>{{i.accuracy}}</th>
                 </tr>
                 {% endfor %}
               </tbody>

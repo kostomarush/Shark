@@ -42,8 +42,20 @@
               <a href="javascript:void(0);" class="dropdown-item">Action</a>
             </div>
           </div>
+          <div class="modal fade bs-example-modal-xl" id="cveModal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myExtraLargeModalLabel">Extra large modal</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body" id="target-div" style="font-family: 'Courier New', monospace; font-size: 18px; color: #efefef;">
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
           <h4 class="header-title mb-3">Таблица Адресов</h4>
-          <table class="table table-bordered" id="selection-datatable">
+          <table class="table table-bordered">
             <thead>
               <tr>
                 <th>№</th>
@@ -60,7 +72,15 @@
                 <th>{{i.port}}</th>
                 <th>{{i.reason}}</th>
                 <th>{{i.service}}</th>
-                <th>{{i.cve}}</th>
+                <th>
+                  <button class="btn btn-success waves-effect waves-light" 
+                          data-cve-information="{{i.cve_information}}" 
+                          data-toggle="modal" 
+                          data-target=".bs-example-modal-xl"
+                          id="show-cve-button">            
+                      Show CVE
+                  </button>
+                </th>
               </tr>
               {% endfor %}
             </tbody>
@@ -70,4 +90,24 @@
     </div>
   </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Находим кнопку по её ID
+    var $button = $("#show-cve-button");
+    
+    // Находим элемент div, в который хотим вставить data-cve-information
+    var $targetDiv = $("#target-div");
+    
+    // Обработчик клика на кнопке
+    $button.on("click", function() {
+        // Получаем значение атрибута data-cve-information из кнопки
+        var cveInformation = $button.data("cve-information");
+        
+        // Вставляем значение в элемент div
+        $targetDiv.text(cveInformation);
+    });
+});
+</script>
 {% endblock %}
+

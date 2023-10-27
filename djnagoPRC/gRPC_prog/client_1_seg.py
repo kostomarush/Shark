@@ -127,7 +127,7 @@ def cve_info(ip_add_seg, port):
         else:
             all_chunk = 'No'
         
-        return all_chunk
+        return all_chunk[0]
     
     else:
         print('hosts is down')

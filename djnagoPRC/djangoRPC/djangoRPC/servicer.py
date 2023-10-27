@@ -6,7 +6,7 @@ from concurrent import futures
 import threading
 import time
 import grpc
-
+import re
 
 class RPCServicer(prot_pb2_grpc.RPCServicer):
 
@@ -52,12 +52,22 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     reason = port_info['reason']
                                     service = port_info['service']
                                     cve = port_info['cve']
+
+                                    # Используем регулярное выражение для поиска всех [CVE ...]
+                                    cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
+                                    
+                                    # Выводим результат
+                                    all_cve=''
+                                    for cve_match in cve_matches:
+                                        all_cve += cve_match + '\n'
+                                    print(all_cve)
+
                                     save_data_in_segment_ports = ResultPorts(
                                         port=port, reason=reason, service=service, cve_information=cve, all_info=save_data_in_segment)
                                     save_data_in_segment_ports.save()
                         return response
             except:
-                pass
+                print('Error')
         for i in data_segment:
             if data_segment[i].tag == 'False':
                 IPAddress.objects.filter(id=i).update(
