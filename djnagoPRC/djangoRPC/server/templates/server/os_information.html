@@ -44,31 +44,7 @@
               <a href="javascript:void(0);" class="dropdown-item">Action</a>
             </div>
           </div>
-          <h4 class="header-title mb-3">Таблица ОС</h4>
-          <table class="table table-bordered" id="selection-datatable">
-            <thead>
-              <tr>
-                <th>№</th>
-                <th>Полное имя</th>
-                <th>Вендор</th>
-                <th>Операционная система</th>
-                <th>Версия ОС</th>
-                <th>Точность</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in os_dict %}
-              <tr>
-                <th>{{forloop.counter}}</th>
-                <th>{{i.full_name}}</th>
-                <th>{{i.vendor}}</th>
-                <th>{{i.osfamily}}</th>
-                <th>{{i.osgen}}</th>
-                <th>{{i.accuracy}}</th>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          <h4 class="header-title mb-3">Информация CVE</h4>
         </div>
       </div>
     </div>

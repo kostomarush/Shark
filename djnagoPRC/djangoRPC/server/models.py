@@ -67,6 +67,7 @@ class ResultPorts(models.Model):
     port = models.CharField(max_length=10)
     reason = models.CharField(max_length=20)
     service = models.CharField(max_length=20)
+    one_cve = models.TextField()
     cve_information = models.TextField()
     all_info = models.ForeignKey(SegmentResult, on_delete=models.CASCADE)
 

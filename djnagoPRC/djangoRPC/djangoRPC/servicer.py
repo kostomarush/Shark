@@ -60,10 +60,9 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     all_cve=''
                                     for cve_match in cve_matches:
                                         all_cve += cve_match + '\n'
-                                    print(all_cve)
 
                                     save_data_in_segment_ports = ResultPorts(
-                                        port=port, reason=reason, service=service, cve_information=cve, all_info=save_data_in_segment)
+                                        port=port, reason=reason, service=service, one_cve=all_cve, cve_information=cve, all_info=save_data_in_segment)
                                     save_data_in_segment_ports.save()
                         return response
             except:
