@@ -13,3 +13,21 @@
             background-color: #222; /* Черный фон */
             color: #fff; /* Белый текст для контраста */
         }
+
+        /* Для вертикальной полосы прокрутки */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: #35b8e0;
+        }
+        
+        /* Для горизонтальной полосы прокрутки */
+        ::-webkit-scrollbar-horizontal {
+            height: 12px;
+        }
+        
+        ::-webkit-scrollbar-thumb:horizontal {
+            background-color: #35b8e0;
+        }

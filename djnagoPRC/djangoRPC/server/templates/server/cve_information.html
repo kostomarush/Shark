@@ -13,14 +13,14 @@
           <li class="breadcrumb-item active">Сегментированное</li>
           <li class="breadcrumb-item active">Результаты сканирования</li>
           <li class="breadcrumb-item active">
-            Информация об операционных системах
+            Информация о CVE
           </li>
         </ol>
       </div>
-      <h4 class="page-title">Информация об операционной системе</h4>
+      <h4 class="page-title">Информация о CVE</h4>
     </div>
     <!-- end page title -->
-    <h2>Операционна система сети: {{item.host}}</h2>
+    <h2>CVE порта: {{item.port}}</h2>
     <div class="row">
       <div class="col-xl-12">
         <div class="card-box">
@@ -45,6 +45,19 @@
             </div>
           </div>
           <h4 class="header-title mb-3">Информация CVE</h4>
+          <pre style="
+          white-space: pre-wrap;     
+          text-align: justify;
+          font-family: Barlow,sans-serif;
+          font-size: .9rem;
+          font-weight: 400;
+          line-height: 1.5;
+          color: #ced4da;">
+          {% for i in cve_dict %}
+            {{i.cve_information}}
+          {% endfor %}
+        </pre>
+
         </div>
       </div>
     </div>

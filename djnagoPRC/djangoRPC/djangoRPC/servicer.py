@@ -1,7 +1,7 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ResultPorts
+from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation
 from concurrent import futures
 import threading
 import time
@@ -62,8 +62,13 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                         all_cve += cve_match + '\n'
 
                                     save_data_in_segment_ports = ResultPorts(
-                                        port=port, reason=reason, service=service, one_cve=all_cve, cve_information=cve, all_info=save_data_in_segment)
+                                        port=port, reason=reason, service=service, one_cve=all_cve, all_info=save_data_in_segment)
                                     save_data_in_segment_ports.save()
+
+                                    save_cve = CveInformation(cve_information = cve, result_ports = save_data_in_segment_ports)
+                                    save_cve.save()
+
+                                    
                         return response
             except:
                 print('Error')

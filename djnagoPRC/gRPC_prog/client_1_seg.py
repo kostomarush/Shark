@@ -120,7 +120,7 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
 def cve_info(ip_add_seg, port): 
     nm = nmap.PortScanner()
     result = nm.scan(ip_add_seg, ports=f"{port}", arguments='-sV --script vulscan/ --script-args vulscandb=update_cve.csv')
-    if result['scan']:
+    if result['scan'][ip_add_seg]['tcp'][port]['script']:
         cve_inf = result['scan'][ip_add_seg]['tcp'][port]['script']
         if cve_inf:
             all_chunk = cve_inf.get('vulscan', ''),
