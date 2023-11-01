@@ -143,21 +143,3 @@ class TaskConsumer(AsyncWebsocketConsumer):
             'task': task,
         }))
 
-class CveConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        # Присоедините клиента к группе WebSocket
-        await self.channel_layer.group_add('send_cve', self.channel_name)
-        await self.accept()
-
-    async def disconnect(self, close_code):
-        # Отсоедините клиента от группы WebSocket при разрыве соединения
-        await self.channel_layer.group_discard('send_cve', self.channel_name)
-
-    async def send_cve_update(self, event):
-        # Этот метод вызывается, когда сигнал об обновлении "tag" отправляется
-        task = event['send_cve']
-
-        # Отправьте обновленные данные клиенту
-        await self.send(json.dumps({
-            'send_cve': task,
-        }))

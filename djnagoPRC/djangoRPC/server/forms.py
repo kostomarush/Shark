@@ -4,7 +4,7 @@ from django.forms import ModelForm, Select, TextInput, BooleanField, CheckboxInp
 class DataServerForm(ModelForm):
     class Meta:
         model = DataServer
-        fields = ['ip', 'port', 'mode']
+        fields = ['ip', 'port', 'mode', 'cve_report']
 
         widgets = {
             'ip': TextInput(attrs={

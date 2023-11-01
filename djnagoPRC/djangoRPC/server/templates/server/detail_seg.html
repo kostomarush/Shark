@@ -151,14 +151,14 @@
                 <th>id</th>
                 <th>Хост</th>
                 <th>Состояние хоста</th>
-                {% if item.mode == 'TCP' or item.mode == 'UDP' %}
-                <th>{{"Открытые порты"}}</th>
-                {% else %}
+                {% if item.mode == 'OS'%}
                 <th>Полное имя ОС</th>
                 <th>Вендор</th>
                 <th>Семейство</th>
                 <th>Версия</th>
                 <th>Точность сканирования</th>
+                {% else %}
+                <th>{{"Открытые порты"}}</th>
                 {% endif %}
               </thead>
             <tbody>

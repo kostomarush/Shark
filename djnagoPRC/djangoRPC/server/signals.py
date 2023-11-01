@@ -70,10 +70,6 @@ def update_client_data(sender, instance, **kwargs):
 @receiver(post_save,  sender=ScanInfo)
 def update_graph_data(sender, instance, **kwargs):
 
-
-    values = instance.data_chunk
-
-
     def get_scan_info_count(state):
         count = ScanInfo.objects.filter(state=state).count()
         return count
@@ -98,15 +94,6 @@ def update_graph_data(sender, instance, **kwargs):
             }
         )
 
-    async def send_cve():
-        await channel_layer.group_send(
-            'send_cve',
-            {
-                'type': 'send_cve.update',
-                'send_cve': values
-            }
-        )
 
     async_to_sync(send_graph_data)()
 
-    async_to_sync(send_cve)()

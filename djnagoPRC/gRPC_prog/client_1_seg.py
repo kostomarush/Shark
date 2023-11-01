@@ -13,20 +13,20 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
     mode_seg = response_segment.mode
     cve_report = response_segment.cve_report
     full_scan = response_segment.full_scan
-    segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report)
+    if full_scan == 'True':
+        parametr = '-p-'
+    else:
+        parametr = '--allports'
+    segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr)
     stub.segment_scan(prot_pb2.DataClientSegment(
         name_cl=name_cl, message='Done'))
     
-# def generate_chunk(chunks):
-#     for data in chunks:
-#         yield prot_pb2.DataChunk(data_chunk=data)
 
-
-def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
+def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr):
     nm = nmap.PortScanner()
     host_info = {}
     if mode_seg == 'TCP':
-        result = nm.scan(ip_add_seg, arguments='-sT')
+        result = nm.scan(ip_add_seg, arguments=f'-sT {parametr}')
         open_ports = 0
         if result['scan']:
             for host, scan_result in result['scan'].items():
@@ -120,17 +120,14 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report):
 def cve_info(ip_add_seg, port): 
     nm = nmap.PortScanner()
     result = nm.scan(ip_add_seg, ports=f"{port}", arguments='-sV --script vulscan/ --script-args vulscandb=update_cve.csv')
-    if result['scan'][ip_add_seg]['tcp'][port]['script']:
-        cve_inf = result['scan'][ip_add_seg]['tcp'][port]['script']
-        if cve_inf:
-            all_chunk = cve_inf.get('vulscan', ''),
-        else:
-            all_chunk = 'No'
-        
-        return all_chunk[0]
-    
+    cve_inf = result['scan'][ip_add_seg]['tcp'][port]['script']
+    if cve_inf:
+        all_chunk = cve_inf.get('vulscan', 'Emptys'),
     else:
-        print('hosts is down')
+        all_chunk = 'No'
+    
+    return all_chunk[0]
+
 
         
         

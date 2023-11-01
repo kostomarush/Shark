@@ -59,11 +59,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group mb-0 justify-content-end row">
-                            <div class="col-sm-9">
-                                <button type="submit"
-                                    class="btn btn-success waves-effect waves-light">Ввести</button>
-                            </div>
+                        <div class="checkbox checkbox-info form-check-inline">
+                            {{ form.cve_report }}
+                            <label>Отчет о CVE</label>
+                        </div>
+                          <div class="form-check-inline">
+                            <button
+                              type="submit"
+                              class="btn btn-success waves-effect waves-light"
+                            >
+                              Создать задачу
+                            </button>
                         </div>
                     </form>
                 </div><!-- end card-box-->
@@ -289,129 +295,70 @@ chart.update();
         </div>
         <!-- end row -->
         <div class="row">
-            <div class="col-xl-6">
+            <div class="col-xl-12">
                 <div class="card-box">
-                    <div class="dropdown float-right">
-                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="mdi mdi-dots-horizontal"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Настройки</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                        </div>
+                  <div class="dropdown float-right">
+                    <a
+                      href="#"
+                      class="dropdown-toggle arrow-none card-drop"
+                      data-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <i class="mdi mdi-dots-horizontal"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <!-- item-->
+                      <a href="javascript:void(0);" class="dropdown-item">Settings</a>
+                      <!-- item-->
+                      <a href="javascript:void(0);" class="dropdown-item">Download</a>
+                      <!-- item-->
+                      <a href="javascript:void(0);" class="dropdown-item">Upload</a>
+                      <!-- item-->
+                      <a href="javascript:void(0);" class="dropdown-item">Action</a>
                     </div>
-                    <h4 class="header-title mb-4">Таблица сканирования</h4>
-                    <div class="table-responsive">
-                        <table class="table table-centered table-hover mb-0" id="selection-datatable">
-                            <thead>
-                                <tr>
-                                    <th class="border-top-0">№</th>
-                                    <th class="border-top-0">Состояние Сети</th>
-                                    <th class="border-top-0">Протокол</th>
-                                    <th class="border-top-0">Рабочие порты</th>
-                                    <th class="border-top-0">Состояние портов</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for i in section %}
-                                <tr>
-                                    <td><span class="ml-2">{{forloop.counter}}</span></td>
-                                    <td><span class="ml-2">{{i.ip_status}}</span></td>
-                                    <td><span class="ml-2">{{i.protocols}}</span></td>
-                                    <td><span class="ml-2">{{i.open_ports}}</span></td>
-                                    <td>
-                                        <span
-                                            class="badge badge-pill {% if i.state == 'open' %}badge-success{% elif i.state == 'filtered' %}badge-warning
-                                            {% elif i.state == 'closed' %}badge-danger{% elif i.state == 'open|filtered' %}badge-info{% endif %}">
-                                            {{i.state}}</span>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                  </div>
+                  <h4 class="header-title mb-3">Таблица Адресов</h4>
+                  <table class="table table-bordered" id="selection-datatable">
+                    <thead>
+                        <th>id</th>
+                        <th>Хост</th>
+                        <th>Состояние хоста</th>
+                        {% if item.mode == 'OS'%}
+                        <th>Полное имя ОС</th>
+                        <th>Вендор</th>
+                        <th>Семейство</th>
+                        <th>Версия</th>
+                        <th>Точность сканирования</th>
+                        {% else %}
+                        <th>{{"Открытые порты"}}</th>
+                        {% endif %}
+                      </thead>
+                    <tbody>
+                      {% for i in result %}
+                      <tr>
+                        <th>{{forloop.counter}}</th>
+                        <th>{{i.host}}</th>
+                        <th>{{i.state_scan}}</th>
+                        {% if i.state_ports %}
+                          {% if i.state_ports == 'down' %}
+                            <th>{{ "Порты закрыты" }}</th>
+                          {% else %}
+                            <th><a class="btn btn-outline-info waves-effect waves-light width-md"
+                              href="{% url 'port_information' pk=i.pk %}"> Информация о портах</a></th>
+                          {% endif %}
+                        {% else %}
+                          <th>{{i.full_name}}</th>
+                          <th>{{i.vendor}}</th>
+                          <th>{{i.osfamily}}</th>
+                          <th>{{i.osgen}}</th>
+                          <th>{{i.accuracy}}</th>
+                        {% endif %}
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                  </table>
                 </div>
-        </div>
-        <div class="col-xl-6">
-        <div class="card-box">
-            <div class="dropdown float-right">
-                <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                    aria-expanded="false">
-                    <i class="mdi mdi-dots-horizontal"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">Настройки</a>
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                    <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                </div>
-            </div>
-            <h4 class="header-title mb-4">CVE</h4>
-            <!-- Консольное окно -->
-<div id="console" class="console-window">
-    <!-- Здесь будет выводиться информация -->
-<script>
-    // Функция для вывода информации в консольное окно
-    function writeToConsole(message) {
-        var consoleWindow = document.getElementById("console");
-        var currentText = consoleWindow.innerHTML;
-        var newText = currentText + message + "<br>";
-        consoleWindow.innerHTML = newText;
-        consoleWindow.scrollTop = consoleWindow.scrollHeight;
-    }
-
-    // Создаем WebSocket соединение
-    var socket_cve = new WebSocket('ws://' + window.location.host + '/ws/my_socket_cve/');
-
-    // Обработка открытия соединения
-    socket_cve.onopen = function(event) {
-        writeToConsole("WebSocket соединение установлено.");
-    };
-
-    // Обработка входящих сообщений
-    socket_cve.onmessage = function(event) {
-        var message = event.data;
-        var mes = JSON.parse(message)
-
-        writeToConsole("Получено сообщение: " + mes['send_cve']);
-    };
-
-    // Обработка закрытия соединения
-    socket_cve.onclose = function(event) {
-        if (event.wasClean) {
-            writeToConsole("WebSocket соединение закрыто чисто, код=" + event.code + " причина=" + event.reason);
-        } else {
-            writeToConsole("WebSocket соединение прервано");
-        }
-    };
-
-    // Обработка ошибок
-    socket_cve.onerror = function(error) {
-        writeToConsole("WebSocket ошибка: " + error.message);
-    };
-
-    // Отправка сообщения на сервер
-    function sendMessage() {
-        var messageInput = document.getElementById("messageInput");
-        var message = messageInput.value;
-        socket_cve.send(message);
-        messageInput.value = "";  // Очищаем поле ввода после отправки
-    }
-</script>
-</div>
-
-                    </div>
+              </div>
                 </div>
             </div>
         </div>
