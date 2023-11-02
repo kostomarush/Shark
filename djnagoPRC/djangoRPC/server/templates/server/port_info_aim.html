@@ -1,0 +1,85 @@
+{% extends 'server/index.html' %} {% block title %} Инфорамция о портах
+{%endblock %} {% block content %}
+<div class="wrapper">
+  <div class="container-fluid">
+    <!-- start page title -->
+    <div class="page-title-alt-bg"></div>
+    <div class="page-title-box">
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item">
+            <a href="javascript: void(0);">Режимы сканирования</a>
+          </li>
+          <li class="breadcrumb-item active">Сегментированное</li>
+          <li class="breadcrumb-item active">Результаты сканирования</li>
+          <li class="breadcrumb-item active">Информация о портах</li>
+        </ol>
+      </div>
+      <h4 class="page-title">Информация о портах</h4>
+    </div>
+    <!-- end page title -->
+    <h2>Состояние открытых портов: {{item.host}}</h2>
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="card-box">
+          <div class="dropdown float-right">
+            <a
+              href="#"
+              class="dropdown-toggle arrow-none card-drop"
+              data-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="mdi mdi-dots-horizontal"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Settings</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Download</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Upload</a>
+              <!-- item-->
+              <a href="javascript:void(0);" class="dropdown-item">Action</a>
+            </div>
+          </div>
+          <h4 class="header-title mb-3">Таблица портов</h4>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>port</th>
+                <th>reason</th>
+                <th>service</th>
+                <th>cve</th>
+                <th>all_cve</th>
+              </tr>
+            </thead>
+            <tbody align="center">
+              {% for i in port_dict %}
+              <tr>
+                <th>{{forloop.counter}}</th>
+                <th>{{i.port}}</th>
+                <th>{{i.reason}}</th>
+                <th>{{i.service}}</th>
+                <th class="your-element-class">
+                  <div style="height: 100px; overflow: auto;">
+                    <pre style="
+                    font-family: Barlow,sans-serif;
+                    color: #ced4da;
+                    font-size: .9rem;">{% if i.one_cve %}{{i.one_cve}}{% else %}{{'[CVE NOT FOUND]'}}{% endif %}</pre>
+                  </div>
+                </th>
+                <th>{% if i.one_cve %}<a class="btn btn-outline-success waves-effect waves-light width-md"
+                  href="{% url 'cve_information' pk=i.pk %}"> Подробнее о CVE</a>{% else %}{{'[CVE NOT FOUND]'}}{% endif %}</th>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+

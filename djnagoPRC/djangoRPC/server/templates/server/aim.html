@@ -333,6 +333,7 @@ chart.update();
                         {% else %}
                         <th>{{"Открытые порты"}}</th>
                         {% endif %}
+                        <th>Удаление</th>
                       </thead>
                     <tbody>
                       {% for i in section %}
@@ -354,6 +355,7 @@ chart.update();
                           <th>{{i.osgen}}</th>
                           <th>{{i.accuracy}}</th>
                         {% endif %}
+                        <th><a href="{% url 'remove_table_aim' pk=i.pk %}" class="btn btn-danger mx-auto">Удалить</a></th>
                         </tr>
                         {% endfor %}
                       </tbody>

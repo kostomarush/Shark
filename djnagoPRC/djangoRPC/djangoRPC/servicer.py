@@ -1,7 +1,7 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation
+from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation, ResultPortsAim
 from concurrent import futures
 import threading
 import time
@@ -90,10 +90,10 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         data_server = DataServer.objects.in_bulk()
         response = prot_pb2.DataServer()
         for data_id in data_server:
-        
+            
             if data_server[data_id].tag == 'Proc' and f'{data_server[data_id].client.id}' == request.name_cl:
                 if request.message:
-                    save_data = DataServer.objects.get(id=i)
+                    save_data = DataServer.objects.get(id=data_id)
                     save_data.tag = 'Done'
                     save_data.save()
                     return response
@@ -102,15 +102,15 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     all_info = eval(alls_info)
                     
                     if all_info['tag'] == 'OS':
-                        for os, os_data in info.items():
+                        for os, os_data in all_info.items():
                             if os != 'host' and os != 'state' and os != 'tag':
                                 vendor = os_data['vendor']
                                 osfamily = os_data['osfamily']
                                 osgen = os_data['osgen']
                                 accuracy = os_data['accuracy']
-                                save_scan_info = ScanInfo(
-                                host=info['host'], state_scan=info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, result=result)
-                                save_scan_info.save()
+                                save_scan_info_os = ScanInfo(
+                                host=all_info['host'], state_scan=all_info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, result=result)
+                                save_scan_info_os.save()
                             else:
                                 pass
                                     
@@ -118,7 +118,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                         save_data = ScanInfo(
                             host=all_info['host'], state_ports = all_info['state_ports'], state_scan=all_info['state'])
                         save_data.save()
-                        for port_info in all_info['open_ports']:
+                        for port_info in all_info['ports']:
                             port = port_info['port']
                             reason = port_info['reason']
                             service = port_info['service']
@@ -130,11 +130,11 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                             all_cve=''
                             for cve_match in cve_matches:
                                 all_cve += cve_match + '\n'
-                            save_data_in_segment_ports = ResultPorts(
-                                port=port, reason=reason, service=service, one_cve=all_cve, all_info=save_scan_info)
+                            save_data_in_segment_ports = ResultPortsAim(
+                                port=port, reason=reason, service=service, one_cve=all_cve, all_info=save_data)
                             save_data_in_segment_ports.save()
-                            save_cve = CveInformation(cve_information = cve, result_ports = save_data_in_segment_ports)
-                            save_cve.save()
+                            #save_cve = CveInformation(cve_information = cve, result_ports = save_data_in_segment_ports)
+                            #save_cve.save()
                     return response
                                 
             elif data_server[data_id].tag == 'False':

@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, post_delete
+"""from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -97,3 +97,4 @@ def update_graph_data(sender, instance, **kwargs):
 
     async_to_sync(send_graph_data)()
 
+"""

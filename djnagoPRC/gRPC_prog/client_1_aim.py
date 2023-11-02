@@ -13,8 +13,7 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
     mode = response_aim.mode
     cve_report = response_aim.cve_report
     scan(stub, ip_address, port, mode, cve_report, name_cl)
-    stub.scan(prot_pb2.DataClient(
-        name_cl=name_cl, message='Done'))
+    stub.scan(prot_pb2.DataClient(name_cl=name_cl, message='Done'))
     
 
 
