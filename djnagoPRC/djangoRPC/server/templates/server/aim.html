@@ -237,6 +237,7 @@ chart.update();
                             <th>mode</th>
                             <th>client_scan</th>
                             <th>tag</th>
+                            <th>CVE</th>
                             <th>delete</th>
                         </tr>
                     </thead>
@@ -249,8 +250,8 @@ chart.update();
                             <th>{{i.mode}}</th>
                             <th>{{i.client}}</th>
                             <th id="tag-{{ i.pk }}">{{ i.tag }}</th>
-                            <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a>
-                            </th>
+                            <th>{{i.cve_report}}</th>
+                            <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a></th>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -334,7 +335,7 @@ chart.update();
                         {% endif %}
                       </thead>
                     <tbody>
-                      {% for i in result %}
+                      {% for i in section %}
                       <tr>
                         <th>{{forloop.counter}}</th>
                         <th>{{i.host}}</th>
@@ -344,7 +345,7 @@ chart.update();
                             <th>{{ "Порты закрыты" }}</th>
                           {% else %}
                             <th><a class="btn btn-outline-info waves-effect waves-light width-md"
-                              href="{% url 'port_information' pk=i.pk %}"> Информация о портах</a></th>
+                              href="{% url 'port_info_aim' pk=i.pk %}"> Информация о портах</a></th>
                           {% endif %}
                         {% else %}
                           <th>{{i.full_name}}</th>

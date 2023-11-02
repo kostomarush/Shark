@@ -4,6 +4,7 @@ from django.db import models
 class ScanInfo(models.Model):
     host = models.CharField(max_length=20)
     state_scan = models.CharField(max_length=20)
+    state_ports = models.CharField(max_length=10)
     full_name = models.CharField(max_length=30)
     vendor = models.CharField(max_length=20)
     osfamily = models.CharField(max_length=20)
@@ -27,6 +28,7 @@ class ClientBD(models.Model):
         return self.ip_client
 
 
+
 class DataServer(models.Model):
     
     MODE_CHOICES = (
@@ -40,8 +42,9 @@ class DataServer(models.Model):
     tag = models.CharField(max_length=10, default=False)
     ip = models.CharField(max_length=20)
     port = models.CharField(max_length=20)
-    mode = models.CharField(max_length=20)
+    mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='')
     cve_report = models.BooleanField(default=False)
+    
 
 
 class SegmentScan(models.Model):

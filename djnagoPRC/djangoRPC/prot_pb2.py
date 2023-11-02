@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nprot.proto\"4\n\nDataServer\x12\n\n\x02ip\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\t\x12\x0c\n\x04mode\x18\x03 \x01(\t\"\x1f\n\tDataChunk\x12\x12\n\ndata_chunk\x18\x01 \x01(\t\"\x17\n\x05\x45mpty\x12\x0e\n\x06result\x18\x01 \x01(\t\"y\n\nDataClient\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x11\n\tip_status\x18\x02 \x01(\t\x12\x11\n\tprotocols\x18\x03 \x01(\t\x12\x12\n\nopen_ports\x18\x04 \x01(\t\x12\r\n\x05state\x18\x05 \x01(\t\x12\x11\n\tid_client\x18\x06 \x01(\t\"V\n\x0b\x44\x61taSegment\x12\x12\n\nip_address\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\t\x12\x12\n\ncve_report\x18\x03 \x01(\t\x12\x11\n\tfull_scan\x18\x04 \x01(\t\"f\n\x11\x44\x61taClientSegment\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\r\n\x05state\x18\x02 \x01(\t\x12\x12\n\nopen_ports\x18\x03 \x01(\t\x12\x0f\n\x07name_cl\x18\x04 \x01(\t\x12\x0f\n\x07message\x18\x05 \x01(\t\"-\n\x0cHelloRequest\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"+\n\nHelloReply\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\xa0\x01\n\x03RPC\x12 \n\x04scan\x12\x0b.DataClient\x1a\x0b.DataServer\x12\x1d\n\x05\x63hunk\x12\n.DataChunk\x1a\x06.Empty(\x01\x12\x30\n\x0csegment_scan\x12\x12.DataClientSegment\x1a\x0c.DataSegment\x12&\n\x08SayHello\x12\r.HelloRequest\x1a\x0b.HelloReplyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nprot.proto\"P\n\nDataServer\x12\x12\n\nip_address\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\t\x12\x0c\n\x04mode\x18\x03 \x01(\t\x12\x12\n\ncve_report\x18\x04 \x01(\t\"<\n\nDataClient\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\t\x12\x0f\n\x07name_cl\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"V\n\x0b\x44\x61taSegment\x12\x12\n\nip_address\x18\x01 \x01(\t\x12\x0c\n\x04mode\x18\x02 \x01(\t\x12\x12\n\ncve_report\x18\x03 \x01(\t\x12\x11\n\tfull_scan\x18\x04 \x01(\t\"C\n\x11\x44\x61taClientSegment\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\t\x12\x0f\n\x07name_cl\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"-\n\x0cHelloRequest\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"+\n\nHelloReply\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t2\x81\x01\n\x03RPC\x12 \n\x04scan\x12\x0b.DataClient\x1a\x0b.DataServer\x12\x30\n\x0csegment_scan\x12\x12.DataClientSegment\x1a\x0c.DataSegment\x12&\n\x08SayHello\x12\r.HelloRequest\x1a\x0b.HelloReplyb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -22,21 +22,17 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _globals['_DATASERVER']._serialized_start=14
-  _globals['_DATASERVER']._serialized_end=66
-  _globals['_DATACHUNK']._serialized_start=68
-  _globals['_DATACHUNK']._serialized_end=99
-  _globals['_EMPTY']._serialized_start=101
-  _globals['_EMPTY']._serialized_end=124
-  _globals['_DATACLIENT']._serialized_start=126
-  _globals['_DATACLIENT']._serialized_end=247
-  _globals['_DATASEGMENT']._serialized_start=249
-  _globals['_DATASEGMENT']._serialized_end=335
-  _globals['_DATACLIENTSEGMENT']._serialized_start=337
-  _globals['_DATACLIENTSEGMENT']._serialized_end=439
-  _globals['_HELLOREQUEST']._serialized_start=441
-  _globals['_HELLOREQUEST']._serialized_end=486
-  _globals['_HELLOREPLY']._serialized_start=488
-  _globals['_HELLOREPLY']._serialized_end=531
-  _globals['_RPC']._serialized_start=534
-  _globals['_RPC']._serialized_end=694
+  _globals['_DATASERVER']._serialized_end=94
+  _globals['_DATACLIENT']._serialized_start=96
+  _globals['_DATACLIENT']._serialized_end=156
+  _globals['_DATASEGMENT']._serialized_start=158
+  _globals['_DATASEGMENT']._serialized_end=244
+  _globals['_DATACLIENTSEGMENT']._serialized_start=246
+  _globals['_DATACLIENTSEGMENT']._serialized_end=313
+  _globals['_HELLOREQUEST']._serialized_start=315
+  _globals['_HELLOREQUEST']._serialized_end=360
+  _globals['_HELLOREPLY']._serialized_start=362
+  _globals['_HELLOREPLY']._serialized_end=405
+  _globals['_RPC']._serialized_start=408
+  _globals['_RPC']._serialized_end=537
 # @@protoc_insertion_point(module_scope)

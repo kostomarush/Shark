@@ -6,3 +6,5 @@ nmap -iL input.txt
 
 nmap -sO 192.168.1.1
  Определение Поддерживаемых IP Протоколов
+
+python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. prot.proto 

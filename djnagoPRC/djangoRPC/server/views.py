@@ -185,3 +185,26 @@ def cve_information(request, pk):
 
     return render(request, 'server/cve_information.html', {'item': item,
                                                             'cve_dict': cve_dict})
+
+
+
+def port_info_aim(request, pk):
+    item = get_object_or_404(ScanInfo, pk=pk)
+    segment_results = ScanInfo.objects.all()
+    ports_by_host = {}
+    # Пройдите по каждому объекту SegmentScan
+    for segment_result in segment_results:
+        # Получите связанные с этим объектом IPAddress
+        ports = ResultPorts.objects.filter(all_info=segment_result)
+
+        # Сохраните их в словаре
+        ports_by_host[segment_result] = ports
+
+    port_dict = []
+    for ports, segment_result in ports_by_host.items():
+        if ports == item:
+            for ports in segment_result:
+                port_dict.append(ports)
+
+    return render(request, 'server/port_info_aim.html', {'item': item,
+                                                            'port_dict': port_dict})

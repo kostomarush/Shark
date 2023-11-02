@@ -16,9 +16,8 @@ class DataServerForm(ModelForm):
                 'placeholder': 'Port',
 
             }),
-            'mode': TextInput(attrs={
+            'mode': Select(attrs={
                 'class': 'form-control',
-                'placeholder': 'Mode',
 
             })
             
