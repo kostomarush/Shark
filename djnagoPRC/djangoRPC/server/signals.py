@@ -1,4 +1,4 @@
-"""from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -6,7 +6,7 @@ import json
 import logging
 
 
-from .models import ScanInfo, DataServer
+from .models import ScanInfo, DataServer, ResultPortsAim
 
 channel_layer = get_channel_layer()
 
@@ -67,11 +67,11 @@ def update_client_data(sender, instance, **kwargs):
 
     async_to_sync(send_task_done)()
 
-@receiver(post_save,  sender=ScanInfo)
+@receiver(post_save,  sender=ResultPortsAim)
 def update_graph_data(sender, instance, **kwargs):
 
     def get_scan_info_count(state):
-        count = ScanInfo.objects.filter(state=state).count()
+        count = ResultPortsAim.objects.filter(state=state).count()
         return count
 
     open = get_scan_info_count('open')
@@ -96,5 +96,3 @@ def update_graph_data(sender, instance, **kwargs):
 
 
     async_to_sync(send_graph_data)()
-
-"""

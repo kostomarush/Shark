@@ -63,21 +63,7 @@ def remove_segment(request, pk):
 
 @login_required(redirect_field_name=None, login_url='/')
 def data(request):
-    # Count_Ports
-    # open = ScanInfo.objects.filter(state='open').count()
-    # filtered = ScanInfo.objects.filter(state='filtered').count()
-    # close = ScanInfo.objects.filter(state='closed').count()
-    # open_filtered = ScanInfo.objects.filter(state='open|filtered').count()
-    # Count_Task
-    client_1 = 0
-    client_2 = 0
-    data_server = DataServer.objects.in_bulk()
-    for id in data_server:
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 1:
-            client_1 += 1
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 2:
-            client_2 += 1
-    #
+
     query_results = ScanInfo.objects.all()
     data_serv = DataServer.objects.all()
     data_serv = DataServer.objects.all()
@@ -92,17 +78,11 @@ def data(request):
             error = 'Форма не верна'
     form = DataServerForm()
     tasks = {
-        # 'open': open,
-        # 'filtered': filtered,
-        # 'close': close,
-        # 'open_filtered': open_filtered,
         'form': form,
         'data_serv': data_serv,
         'error': error,
         'section': query_results,
         'task_done': task_done,
-        'client_1': client_1,
-        'client_2': client_2,
     }
     return render(request, 'server/aim.html', tasks)
 
