@@ -63,9 +63,7 @@ def remove_segment(request, pk):
 
 @login_required(redirect_field_name=None, login_url='/')
 def data(request):
-
     query_results = ScanInfo.objects.all()
-    data_serv = DataServer.objects.all()
     data_serv = DataServer.objects.all()
     task_done = DataServer.objects.filter(tag='Done').count()
     error = ''

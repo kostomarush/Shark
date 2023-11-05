@@ -77,6 +77,7 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr):
                     for port, info in scan_result['udp'].items():
                         port_data = {
                             'port': f'{port}',
+                            'state': info['state'],
                             'reason': info['reason'],
                             'service': info['name']
                         }
@@ -114,7 +115,7 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr):
                 else:
                     print('OS None')
             stub.segment_scan(prot_pb2.DataClientSegment(
-                name_cl=name_cl, host=f'{host_info}'))  
+                name_cl=name_cl, data=f'{host_info}'))  
         else:
             print('hosts is down')
 

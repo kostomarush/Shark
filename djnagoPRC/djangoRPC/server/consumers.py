@@ -116,12 +116,14 @@ class TableConsumer(AsyncWebsocketConsumer):
     async def update_tag(self, event):
         # Этот метод вызывается, когда сигнал об обновлении "tag" отправляется
         tag = event['tag']
+        client = event['client']
         record_id = event['id']
 
         # Отправьте обновленные данные клиенту
         await self.send(json.dumps({
             'id': record_id,
             'tag': tag,
+            'client': client
         }))
 
 class TaskConsumer(AsyncWebsocketConsumer):

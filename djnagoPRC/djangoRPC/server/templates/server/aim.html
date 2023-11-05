@@ -211,14 +211,19 @@ chart.update();
                     var socket3 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_table/');
                     
                     socket3.onmessage = function(e) {
-                        var newData = JSON.parse(e.data);
-                        var recordId = newData.id;
-                        var tagCell = document.getElementById('tag-' + recordId);
-                        console.log(newData)
-                        if (tagCell) {
-                            tagCell.innerText = newData.tag;
-                        }
-                    };
+                    var newData = JSON.parse(e.data);
+                    var recordId = newData.id;
+                    var tagCell = document.getElementById('tag-' + recordId);
+                    var clientCell = document.getElementById('client-' + recordId); // Найдем ячейку для параметра 'client'
+                    console.log(newData);
+                    if (tagCell) {
+                      tagCell.innerText = newData.tag;
+                    }
+                    if (clientCell) {
+                      clientCell.innerText = newData.client; // Обновим текст в ячейке 'client' с новым значением
+                    }
+                };
+                    
                 
                     socket3.onopen = function() {
                         console.log('WebSocket connected');
@@ -248,7 +253,7 @@ chart.update();
                             <th>{{i.ip}}</th>
                             <th>{{i.port}}</th>
                             <th>{{i.mode}}</th>
-                            <th>{{i.client}}</th>
+                            <th id="client-{{ i.pk }}">{{ i.client }}</th>
                             <th id="tag-{{ i.pk }}">{{ i.tag }}</th>
                             <th>{{i.cve_report}}</th>
                             <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a></th>
@@ -323,13 +328,10 @@ chart.update();
                     <thead>
                         <th>id</th>
                         <th>Хост</th>
+                        <th>Режим</th>
                         <th>Состояние хоста</th>
-                        {% if item.mode == 'OS'%}
-                        <th>Полное имя ОС</th>
-                        <th>Вендор</th>
-                        <th>Семейство</th>
-                        <th>Версия</th>
-                        <th>Точность сканирования</th>
+                        {% if result.mode == 'OS'%}
+ 
                         {% else %}
                         <th>{{"Открытые порты"}}</th>
                         {% endif %}
@@ -339,25 +341,38 @@ chart.update();
                       <tr>
                         <th>{{forloop.counter}}</th>
                         <th>{{i.host}}</th>
+                        <th>{{i.result.mode}}</th>
                         <th>{{i.state_scan}}</th>
-                        {% if i.state_ports %}
-                          {% if i.state_ports == 'down' %}
-                            <th>{{ "Порты закрыты" }}</th>
-                          {% else %}
+                        {% if i.result.mode == 'OS'%}
+                        <th><button type="button" class="btn btn-outline-info waves-effect waves-light width-md" data-toggle="modal" data-target="#myModal{{ i.id }}">
+                            Информация об ОС
+                          </button></th>
+                          
+                          <!-- Модальное окно -->
+                          <div class="modal fade" id="myModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h4 class="modal-title" id="myModalLabel"> Информация об ОС {{i.host}}</h4>
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                </div>
+                                <div class="modal-body" style="font-size: 16px;">
+                                  <!-- Содержимое модального окна -->
+                                Полное имя ОС: {{i.full_name}}<br>
+                                Вендор: {{i.vendor}}<br>
+                                Семейство: {{i.osfamily}}<br>
+                                Версия: {{i.osgen}}<br>
+                                Точность сканирования: {{i.accuracy}}
+                                </div>
+                        {% else %}
                             <th><a class="btn btn-outline-info waves-effect waves-light width-md"
                               href="{% url 'port_info_aim' pk=i.pk %}"> Информация о портах</a></th>
-                          {% endif %}
-                        {% else %}
-                          <th>{{i.full_name}}</th>
-                          <th>{{i.vendor}}</th>
-                          <th>{{i.osfamily}}</th>
-                          <th>{{i.osgen}}</th>
-                          <th>{{i.accuracy}}</th>
                         {% endif %}
                         </tr>
                         {% endfor %}
                       </tbody>
                   </table>
+                </div>
                 </div>
               </div>
                 </div>

@@ -1,7 +1,7 @@
 
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim
+from server.models import ScanInfo, DataServer, ClientBD, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim
 from concurrent import futures
 import threading
 import time
@@ -141,7 +141,12 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     return response
                                 
             elif data_server[data_id].tag == 'False':
-                DataServer.objects.filter(id=data_id).update(client=request.name_cl, tag='Proc')
+                client = ClientBD.objects.get(id=data_id)
+                save = DataServer.objects.get(id=data_id)
+                save.client = client
+                save.tag = 'Proc'
+                save.save()
+                #DataServer.objects.filter(id=data_id).update(client=request.name_cl, tag='Proc')
                 ip = data_server[data_id].ip
                 port = data_server[data_id].port
                 mode = data_server[data_id].mode

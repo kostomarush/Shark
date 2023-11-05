@@ -32,6 +32,7 @@ def update_client_data(sender, instance, **kwargs):
     task_done = DataServer.objects.filter(tag='Done').count()
 
     new_tag = instance.tag
+    new_cl = instance.client
 
     # Отправьте это значение через WebSocket
 
@@ -39,6 +40,7 @@ def update_client_data(sender, instance, **kwargs):
         await channel_layer.group_send('my_table_group', {
             'type': 'update_tag',
             'tag': new_tag,
+            'client': new_cl,
             'id': instance.pk,  # Идентификатор записи, которую вы обновили
         })
 
