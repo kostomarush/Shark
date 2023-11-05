@@ -48,6 +48,7 @@
               <tr>
                 <th>№</th>
                 <th>port</th>
+                <th>state</th>
                 <th>reason</th>
                 <th>service</th>
                 <th>cve</th>
@@ -59,6 +60,7 @@
               <tr>
                 <th>{{forloop.counter}}</th>
                 <th>{{i.port}}</th>
+                <th>{{i.state}}</th>
                 <th>{{i.reason}}</th>
                 <th>{{i.service}}</th>
                 <th class="your-element-class">
@@ -70,7 +72,7 @@
                   </div>
                 </th>
                 <th>{% if i.one_cve %}<a class="btn btn-outline-success waves-effect waves-light width-md"
-                  href="{% url 'cve_information' pk=i.pk %}"> Подробнее о CVE</a>{% else %}{{'[CVE NOT FOUND]'}}{% endif %}</th>
+                  href="{% url 'cve_information_aim' pk=i.pk %}"> Подробнее о CVE</a>{% else %}{{'[CVE NOT FOUND]'}}{% endif %}</th>
               </tr>
               {% endfor %}
             </tbody>

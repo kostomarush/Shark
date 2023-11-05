@@ -3,7 +3,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from asgiref.sync import sync_to_async
-from .models import ScanInfo, DataServer
+from .models import ScanInfo, DataServer, ResultPortsAim
 
 
 class GraphConsumer(AsyncWebsocketConsumer):
@@ -21,10 +21,10 @@ class GraphConsumer(AsyncWebsocketConsumer):
         if message['type'] == 'get_initial_data':
             # Здесь вы можете выполнить логику для получения начальных данных
 
-            open = await sync_to_async(ScanInfo.objects.filter(state='open').count)()
-            filtered = await sync_to_async(ScanInfo.objects.filter(state='filtered').count)()
-            close = await sync_to_async(ScanInfo.objects.filter(state='closed').count)()
-            open_filtered = await sync_to_async(ScanInfo.objects.filter(state='open|filtered').count)()
+            open = await sync_to_async(ResultPortsAim.objects.filter(state='open').count)()
+            filtered = await sync_to_async(ResultPortsAim.objects.filter(state='filtered').count)()
+            close = await sync_to_async(ResultPortsAim.objects.filter(state='closed').count)()
+            open_filtered = await sync_to_async(ResultPortsAim.objects.filter(state='open|filtered').count)()
             print(open)
 
             initial_data = {

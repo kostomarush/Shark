@@ -44,6 +44,7 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr):
                             cve_information = 'Empty'
                         port_data = {
                             'port': f'{port}',
+                            'state': info['state'],
                             'reason': info['reason'],
                             'service': info['name'],
                             'cve': cve_information

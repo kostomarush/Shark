@@ -36,6 +36,7 @@ def scan(stub, ip_address, port, mode, cve_report, name_cl):
                         cve_information = 'Empty'
                     port_data = {
                                 'port': f'{port}',
+                                'state': info['state'],
                                 'reason': info['reason'],
                                 'service': info['name'],
                                 'cve': cve_information
@@ -80,7 +81,7 @@ def run():
     channel = grpc.insecure_channel(
         'localhost:50051', options=(('grpc.enable_http_proxy', 0),))
     stub = prot_pb2_grpc.RPCStub(channel)
-    name_cl = '1'
+    name_cl = '2'
     ping_thread = threading.Thread(
         target=send_keep_alive_messages, args=(stub, name_cl))
     ping_thread.daemon = True

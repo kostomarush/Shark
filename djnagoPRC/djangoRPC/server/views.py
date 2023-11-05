@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim
+from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim
 from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
 import ipaddress
@@ -209,8 +209,24 @@ def port_info_aim(request, pk):
     return render(request, 'server/port_info_aim.html', {'item': item,
                                                          'port_dict': port_dict})
 
-@login_required(redirect_field_name=None, login_url='/')
-def remove_table_aim(request, pk):
-    item = ScanInfo.objects.get(pk=pk)
-    item.delete()
-    return redirect('aim')
+
+def cve_information_aim(request, pk):
+    item = get_object_or_404(ResultPortsAim, pk=pk)
+    port_results = ResultPortsAim.objects.all()
+    cve_by_port = {}
+    # Пройдите по каждому объекту SegmentScan
+    for port_result in port_results:
+        # Получите связанные с этим объектом IPAddress
+        cve = CveInformationAim.objects.filter(result_ports=port_result)
+
+        # Сохраните их в словаре
+        cve_by_port[port_result] = cve
+
+    cve_dict = []
+    for cve, port_result in cve_by_port.items():
+        if cve == item:
+            for i in port_result:
+                cve_dict.append(i)
+
+    return render(request, 'server/cve_information_aim.html', {'item': item,
+                                                            'cve_dict': cve_dict})
