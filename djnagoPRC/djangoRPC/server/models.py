@@ -2,7 +2,7 @@ from django.db import models
 
 
 class ClientBD(models.Model):
-
+    
     ip_client = models.CharField(max_length=20)
 
     def __str__(self):
@@ -17,11 +17,11 @@ class DataServer(models.Model):
         ('OS', 'OS')
     )
     
-    client = models.ForeignKey(ClientBD, on_delete=models.SET_NULL, null=True)
     tag = models.CharField(max_length=10, default=False)
     ip = models.CharField(max_length=20)
     port = models.CharField(max_length=20)
     mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='')
+    client = models.ForeignKey(ClientBD, on_delete=models.SET_NULL, null=True)
     cve_report = models.BooleanField(default=False)
     
 

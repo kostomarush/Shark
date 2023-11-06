@@ -31,19 +31,6 @@ def update_client_data(sender, instance, **kwargs):
 
     task_done = DataServer.objects.filter(tag='Done').count()
 
-    new_tag = instance.tag
-    new_cl = instance.client
-
-    # Отправьте это значение через WebSocket
-
-    async def send_update():
-        await channel_layer.group_send('my_table_group', {
-            'type': 'update_tag',
-            'tag': new_tag,
-            'client': new_cl,
-            'id': instance.pk,  # Идентификатор записи, которую вы обновили
-        })
-
     async def send_client_data():
         await channel_layer.group_send(
             'send_client_data',
@@ -62,12 +49,29 @@ def update_client_data(sender, instance, **kwargs):
             }
         )
 
-
-    async_to_sync(send_update)()
-
     async_to_sync(send_client_data)()
 
     async_to_sync(send_task_done)()
+    
+@receiver(post_save, sender=DataServer)
+def update_client_tag(sender, instance, created, **kwargs):
+    if created:
+        pass
+    else:
+        new_tag = instance.tag
+        new_cl = instance.client.ip_client
+
+        # Отправьте это значение через WebSocket
+
+        async def send_update():
+            await channel_layer.group_send('my_table_group', {
+                'type': 'update_tag',
+                'tag': new_tag,
+                'client': new_cl,
+                'id': instance.pk,  # Идентификатор записи, которую вы обновили
+            })
+
+        async_to_sync(send_update)()
 
 @receiver(post_save,  sender=ResultPortsAim)
 def update_graph_data(sender, instance, **kwargs):

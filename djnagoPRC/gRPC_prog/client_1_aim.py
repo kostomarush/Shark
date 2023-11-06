@@ -53,7 +53,7 @@ def scan(stub, ip_address, port, mode, cve_report, name_cl):
             print('hosts is down')
     
     elif mode == 'UDP':
-        result = nm.scan(ip_address, ports=port, arguments='-sT', sudo=True)
+        result = nm.scan(ip_address, ports=port, arguments='-sU', sudo=True)
         if result['scan']:
             host_info['host'] = ip_address
             host_info['tag'] = mode
@@ -61,7 +61,7 @@ def scan(stub, ip_address, port, mode, cve_report, name_cl):
             host_info['ports'] = []
             if 'udp' in nm[ip_address]:
                 host_info['state_ports'] = 'open'
-                for port, info in nm[ip_address]['tcp'].items():
+                for port, info in nm[ip_address]['udp'].items():
                     if cve_report == 'True':
                         cve_information = cve_info(ip_address, port)
                     else:
@@ -137,7 +137,7 @@ def run():
     channel = grpc.insecure_channel(
         'localhost:50051', options=(('grpc.enable_http_proxy', 0),))
     stub = prot_pb2_grpc.RPCStub(channel)
-    name_cl = '2'
+    name_cl = '1'
     ping_thread = threading.Thread(
         target=send_keep_alive_messages, args=(stub, name_cl))
     ping_thread.daemon = True

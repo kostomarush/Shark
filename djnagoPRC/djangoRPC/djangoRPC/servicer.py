@@ -92,7 +92,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         response = prot_pb2.DataServer()
         for data_id in data_server:
             
-            if data_server[data_id].tag == 'Proc' and f'{data_server[data_id].client.id}' == request.name_cl:
+            if data_server[data_id].tag == 'Proc' and f'{data_server[data_id].client.ip_client}' == request.name_cl:
                 if request.message:
                     save_data = DataServer.objects.get(id=data_id)
                     save_data.tag = 'Done'
@@ -141,11 +141,11 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     return response
                                 
             elif data_server[data_id].tag == 'False':
-                client = ClientBD.objects.get(id=data_id)
-                save = DataServer.objects.get(id=data_id)
-                save.client = client
-                save.tag = 'Proc'
-                save.save()
+                client = ClientBD.objects.get(ip_client=request.name_cl)
+                save_tab = DataServer.objects.get(id=data_id)
+                save_tab.client = client
+                save_tab.tag = 'Proc'
+                save_tab.save()
                 #DataServer.objects.filter(id=data_id).update(client=request.name_cl, tag='Proc')
                 ip = data_server[data_id].ip
                 port = data_server[data_id].port

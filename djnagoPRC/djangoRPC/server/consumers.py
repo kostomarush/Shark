@@ -118,7 +118,6 @@ class TableConsumer(AsyncWebsocketConsumer):
         tag = event['tag']
         client = event['client']
         record_id = event['id']
-
         # Отправьте обновленные данные клиенту
         await self.send(json.dumps({
             'id': record_id,
