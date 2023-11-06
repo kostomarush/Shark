@@ -1,18 +1,60 @@
-
 import prot_pb2
 import prot_pb2_grpc
 from server.models import ScanInfo, DataServer, ClientBD, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim
-from concurrent import futures
 import threading
 import time
-import grpc
+import json
 import re
+import os
+
+
+
 
 class RPCServicer(prot_pb2_grpc.RPCServicer):
 
     def __init__(self):
         self.last_ping_times = {}
 
+    def get_cvss_score(self, cve_id, nvd_json_path):
+        year = cve_id.split('-')[1]  # Извлекаем год из названия CVE
+        json_file = os.path.join(nvd_json_path, f"nvdcve-1.1-{year}.json")
+
+        if not os.path.isfile(json_file):
+            print(f"Файл с данными CVE {cve_id} для года {year} не найден.")
+            return None
+
+        with open(json_file, 'r') as file:
+            nvd_data = json.load(file)
+    
+        for item in nvd_data['CVE_Items']:
+            if item['cve']['CVE_data_meta']['ID'] == cve_id:
+                cvss_score = None
+                if 'baseMetricV3' in item['impact']:
+                    cvss = item['impact']['baseMetricV3']['cvssV3']
+                    cvss_score = cvss['baseScore']
+                elif 'baseMetricV2' in item['impact']:
+                    cvss = item['impact']['baseMetricV2']['cvssV2']
+                    cvss_score = cvss['baseScore']
+
+                if cvss_score is not None:
+                    return cvss_score
+    
+        print(f"Информация о CVE {cve_id} не найдена для года {year}.")
+        return None
+
+    def get_criticality(self, cve_id, nvd_json_path):
+        cvss_score = self.get_cvss_score(cve_id, nvd_json_path)
+        if cvss_score is not None:
+            if cvss_score >= 9.0:
+                return "Критично"
+            elif cvss_score >= 7.0:
+                return "Высокая"
+            elif cvss_score >= 4.0:
+                return "Средняя"
+            else:
+                return "Низкая"
+        return f"Информация о CVE {cve_id} не найдена для года."
+    
     def segment_scan(self, request, context):
         data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
@@ -130,9 +172,12 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                             cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
                             
                             # Выводим результат
+                            nvd_json_path = "/home/user/Desktop/clone/Dipl/cvss"
                             all_cve=''
                             for cve_match in cve_matches:
-                                all_cve += cve_match + '\n'
+                                stripped_cve = cve_match.strip("[]")
+                                criticality = self.get_criticality(stripped_cve, nvd_json_path)
+                                all_cve += stripped_cve + criticality+ '\n'
                             save_data_in_aim_ports = ResultPortsAim(
                                 port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data)
                             save_data_in_aim_ports.save()
@@ -146,7 +191,6 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 save_tab.client = client
                 save_tab.tag = 'Proc'
                 save_tab.save()
-                #DataServer.objects.filter(id=data_id).update(client=request.name_cl, tag='Proc')
                 ip = data_server[data_id].ip
                 port = data_server[data_id].port
                 mode = data_server[data_id].mode

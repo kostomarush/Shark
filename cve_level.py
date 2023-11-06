@@ -1,30 +1,35 @@
 import os
-import xml.etree.ElementTree as ET
-from cvss import CVSS3
+import json
 
-def get_cvss_score(cve_id, nvd_data_path):
-    xml_file = os.path.join(nvd_data_path, "nvdcve-{}trans.xml".format(cve_id.split("-")[1]))
+def get_cvss_score(cve_id, nvd_json_path):
+    year = cve_id.split('-')[1]  # Извлекаем год из названия CVE
+    json_file = os.path.join(nvd_json_path, f"nvdcve-1.1-{year}.json")
 
-    if not os.path.isfile(xml_file):
-        print(f"Файл с данными CVE {cve_id} не найден.")
+    if not os.path.isfile(json_file):
+        print(f"Файл с данными CVE {cve_id} для года {year} не найден.")
         return None
 
-    tree = ET.parse(xml_file)
-    root = tree.getroot()
+    with open(json_file, 'r') as file:
+        nvd_data = json.load(file)
+    
+    for item in nvd_data['CVE_Items']:
+        if item['cve']['CVE_data_meta']['ID'] == cve_id:
+            cvss_score = None
+            if 'baseMetricV3' in item['impact']:
+                cvss = item['impact']['baseMetricV3']['cvssV3']
+                cvss_score = cvss['baseScore']
+            elif 'baseMetricV2' in item['impact']:
+                cvss = item['impact']['baseMetricV2']['cvssV2']
+                cvss_score = cvss['baseScore']
 
-    for entry in root.findall(".//{http://cve.mitre.org/cve/data_interchange/4}entry"):
-        cve_id_element = entry.find(".//{http://cve.mitre.org/cve/data_interchange/4}cve-id")
-        if cve_id_element is not None and cve_id_element.text == cve_id:
-            cvssv3 = entry.find(".//{http://cve.mitre.org/cve/data_interchange/4}cvssv3")
-            if cvssv3 is not None:
-                cvss_vector = cvssv3.find(".//{http://www.w3.org/2001/XMLSchema-instance}value").text
-                cvss_score = CVSS3(cvss_vector).base_score
+            if cvss_score is not None:
                 return cvss_score
-
+    
+    print(f"Информация о CVE {cve_id} не найдена для года {year}.")
     return None
 
-def get_criticality(cve_id, nvd_data_path):
-    cvss_score = get_cvss_score(cve_id, nvd_data_path)
+def get_criticality(cve_id, nvd_json_path):
+    cvss_score = get_cvss_score(cve_id, nvd_json_path)
     if cvss_score is not None:
         if cvss_score >= 9.0:
             return "Критично"
@@ -34,11 +39,10 @@ def get_criticality(cve_id, nvd_data_path):
             return "Средняя"
         else:
             return "Низкая"
-    else:
-        return "Информация о CVE не найдена."
+    return f"Информация о CVE {cve_id} не найдена для года."
 
 if __name__ == "__main__":
-    nvd_data_path = "/home/user/Dipl/cvss"  # Укажите путь к папке с данными NVD
-    cve_id = input("Введите CVE ID (например, CVE-2019-12345): ")
-    criticality = get_criticality(cve_id, nvd_data_path)
-    print(f"Критичность CVE {cve_id}: {criticality}")
+    nvd_json_path = "/home/user/Desktop/clone/Dipl/cvss"  # Укажите путь к папке с данными CVE
+    cve_id = 'CVE-2007-4654'
+    criticality = get_criticality(cve_id, nvd_json_path)
+    print(f"Критичность {cve_id}: {criticality}")
