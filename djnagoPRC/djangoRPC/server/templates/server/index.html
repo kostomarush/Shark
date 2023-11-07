@@ -7,7 +7,6 @@
     <title>{% block title %}Shark{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- App favicon -->
-
     <link rel="shortcut icon" href="{% static 'server/images/favicon.ico' %}" />
     <!-- jvectormap -->
     <link
@@ -43,6 +42,11 @@
     <!-- App css -->
     <link
       href="{% static 'server/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'server/css/knob.css' %}"
       rel="stylesheet"
       type="text/css"
     />
@@ -287,6 +291,7 @@
     <script src="{% static 'server/libs/jqvmap/jquery.vmap.min.js' %}"></script>
     <script src="{% static 'server/libs/jqvmap/jquery.vmap.usa.js' %}"></script>
 
+    
     <!-- Datatable js -->
     <script src="{% static 'server/libs/datatables/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'server/libs/datatables/dataTables.bootstrap4.min.js' %}"></script>

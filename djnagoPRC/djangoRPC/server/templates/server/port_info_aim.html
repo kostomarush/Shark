@@ -20,6 +20,87 @@
     <!-- end page title -->
     <h2>Состояние открытых портов: {{item.host}}</h2>
     <div class="row">
+      <div class="col-xl-6">
+        <div class="card-box" dir="ltr">
+          <h5 style="margin-top: -10px;">Состояния</h5>
+          <br>
+          <div class="row">
+            <div class="col-md-3 text-center">
+              <input data-plugin="knob" data-width="150" data-height="150"
+                data-displayPrevious=true data-fgColor="hsl(283, 90%, 55%)" data-bgColor="#3b4452" data-skin="tron"
+                data-cursor=true value="75" data-thickness=".4" data-angleOffset="-125"
+                data-angleArc="250" />
+              <h4 class="text-muted mt-3">Критично</h4>
+            </div>
+            <div class="col-md-3 text-center">
+              <input data-plugin="knob" data-width="150" data-height="150"
+                data-displayPrevious=true data-fgColor="hsl(0, 86%, 65%)" data-bgColor="#3b4452" data-skin="tron"
+                data-cursor=true value="75" data-thickness=".4" data-angleOffset="-125"
+                data-angleArc="250" />
+              <h4 class="text-muted mt-3">Высокая</h4>
+            </div>
+            <div class="col-md-3 text-center">
+              <input data-plugin="knob" data-width="150" data-height="150"
+                data-displayPrevious=true data-fgColor="hsl(39, 90%, 55%)" data-bgColor="#3b4452" data-skin="tron"
+                data-cursor=true value="75" data-thickness=".4" data-angleOffset="-125"
+                data-angleArc="250" />
+              <h4 class="text-muted mt-3">Средняя</h4>
+            </div>
+            <div class="col-md-3 text-center">
+              <input data-plugin="knob" data-width="150" data-height="150"
+                data-displayPrevious=true data-fgColor="hsl(130, 90%, 55%)" data-bgColor="#3b4452" data-skin="tron"
+                data-cursor=true value="75" data-thickness=".4" data-angleOffset="-125"
+                data-angleArc="250" />
+              <h4 class="text-muted mt-3">Низкая</h4>
+              <div class="mb-3"></div>
+            </div>
+          </div>
+        </div> <!-- end card-box -->
+      </div>
+      <div class="col-xl-3">
+        <div class="card-box" align='center'>
+          <h5 style="margin-top: -10px;">Состояния</h5>
+          <div style="width: 260px; height: 245px;">
+          <canvas id="chart"></canvas>
+        </div>
+      </div>
+      </div>
+      <div class="col-xl-3">
+        <div class="card-box" dir="ltr">
+          <h5 style="margin-top: -10px;">Наиболее опасные уязвимости</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Заголовок 1</th>
+                  <th>Заголовок 2</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Строка 1, ячейка 1</td>
+                  <td>Строка 1, ячейка 2</td>
+                </tr>
+                <tr>
+                  <td>Строка 2, ячейка 1</td>
+                  <td>Строка 2, ячейка 2</td>
+                </tr>
+                <tr>
+                  <td>Строка 3, ячейка 1</td>
+                  <td>Строка 3, ячейка 2</td>
+                </tr>
+                <tr>
+                  <td>Строка 4, ячейка 1</td>
+                  <td>Строка 4, ячейка 2</td>
+                </tr>
+                <!-- Добавьте больше строк, если необходимо -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-xl-12">
         <div class="card-box">
           <div class="dropdown float-right">
@@ -82,6 +163,30 @@
     </div>
   </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+  const data = {
+    labels: ['Red', 'Blue', 'Yellow'],
+    datasets: [{
+      label: 'My First Dataset',
+      data: [300, 50, 100],
+      backgroundColor: [
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 205, 86)'
+      ],
+      hoverOffset: 4
+    }]
+  };
+
+  const ctx = document.getElementById('chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'pie', // Используем тип "doughnut" для круговой диаграммы
+    data: data
+  });
+</script>
+
+
 {% endblock %}
 

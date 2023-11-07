@@ -42,7 +42,7 @@ def get_criticality(cve_id, nvd_json_path):
     return f"Информация о CVE {cve_id} не найдена для года."
 
 if __name__ == "__main__":
-    nvd_json_path = "/home/user/Desktop/clone/Dipl/cvss"  # Укажите путь к папке с данными CVE
+    nvd_json_path = "/usr/share/nmap/scripts/vulscan/cvss"  # Укажите путь к папке с данными CVE
     cve_id = 'CVE-2007-4654'
     criticality = get_criticality(cve_id, nvd_json_path)
     print(f"Критичность {cve_id}: {criticality}")

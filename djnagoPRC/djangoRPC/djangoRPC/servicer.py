@@ -53,7 +53,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                 return "Средняя"
             else:
                 return "Низкая"
-        return f"Информация о CVE {cve_id} не найдена для года."
+        return f"Информация неизвестна"
     
     def segment_scan(self, request, context):
         data_segment = IPAddress.objects.in_bulk()
@@ -172,12 +172,12 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                             cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
                             
                             # Выводим результат
-                            nvd_json_path = "/home/user/Desktop/clone/Dipl/cvss"
+                            nvd_json_path = "/usr/share/nmap/scripts/vulscan/cvss"
                             all_cve=''
                             for cve_match in cve_matches:
                                 stripped_cve = cve_match.strip("[]")
                                 criticality = self.get_criticality(stripped_cve, nvd_json_path)
-                                all_cve += stripped_cve + criticality+ '\n'
+                                all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
                             save_data_in_aim_ports = ResultPortsAim(
                                 port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data)
                             save_data_in_aim_ports.save()

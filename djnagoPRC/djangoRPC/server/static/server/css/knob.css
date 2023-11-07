@@ -1,0 +1,22 @@
+.knob-container {
+    display: inline-block;
+    width: 200px;
+    height: 200px;
+    position: relative;
+  }
+  
+  .knob {
+    width: 104px;
+    height: 66px;
+    position: absolute;
+    vertical-align: middle;
+    margin-top: 66px;
+    margin-left: -152px;
+    border: 0;
+    background: none;
+    font: bold 40px Arial;
+    text-align: center;
+    color: hsl(130, 90%, 55%);
+    padding: 0;
+    appearance: none;
+  }
