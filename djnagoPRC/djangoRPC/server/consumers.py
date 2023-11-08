@@ -144,3 +144,4 @@ class TaskConsumer(AsyncWebsocketConsumer):
             'task': task,
         }))
 
+

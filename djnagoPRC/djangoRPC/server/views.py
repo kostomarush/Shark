@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim
+from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim
 from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
 import ipaddress
@@ -169,7 +169,34 @@ def cve_information(request, pk):
 def port_info_aim(request, pk):
     item = get_object_or_404(ScanInfo, pk=pk)
     scan_results = ScanInfo.objects.all()
+    num_rows = LevelCveAim.objects.count()
+    critical = LevelCveAim.objects.filter(level='Критично').count()
+    high = LevelCveAim.objects.filter(level='Высокая').count()
+    medium = LevelCveAim.objects.filter(level='Средняя').count()
+    normal = LevelCveAim.objects.filter(level='Низкая').count()
+    open = ResultPortsAim.objects.filter(state='open').count()
+    filtered = ResultPortsAim.objects.filter(state='filtered').count()
+    close = ResultPortsAim.objects.filter(state='closed').count()
+    open_filtered = ResultPortsAim.objects.filter(state='open|filtered').count()
+    
+    cve_level_host = {}
     ports_by_host = {}
+    
+    
+    for cve_level in scan_results:
+
+        level = LevelCveAim.objects.filter(result=cve_level)
+
+        # Сохраните их в словаре
+        cve_level_host[cve_level] = level
+
+    level_dict = []
+    for level, scan_result in cve_level_host.items():
+        if level == item:
+            for level in scan_result:
+                level_dict.append(level)
+    
+    
     # Пройдите по каждому объекту SegmentScan
     for scan_result in scan_results:
         # Получите связанные с этим объектом IPAddress
@@ -185,12 +212,22 @@ def port_info_aim(request, pk):
                 port_dict.append(ports)
 
     return render(request, 'server/port_info_aim.html', {'item': item,
-                                                         'port_dict': port_dict})
-
+                                                         'port_dict': port_dict,
+                                                         'level_dict': level_dict,
+                                                         'count': num_rows,
+                                                        'critical': critical,
+                                                        'high': high,
+                                                        'medium': medium,
+                                                        'normal': normal,
+                                                        'open':open,
+                                                        'filtered': filtered,
+                                                        'close':close,
+                                                        'open_filtered':open_filtered})
 
 def cve_information_aim(request, pk):
     item = get_object_or_404(ResultPortsAim, pk=pk)
     port_results = ResultPortsAim.objects.all()
+
     cve_by_port = {}
     # Пройдите по каждому объекту SegmentScan
     for port_result in port_results:

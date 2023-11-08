@@ -6,11 +6,35 @@ import json
 import logging
 
 
-from .models import ScanInfo, DataServer, ResultPortsAim
+from .models import ScanInfo, DataServer, ResultPortsAim, LevelCveAim
 
 channel_layer = get_channel_layer()
 
 
+
+
+# @receiver(post_save, sender=LevelCveAim)
+# def update_cve_level(sender, instance, **kwargs):
+    
+#     critical = LevelCveAim.objects.filter(tag='Критично').count()
+
+#     send_level = {
+        
+#         'critical': critical
+        
+#     }
+    
+#     async def send_level_data():
+#         await channel_layer.group_send(
+#             'send_level_data',
+#             {
+#                 'type': 'level.update',
+#                 'data': send_level
+#             }
+#         )
+    
+#     async_to_sync(send_level)()
+    
 @receiver(post_save, sender=DataServer)
 def update_client_data(sender, instance, **kwargs):
 

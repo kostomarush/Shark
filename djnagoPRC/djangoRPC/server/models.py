@@ -100,7 +100,12 @@ class CveInformation(models.Model):
 class CveInformationAim(models.Model):
     cve_information = models.TextField()
     result_ports = models.ForeignKey(ResultPortsAim, on_delete=models.CASCADE)
-
+    
+class LevelCveAim(models.Model):
+    port = models.CharField(max_length=10)
+    cve = models.CharField(max_length=20)
+    level = models.CharField(max_length=30)
+    result = models.ForeignKey(ScanInfo, on_delete=models.CASCADE)
 
 # class ResultOs(models.Model):
 #     full_name = models.CharField(max_length=30)

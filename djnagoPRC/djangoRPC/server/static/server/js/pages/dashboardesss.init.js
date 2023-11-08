@@ -415,6 +415,12 @@ File: Dashboard
     },
     //initializing various components and plugins
     Dashboard.prototype.init = function () {
+        
+        $('#myTable').DataTable({
+            "pageLength": 3,
+            "searching": false,
+            "lengthChange": false
+        });
 
         $('#datatables').DataTable({
             "pageLength": 5,

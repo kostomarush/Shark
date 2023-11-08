@@ -1,6 +1,6 @@
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, ClientBD, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim
+from server.models import ScanInfo, DataServer, ClientBD, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim
 import threading
 import time
 import json
@@ -178,6 +178,9 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                 stripped_cve = cve_match.strip("[]")
                                 criticality = self.get_criticality(stripped_cve, nvd_json_path)
                                 all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
+                                save_cve_level = LevelCveAim(port = port, cve=stripped_cve, level=criticality, result = save_data)
+                                save_cve_level.save()                                  
+                                
                             save_data_in_aim_ports = ResultPortsAim(
                                 port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data)
                             save_data_in_aim_ports.save()
