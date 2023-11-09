@@ -169,15 +169,6 @@ def cve_information(request, pk):
 def port_info_aim(request, pk):
     item = get_object_or_404(ScanInfo, pk=pk)
     scan_results = ScanInfo.objects.all()
-    num_rows = LevelCveAim.objects.count()
-    critical = LevelCveAim.objects.filter(level='Критично').count()
-    high = LevelCveAim.objects.filter(level='Высокая').count()
-    medium = LevelCveAim.objects.filter(level='Средняя').count()
-    normal = LevelCveAim.objects.filter(level='Низкая').count()
-    open = ResultPortsAim.objects.filter(state='open').count()
-    filtered = ResultPortsAim.objects.filter(state='filtered').count()
-    close = ResultPortsAim.objects.filter(state='closed').count()
-    open_filtered = ResultPortsAim.objects.filter(state='open|filtered').count()
     
     cve_level_host = {}
     ports_by_host = {}
@@ -191,9 +182,14 @@ def port_info_aim(request, pk):
         cve_level_host[cve_level] = level
 
     level_dict = []
-    for level, scan_result in cve_level_host.items():
+    for level, cve_level in cve_level_host.items():
         if level == item:
-            for level in scan_result:
+            num_rows = LevelCveAim.objects.filter(result = level).count()
+            critical = LevelCveAim.objects.filter(result = level,level='Критично').count()
+            high = LevelCveAim.objects.filter(result = level,level='Высокая').count()
+            medium = LevelCveAim.objects.filter(result = level,level='Средняя').count()
+            normal = LevelCveAim.objects.filter(result = level,level='Низкая').count()
+            for level in cve_level:
                 level_dict.append(level)
     
     
@@ -208,6 +204,10 @@ def port_info_aim(request, pk):
     port_dict = []
     for ports, scan_result in ports_by_host.items():
         if ports == item:
+            open = ResultPortsAim.objects.filter(all_info = ports, state='open').count()
+            filtered = ResultPortsAim.objects.filter(all_info = ports, state='filtered').count()
+            close = ResultPortsAim.objects.filter(all_info = ports, state='closed').count()
+            open_filtered = ResultPortsAim.objects.filter(all_info = ports, state='open|filtered').count()
             for ports in scan_result:
                 port_dict.append(ports)
 

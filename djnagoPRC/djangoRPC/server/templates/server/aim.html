@@ -288,7 +288,7 @@ chart.update();
                         </script>
                         <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
                                 data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" data-max="{% for i in data_serv %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}" 
-                                value="{{ task_done|safe  }}" 
+                                value="{{ task_done }}" 
                                 data-skin="tron" data-angleOffset="180"
                                 data-readOnly=true data-thickness=".2" id='task_done'/>
                     </div>
@@ -324,6 +324,20 @@ chart.update();
                     </div>
                   </div>
                   <h4 class="header-title mb-3">Таблица Адресов</h4>
+                  <script>
+                    // Создаем WebSocket соединение
+                    var socket_add = new WebSocket('ws://' + window.location.host + '/ws/my_socket_add/');
+                                                    // Обработчик события открытия WebSocket соединения
+                    
+                    socket_add.onmessage = function (e) {
+                    console.log('Cчитывание таблиц адресов установлено.');
+                    var value = JSON.parse(e.data);
+                    console.log(value)
+                    };
+                    socket_add.onclose = function () {
+                        console.log('Соединение адресов закрыто.');
+                    };
+                  </script>
                   <table class="table table-bordered" id="selection-datatable">
                     <thead>
                         <th>id</th>

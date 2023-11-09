@@ -34,7 +34,56 @@ channel_layer = get_channel_layer()
 #         )
     
 #     async_to_sync(send_level)()
+
+@receiver(post_save, sender=ScanInfo)
+def update_table_data(sender, instance, **kwargs):
+
+    host = instance.host
+    state_scan = instance.state_scan
+    mode = instance.result.mode
+    state_ports = instance.state_ports
     
+    if mode == 'OS':
+        full_name = instance.full_name
+        vendor = instance.vendor
+        osfamily = instance.osfamily
+        osgen = instance.osgen
+        accuracy = instance.accuracy
+    else:
+        full_name = ''
+        vendor = ''
+        osfamily = ''
+        osgen = ''
+        accuracy = ''
+    
+    data = {
+        
+        'id': instance.pk,
+        'host': host,
+        'state_scan': state_scan,
+        'mode': mode,
+        'state_ports': state_ports,
+        'full_name': full_name,
+        'vendor': vendor,
+        'osfamily': osfamily,
+        'osgen': osgen,
+        'accuracy': accuracy
+    }
+    
+    
+    async def send_data_table():
+        await channel_layer.group_send(
+            'send_data_table',
+            {
+                'type': 'data_table.update',
+                'data': data
+            }
+        )
+
+
+    async_to_sync(send_data_table)()
+
+
 @receiver(post_save, sender=DataServer)
 def update_client_data(sender, instance, **kwargs):
 
