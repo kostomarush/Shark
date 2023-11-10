@@ -1,6 +1,6 @@
 import prot_pb2
 import prot_pb2_grpc
-from server.models import ScanInfo, DataServer, ClientBD, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim
+from server.models import ScanInfo, DataServer, ClientBD, SegmentScan, SegmentResult, IPAddress, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim, LevelCve
 import threading
 import time
 import json
@@ -98,30 +98,36 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
 
                                     # Используем регулярное выражение для поиска всех [CVE ...]
                                     cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
-                                    
+                            
                                     # Выводим результат
+                                    nvd_json_path = "/usr/share/nmap/scripts/vulscan/cvss"
                                     all_cve=''
                                     for cve_match in cve_matches:
-                                        all_cve += cve_match + '\n'
-
+                                        stripped_cve = cve_match.strip("[]")
+                                        criticality = self.get_criticality(stripped_cve, nvd_json_path)
+                                        all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
+                                        save_cve_level = LevelCve(port = port, cve=stripped_cve, level=criticality, result = save_data_in_segment)
+                                        save_cve_level.save()                                  
+                                        
                                     save_data_in_segment_ports = ResultPorts(
                                         port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data_in_segment)
                                     save_data_in_segment_ports.save()
-
                                     save_cve = CveInformation(cve_information = cve, result_ports = save_data_in_segment_ports)
                                     save_cve.save()
-
+                                    
                                     
                         return response
             except:
                 print('Error')
         for i in data_segment:
             if data_segment[i].tag == 'False':
-                IPAddress.objects.filter(id=i).update(
-                    client=request.name_cl, tag='Proc')
+                client = ClientBD.objects.get(ip_client=request.name_cl)
+                save_seg_ip = IPAddress.objects.get(id=i)
+                save_seg_ip.client = client
+                save_seg_ip.tag = 'Proc'
+                save_seg_ip.save()
                 ip_address = data_segment[i].address
                 mode = data_segment[i].seg_scan.mode
-                id_task = data_segment[i].id
                 cve_report = f'{data_segment[i].seg_scan.cve_report}'
                 full_scan = f'{data_segment[i].seg_scan.full_scan}'
                 response_start = prot_pb2.DataSegment(

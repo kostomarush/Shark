@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim
+from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim, LevelCve
 from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
 import ipaddress
@@ -124,6 +124,26 @@ def port_information(request, pk):
     item = get_object_or_404(SegmentResult, pk=pk)
     segment_results = SegmentResult.objects.all()
     ports_by_host = {}
+    
+    cve_level_host = {}
+    
+    for cve_level in segment_results:
+
+        level = LevelCve.objects.filter(result=cve_level)
+
+        # Сохраните их в словаре
+        cve_level_host[cve_level] = level
+
+    level_dict = []
+    for level, cve_level in cve_level_host.items():
+        if level == item:
+            num_rows = LevelCve.objects.filter(result = level).count()
+            critical = LevelCve.objects.filter(result = level,level='Критично').count()
+            high = LevelCve.objects.filter(result = level,level='Высокая').count()
+            medium = LevelCve.objects.filter(result = level,level='Средняя').count()
+            normal = LevelCve.objects.filter(result = level,level='Низкая').count()
+            for level in cve_level:
+                level_dict.append(level)
     # Пройдите по каждому объекту SegmentScan
     for segment_result in segment_results:
         # Получите связанные с этим объектом IPAddress
@@ -135,11 +155,25 @@ def port_information(request, pk):
     port_dict = []
     for ports, segment_result in ports_by_host.items():
         if ports == item:
+            open = ResultPorts.objects.filter(all_info = ports, state='open').count()
+            filtered = ResultPorts.objects.filter(all_info = ports, state='filtered').count()
+            close = ResultPorts.objects.filter(all_info = ports, state='closed').count()
+            open_filtered = ResultPorts.objects.filter(all_info = ports, state='open|filtered').count()
             for ports in segment_result:
                 port_dict.append(ports)
 
     return render(request, 'server/port_information.html', {'item': item,
-                                                            'port_dict': port_dict})
+                                                         'port_dict': port_dict,
+                                                         'level_dict': level_dict,
+                                                         'count': num_rows,
+                                                        'critical': critical,
+                                                        'high': high,
+                                                        'medium': medium,
+                                                        'normal': normal,
+                                                        'open':open,
+                                                        'filtered': filtered,
+                                                        'close':close,
+                                                        'open_filtered':open_filtered})
 
 
 
