@@ -325,19 +325,45 @@ chart.update();
                   </div>
                   <h4 class="header-title mb-3">Таблица Адресов</h4>
                   <script>
-                    // Создаем WebSocket соединение
                     var socket_add = new WebSocket('ws://' + window.location.host + '/ws/my_socket_add/');
-                                                    // Обработчик события открытия WebSocket соединения
-                    
+                
                     socket_add.onmessage = function (e) {
-                    console.log('Cчитывание таблиц адресов установлено.');
-                    var value = JSON.parse(e.data);
-                    console.log(value)
+                        var data = JSON.parse(e.data);
+                        console.log(data.data);
+                        
+                        // Полученные данные добавляются в таблицу
+                        var dataTable = document.getElementById('selection-datatable').getElementsByTagName('tbody')[0];
+                        var newRow = dataTable.insertRow();
+                
+                        var cell1 = newRow.insertCell(0);
+                        var cell2 = newRow.insertCell(1);
+                        var cell3 = newRow.insertCell(2);
+                        var cell4 = newRow.insertCell(3);
+                
+                        cell1.innerHTML = data.data.row_count;
+                        cell2.innerHTML = data.data.host;
+                        cell3.innerHTML = data.data.mode;
+                        cell4.innerHTML = data.data.state_scan;
+                
+                        // Добавление кнопки или ссылки, в зависимости от режима
+                        var cell5 = newRow.insertCell(4);
+                        
+                        if (data.data.id) {
+                            var portInfoUrl = "{% url 'port_info_aim' pk=1 %}".replace('1', data.data.id);
+                        
+                            if (data.data.mode === 'OS') {
+                                cell5.innerHTML = '<button type="button" class="btn btn-outline-info waves-effect waves-light width-md" data-toggle="modal" data-target="#myModal' + data.data.id + '">Информация об ОС</button>';
+                            } else {
+                                cell5.innerHTML = '<a class="btn btn-outline-info waves-effect waves-light width-md" href="' + portInfoUrl + '">Информация о портах</a>';
+                            }
+                        }
                     };
+                
                     socket_add.onclose = function () {
                         console.log('Соединение адресов закрыто.');
                     };
-                  </script>
+                </script>
+                
                   <table class="table table-bordered" id="selection-datatable">
                     <thead>
                         <th>id</th>
@@ -353,14 +379,14 @@ chart.update();
                     <tbody>
                       {% for i in section %}
                       <tr>
-                        <th>{{forloop.counter}}</th>
-                        <th>{{i.host}}</th>
-                        <th>{{i.result.mode}}</th>
-                        <th>{{i.state_scan}}</th>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{i.host}}</td>
+                        <td>{{i.result.mode}}</td>
+                        <td>{{i.state_scan}}</td>
                         {% if i.result.mode == 'OS'%}
-                        <th><button type="button" class="btn btn-outline-info waves-effect waves-light width-md" data-toggle="modal" data-target="#myModal{{ i.id }}">
+                        <td><button type="button" class="btn btn-outline-info waves-effect waves-light width-md" data-toggle="modal" data-target="#myModal{{ i.id }}">
                             Информация об ОС
-                          </button></th>
+                          </button></td>
                           
                           <!-- Модальное окно -->
                           <div class="modal fade" id="myModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

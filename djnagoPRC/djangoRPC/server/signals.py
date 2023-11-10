@@ -43,6 +43,8 @@ def update_table_data(sender, instance, **kwargs):
     mode = instance.result.mode
     state_ports = instance.state_ports
     
+    row_count = ScanInfo.objects.count()
+    
     if mode == 'OS':
         full_name = instance.full_name
         vendor = instance.vendor
@@ -58,6 +60,7 @@ def update_table_data(sender, instance, **kwargs):
     
     data = {
         
+        'row_count': row_count,
         'id': instance.pk,
         'host': host,
         'state_scan': state_scan,
