@@ -46,7 +46,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         cvss_score = self.get_cvss_score(cve_id, nvd_json_path)
         if cvss_score is not None:
             if cvss_score >= 9.0:
-                return "Критично"
+                return "Критичная"
             elif cvss_score >= 7.0:
                 return "Высокая"
             elif cvss_score >= 4.0:
@@ -104,9 +104,10 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     all_cve=''
                                     for cve_match in cve_matches:
                                         stripped_cve = cve_match.strip("[]")
+                                        year = cve_match.split("-")[1]
                                         criticality = self.get_criticality(stripped_cve, nvd_json_path)
                                         all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
-                                        save_cve_level = LevelCve(port = port, cve=stripped_cve, level=criticality, result = save_data_in_segment)
+                                        save_cve_level = LevelCve(port = port, cve=stripped_cve, level=criticality, year = year, result = save_data_in_segment)
                                         save_cve_level.save()                                  
                                         
                                     save_data_in_segment_ports = ResultPorts(
@@ -182,9 +183,10 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                             all_cve=''
                             for cve_match in cve_matches:
                                 stripped_cve = cve_match.strip("[]")
+                                year = cve_match.split("-")[1]
                                 criticality = self.get_criticality(stripped_cve, nvd_json_path)
                                 all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
-                                save_cve_level = LevelCveAim(port = port, cve=stripped_cve, level=criticality, result = save_data)
+                                save_cve_level = LevelCveAim(port = port, cve=stripped_cve, level=criticality, year = year, result = save_data)
                                 save_cve_level.save()                                  
                                 
                             save_data_in_aim_ports = ResultPortsAim(

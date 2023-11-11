@@ -32,7 +32,7 @@
               data-angleArc="250" data-max="{{count}}" readonly="readonly"/>
 
               
-              <h4 class="text-muted mt-3">Критично</h4>
+              <h4 class="text-muted mt-3">Критичная</h4>
             </div>
             <div class="col-md-3 text-center">
               <input data-plugin="knob" data-width="150" data-height="150"
@@ -82,7 +82,7 @@
             </thead>
             <tbody>
               {% for i in level_dict %}
-              {% if i.level == 'Критично' or i.level == 'Высокая' %}
+              {% if i.level == 'Критичная' or i.level == 'Высокая' %}
               <tr>
                 <td style='font-size: 13px'>{{i.port}}</td>
                 <td style='font-size: 12px'>{{i.cve}}</td>

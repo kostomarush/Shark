@@ -111,6 +111,7 @@ class LevelCveAim(models.Model):
     port = models.CharField(max_length=10)
     cve = models.CharField(max_length=20)
     level = models.CharField(max_length=30)
+    year = models.CharField(max_length=10)
     result = models.ForeignKey(ScanInfo, on_delete=models.CASCADE)
     
 

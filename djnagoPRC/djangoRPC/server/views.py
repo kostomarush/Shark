@@ -88,12 +88,22 @@ def data(request):
 @login_required(redirect_field_name=None, login_url='/')
 def segment(request):
     scan_segment = SegmentScan.objects.all()
-    all_done = IPAddress.objects.filter(
-        tag='Done').count() == IPAddress.objects.count()
-    if all_done:
-        SegmentScan.objects.update(state_scan='Done')
-    else:
-        pass
+    
+    ip_seg_pull = []
+    for scan_res in scan_segment:
+        
+        all_done = IPAddress.objects.filter(seg_scan = scan_res,
+            tag='Done').count() == IPAddress.objects.filter(seg_scan = scan_res).count()
+        
+        if all_done:
+            
+            segment_scan = SegmentScan.objects.get(id=scan_res.id)
+            segment_scan.state_scan = 'Done'
+            segment_scan.save()
+            
+        else:
+            pass
+        
     error = ''
     if request.method == 'POST':
         form = SegmentScanForm(request.POST)
@@ -103,10 +113,11 @@ def segment(request):
             mask = segment_scan_instance.mask
             network = ipaddress.IPv4Network(f'{net}/{mask}', strict=False)
             segments = [
-                ipaddr for ipaddr in network.subnets(prefixlen_diff=6)]
+                ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
             for addr in segments:
                 IPAddress.objects.create(
                     address=f'{addr}', seg_scan=segment_scan_instance)
+            
         else:
             error = 'Форма не верна'
 
@@ -138,7 +149,7 @@ def port_information(request, pk):
     for level, cve_level in cve_level_host.items():
         if level == item:
             num_rows = LevelCve.objects.filter(result = level).count()
-            critical = LevelCve.objects.filter(result = level,level='Критично').count()
+            critical = LevelCve.objects.filter(result = level,level='Критичная').count()
             high = LevelCve.objects.filter(result = level,level='Высокая').count()
             medium = LevelCve.objects.filter(result = level,level='Средняя').count()
             normal = LevelCve.objects.filter(result = level,level='Низкая').count()
@@ -219,7 +230,7 @@ def port_info_aim(request, pk):
     for level, cve_level in cve_level_host.items():
         if level == item:
             num_rows = LevelCveAim.objects.filter(result = level).count()
-            critical = LevelCveAim.objects.filter(result = level,level='Критично').count()
+            critical = LevelCveAim.objects.filter(result = level,level='Критичная').count()
             high = LevelCveAim.objects.filter(result = level,level='Высокая').count()
             medium = LevelCveAim.objects.filter(result = level,level='Средняя').count()
             normal = LevelCveAim.objects.filter(result = level,level='Низкая').count()

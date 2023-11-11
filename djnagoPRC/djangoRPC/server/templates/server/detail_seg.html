@@ -23,7 +23,7 @@
       <div class="col-xl-4">
         <div class="card-box">
           <h4 class="header-title mb-3">График</h4>
-          <canvas id="barChart" width="400" height="167"></canvas>
+          <canvas id="barChart" width="400" height="185"></canvas>
 
           <script>
               document.addEventListener('DOMContentLoaded', function () {
@@ -105,7 +105,61 @@
       <div class="col-xl-4">
         <div class="card-box">
           <h4 class="header-title mb-3">График</h4>
-          
+          <canvas id="myLineChart" height="228"></canvas>
+          <script>
+            // Получаем контекст canvas
+var ctx = document.getElementById('myLineChart').getContext('2d');
+
+// Данные для графика (время и значения)
+var timeLabels = ['2013', '2023', '2021', '2022', '2024'];
+var dataValues1 = [2, 1, 2, 1, 2];
+var dataValues2 = [5, 10, 15, 20, 25];
+var dataValues3 = [20, 5, 18, 12, 30];
+var dataValues4 = [8, 12, 17, 25, 14];
+
+// Создаем объект графика
+// Создаем объект графика
+var myLineChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: timeLabels,
+    datasets: [
+      {
+        label: 'Критичная',
+        data: dataValues1,
+        backgroundColor: "hsl(283, 90%, 55%)",
+        borderColor: 'hsl(283, 90%, 55%)',
+        borderWidth: 2,
+        fill: false,
+      },
+      {
+        label: 'Высокая',
+        data: dataValues2,
+        backgroundColor: "hsl(0, 86%, 65%)",
+        borderColor: 'hsl(0, 86%, 65%)',
+        borderWidth: 2,
+        fill: false,
+      },
+      {
+        label: 'Средняя',
+        data: dataValues3,
+        backgroundColor: "hsl(39, 90%, 55%)",
+        borderColor: 'hsl(39, 90%, 55%)',
+        borderWidth: 2,
+        fill: false,
+      },
+      {
+        label: 'Низкая',
+        data: dataValues4,
+        backgroundColor: "#33ce7a",
+        borderColor: '#33ce7a',
+        borderWidth: 2,
+        fill: false,
+      }
+    ]
+  },
+});
+          </script>
         </div>
       </div>
       <div class="col-xl-4">
