@@ -31,7 +31,7 @@
       
               // Инициализируем начальные данные для графика
               var initialData = {
-                  labels: ["Клиент 1", "Клиент 2"],
+                  labels: ["Клиент 1", "Клиент 2", "Клиент 3"],
                   datasets: [{
                       label: "Задачи",
                       data: [],
@@ -45,22 +45,21 @@
               });
       
               // Создаем WebSocket соединение
-              var socket2 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_2/');  // Замените URL на ваш сервер и путь WebSocket
+              var socket_cl_seg = new WebSocket('ws://' + window.location.host + '/ws/my_socket_client_seg/');  // Замените URL на ваш сервер и путь WebSocket
       
-              socket2.onopen = function () {
+              socket_cl_seg.onopen = function () {
                   console.log('Соединение WebSocket установлено.');
-                  socket2.send(JSON.stringify({ 'type': 'get_cl_data' }));
+                  socket_cl_seg.send(JSON.stringify({ 'type': 'get_cl_data_seg' }));
               };
       
-              socket2.onmessage = function (e) {
+              socket_cl_seg.onmessage = function (e) {
                   var newData = JSON.parse(e.data);
-                  console.log(newData.data.client_2)
                   // Обновляем данные в графике
-                  barChart.data.datasets[0].data = [newData.data.client_1, newData.data.client_2];
+                  barChart.data.datasets[0].data = [newData.data.client_1, newData.data.client_2, newData.data.client_3];
                   barChart.update();
               };
       
-              socket2.onclose = function () {
+              socket_cl_seg.onclose = function () {
                   console.log('Соединение WebSocket закрыто.');
               };
           });
@@ -108,58 +107,144 @@
           <canvas id="myLineChart" height="228"></canvas>
           <script>
             // Получаем контекст canvas
-var ctx = document.getElementById('myLineChart').getContext('2d');
+            var ctx = document.getElementById('myLineChart').getContext('2d');
+        
+            var socket_cve = new WebSocket('ws://' + window.location.host + '/ws/cve_year/'); // Замените URL на ваш сервер и путь WebSocket
+        
+            socket_cve.onopen = function () {
+                console.log('Соединение CVE установлено.');
+                socket_cve.send(JSON.stringify({ 'type': 'get_cve_data' }));
+                
+            };
+            var myLineChart;
+            socket_cve.onmessage = function (e) {
+                var nData = JSON.parse(e.data);
+                var newData = nData.data
+                // Очищаем массивы
+                timeLabels = [];
+                dataValues1 = [];
+                dataValues2 = [];
+                dataValues3 = [];
+                dataValues4 = [];
+        
+                // Заполняем массивы данными из пришедшего сообщения
+                for (var year in newData) {
+                  timeLabels.push(year);
+                  dataValues1.push(newData[year]['Критичная']);
+                  dataValues2.push(newData[year]['Высокая']);
+                  dataValues3.push(newData[year]['Средняя']);
+                  dataValues4.push(newData[year]['Низкая']);
+                }
+        
+                if (myLineChart) {
 
-// Данные для графика (время и значения)
-var timeLabels = ['2013', '2023', '2021', '2022', '2024'];
-var dataValues1 = [2, 1, 2, 1, 2];
-var dataValues2 = [5, 10, 15, 20, 25];
-var dataValues3 = [20, 5, 18, 12, 30];
-var dataValues4 = [8, 12, 17, 25, 14];
+                  myLineChart.destroy();
 
-// Создаем объект графика
-// Создаем объект графика
-var myLineChart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: timeLabels,
-    datasets: [
-      {
-        label: 'Критичная',
-        data: dataValues1,
-        backgroundColor: "hsl(283, 90%, 55%)",
-        borderColor: 'hsl(283, 90%, 55%)',
-        borderWidth: 2,
-        fill: false,
-      },
-      {
-        label: 'Высокая',
-        data: dataValues2,
-        backgroundColor: "hsl(0, 86%, 65%)",
-        borderColor: 'hsl(0, 86%, 65%)',
-        borderWidth: 2,
-        fill: false,
-      },
-      {
-        label: 'Средняя',
-        data: dataValues3,
-        backgroundColor: "hsl(39, 90%, 55%)",
-        borderColor: 'hsl(39, 90%, 55%)',
-        borderWidth: 2,
-        fill: false,
-      },
-      {
-        label: 'Низкая',
-        data: dataValues4,
-        backgroundColor: "#33ce7a",
-        borderColor: '#33ce7a',
-        borderWidth: 2,
-        fill: false,
-      }
-    ]
-  },
-});
-          </script>
+                  myLineChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: timeLabels,
+                        datasets: [
+                            {
+                                label: 'Критичная',
+                                data: [],
+                                backgroundColor: "hsl(283, 90%, 55%)",
+                                borderColor: 'hsl(283, 90%, 55%)',
+                                borderWidth: 2,
+                                fill: false,
+                            },
+                            {
+                                label: 'Высокая',
+                                data: [],
+                                backgroundColor: "hsl(0, 86%, 65%)",
+                                borderColor: 'hsl(0, 86%, 65%)',
+                                borderWidth: 2,
+                                fill: false,
+                            },
+                            {
+                                label: 'Средняя',
+                                data: [],
+                                backgroundColor: "hsl(39, 90%, 55%)",
+                                borderColor: 'hsl(39, 90%, 55%)',
+                                borderWidth: 2,
+                                fill: false,
+                            },
+                            {
+                                label: 'Низкая',
+                                data: [],
+                                backgroundColor: "#33ce7a",
+                                borderColor: '#33ce7a',
+                                borderWidth: 2,
+                                fill: false,
+                            }
+                        ]
+                    },
+                });
+
+                  
+                  myLineChart.data.labels = timeLabels;
+                  myLineChart.data.datasets[0].data = dataValues1;
+                  myLineChart.data.datasets[1].data = dataValues2;
+                  myLineChart.data.datasets[2].data = dataValues3;
+                  myLineChart.data.datasets[3].data = dataValues4;
+      
+                  myLineChart.update();
+              } else {
+        
+            // Создаем объект графика
+            myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [
+                        {
+                            label: 'Критичная',
+                            data: [],
+                            backgroundColor: "hsl(283, 90%, 55%)",
+                            borderColor: 'hsl(283, 90%, 55%)',
+                            borderWidth: 2,
+                            fill: false,
+                        },
+                        {
+                            label: 'Высокая',
+                            data: [],
+                            backgroundColor: "hsl(0, 86%, 65%)",
+                            borderColor: 'hsl(0, 86%, 65%)',
+                            borderWidth: 2,
+                            fill: false,
+                        },
+                        {
+                            label: 'Средняя',
+                            data: [],
+                            backgroundColor: "hsl(39, 90%, 55%)",
+                            borderColor: 'hsl(39, 90%, 55%)',
+                            borderWidth: 2,
+                            fill: false,
+                        },
+                        {
+                            label: 'Низкая',
+                            data: [],
+                            backgroundColor: "#33ce7a",
+                            borderColor: '#33ce7a',
+                            borderWidth: 2,
+                            fill: false,
+                        }
+                    ]
+                },
+            });
+            myLineChart.data.labels = timeLabels;
+            myLineChart.data.datasets[0].data = dataValues1;
+            myLineChart.data.datasets[1].data = dataValues2;
+            myLineChart.data.datasets[2].data = dataValues3;
+            myLineChart.data.datasets[3].data = dataValues4;
+            myLineChart.update();
+          }
+        };
+          socket_cve.onclose = function () {
+            console.log('Соединение WebSocket закрыто.');
+        };
+        </script>
+        
         </div>
       </div>
       <div class="col-xl-4">

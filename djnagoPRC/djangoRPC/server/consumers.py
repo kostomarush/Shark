@@ -3,7 +3,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from asgiref.sync import sync_to_async
-from .models import ScanInfo, DataServer, ResultPortsAim
+from .models import ScanInfo, DataServer, ResultPortsAim, LevelCve, IPAddress
 
 
 class GraphConsumer(AsyncWebsocketConsumer):
@@ -102,6 +102,61 @@ class ClientConsumer(AsyncWebsocketConsumer):
     async def client_data_update(self, event):
         await self.send(json.dumps({'data': event['client']}))
 
+class ClientSegConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
+
+        await self.channel_layer.group_add(
+            'send_client_data_seg',
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        message = json.loads(text_data)
+
+        if message['type'] == 'get_cl_data_seg':
+            # Здесь вы можете выполнить логику для получения начальных данных
+
+            @sync_to_async
+            def get_cl_data():
+                client_1 = 0
+                client_2 = 0
+                client_3 = 0
+                data_seg = IPAddress.objects.in_bulk()
+                for id in data_seg:
+                    if data_seg[id].tag == 'Done' and data_seg[id].client.ip_client == 1:
+                        client_1 += 1
+                    if data_seg[id].tag == 'Done' and data_seg[id].client.ip_client == 2:
+                        client_2 += 1
+                    if data_seg[id].tag == 'Done' and data_seg[id].client.ip_client == 3:
+                        client_3 += 1
+                return {
+                    'client_1': client_1,
+                    'client_2': client_2,
+                    'client_3': client_3
+                }
+
+            # Внутри вашего обработчика или функции, где требуется получить client_data:
+
+            client_data_seg = await get_cl_data()
+
+            print(client_data_seg)
+
+            # Отправляем начальные данные обратно клиенту
+            await self.send(json.dumps({
+                'type': 'initial_data',
+                'data': client_data_seg,
+            }))
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            'send_client_data_seg',
+            self.channel_name
+        )
+
+    async def client_data_update(self, event):
+        await self.send(json.dumps({'data': event['client']}))
+
 
 class TableConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -163,3 +218,75 @@ class UpdateTable(AsyncWebsocketConsumer):
 
     async def data_table_update(self, event):
         await self.send(json.dumps({'data': event['data']}))
+        
+class UpdateCveInformationData(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.channel_layer.group_add(
+            'send_data_information_cve_data',
+            self.channel_name
+        )
+        await self.accept()
+        
+    async def receive(self, text_data):
+        message = json.loads(text_data)
+
+        if message['type'] == 'get_cve_data':
+
+            @sync_to_async
+            def get_cve_data():
+                vulnerability_counts_by_year = {}
+
+                # Получаем уникальные года
+                unique_years = LevelCve.objects.values('year').distinct()
+
+                # Итерируемся по уникальным годам и подсчитываем уровни уязвимостей
+                for year_info in unique_years:
+                    year = year_info['year']
+
+
+                    critical_count = LevelCve.objects.filter(year=year, level='Критичная').count()
+
+
+                    high_count = LevelCve.objects.filter(year=year, level='Высокая').count()
+
+
+                    medium_count = LevelCve.objects.filter(year=year, level='Средняя').count()
+
+
+                    normal_count = LevelCve.objects.filter(year=year, level='Низкая').count()
+
+                    # Создаем словарь для уровней уязвимостей текущего года
+                    levels_dict = {
+                        'Критичная': critical_count,
+                        'Высокая': high_count,
+                        'Средняя': medium_count,
+                        'Низкая': normal_count
+                    }
+
+                    # Добавляем в общий словарь
+                    vulnerability_counts_by_year[year] = levels_dict
+                return vulnerability_counts_by_year
+
+            # Внутри вашего обработчика или функции, где требуется получить client_data:
+
+            cve_data_yaer = await get_cve_data()
+
+            print(cve_data_yaer)
+
+            # Отправляем начальные данные обратно клиенту
+            await self.send(json.dumps({
+                'type': 'cve_data',
+                'data': cve_data_yaer,
+            }))
+
+    async def disconnect(self, close_code):
+        # Отсоедините клиента от группы WebSocket при разрыве соединения
+        await self.channel_layer.group_discard(
+            'send_data_information_cve_data',
+            self.channel_name
+        )
+
+    async def cve_data_update(self, event):
+        print(event['data'])
+        await self.send(json.dumps({'data': event['data']}))
+

@@ -186,7 +186,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                 year = cve_match.split("-")[1]
                                 criticality = self.get_criticality(stripped_cve, nvd_json_path)
                                 all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
-                                save_cve_level = LevelCveAim(port = port, cve=stripped_cve, level=criticality, year = year, result = save_data)
+                                save_cve_level = LevelCveAim(port = port, cve=stripped_cve, level=criticality, result = save_data)
                                 save_cve_level.save()                                  
                                 
                             save_data_in_aim_ports = ResultPortsAim(

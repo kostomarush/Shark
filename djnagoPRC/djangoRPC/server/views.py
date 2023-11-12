@@ -87,23 +87,9 @@ def data(request):
 
 @login_required(redirect_field_name=None, login_url='/')
 def segment(request):
+    
     scan_segment = SegmentScan.objects.all()
     
-    ip_seg_pull = []
-    for scan_res in scan_segment:
-        
-        all_done = IPAddress.objects.filter(seg_scan = scan_res,
-            tag='Done').count() == IPAddress.objects.filter(seg_scan = scan_res).count()
-        
-        if all_done:
-            
-            segment_scan = SegmentScan.objects.get(id=scan_res.id)
-            segment_scan.state_scan = 'Done'
-            segment_scan.save()
-            
-        else:
-            pass
-        
     error = ''
     if request.method == 'POST':
         form = SegmentScanForm(request.POST)
@@ -122,6 +108,17 @@ def segment(request):
             error = 'Форма не верна'
 
     form_segment = SegmentScanForm()
+    if scan_segment:
+        for scan_res in scan_segment:
+        
+                all_done = IPAddress.objects.filter(seg_scan = scan_res,
+                    tag='Done').count() == IPAddress.objects.filter(seg_scan = scan_res).count()
+    
+                if all_done:
+                
+                    segment_scan = SegmentScan.objects.get(id=scan_res.id)
+                    segment_scan.state_scan = 'Done'
+                    segment_scan.save()
 
     seg = {
         'form_segment': form_segment,

@@ -6,7 +6,9 @@ import json
 import logging
 
 
-from .models import ScanInfo, DataServer, ResultPortsAim, LevelCveAim
+from .models import ScanInfo, DataServer, ResultPortsAim, LevelCve
+
+from django.db.models import Count
 
 channel_layer = get_channel_layer()
 
@@ -34,6 +36,56 @@ channel_layer = get_channel_layer()
 #         )
     
 #     async_to_sync(send_level)()
+
+
+@receiver(post_save, sender=LevelCve)
+def update_cve_year_data(sender, instance, **kwargs):
+    # Создаем словарь для хранения количества уникальных уровней уязвимостей для каждого года
+    # Создаем словарь для хранения количества уровней уязвимостей для каждого года
+    vulnerability_counts_by_year = {}
+
+    # Получаем уникальные года
+    unique_years = LevelCve.objects.values('year').distinct()
+
+    # Итерируемся по уникальным годам и подсчитываем уровни уязвимостей
+    for year_info in unique_years:
+        year = year_info['year']
+
+
+        critical_count = LevelCve.objects.filter(year=year, level='Критичная').count()
+
+
+        high_count = LevelCve.objects.filter(year=year, level='Высокая').count()
+
+
+        medium_count = LevelCve.objects.filter(year=year, level='Средняя').count()
+        
+        
+        normal_count = LevelCve.objects.filter(year=year, level='Низкая').count()
+
+        # Создаем словарь для уровней уязвимостей текущего года
+        levels_dict = {
+            'Критичная': critical_count,
+            'Высокая': high_count,
+            'Средняя': medium_count,
+            'Низкая': normal_count
+        }
+
+        # Добавляем в общий словарь
+        vulnerability_counts_by_year[year] = levels_dict
+
+    async def send_cve_year_data():
+        await channel_layer.group_send(
+            'send_data_information_cve_data',
+            {
+                'type': 'cve_data.update',
+                'data': vulnerability_counts_by_year
+            }
+        )
+
+
+    async_to_sync(send_cve_year_data)()
+
 
 @receiver(post_save, sender=ScanInfo)
 def update_table_data(sender, instance, **kwargs):
