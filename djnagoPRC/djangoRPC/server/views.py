@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim, LevelCve
 from .forms import DataServerForm, SegmentScanForm
 from django.contrib.auth.decorators import login_required
+import json
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 import ipaddress
 import math
 
@@ -12,6 +15,7 @@ def detail_seg(request, pk):
     segment_scans = SegmentScan.objects.all()
     all_ip_addresses = IPAddress.objects.all()
     task_done = IPAddress.objects.filter(seg_scan = item, tag='Done').count()
+    tasks = IPAddress.objects.filter(seg_scan = item).count()
     # Создайте словарь, где ключами будут объекты SegmentScan, а значениями будут связанные IP-адреса
     ip_addresses_by_segment = {}
     segment_results_by_segment = {}
@@ -32,7 +36,6 @@ def detail_seg(request, pk):
     for segment_scan in segment_scans:
         # Получите связанные с этим объектом IPAddress
         ip_addresses = IPAddress.objects.filter(seg_scan=segment_scan)
-
         # Сохраните их в словаре
         ip_addresses_by_segment[segment_scan] = ip_addresses
     ip_dict = []
@@ -40,11 +43,55 @@ def detail_seg(request, pk):
         if segment_scan == item:
             for ip_address in ip_addresses:
                 ip_dict.append(ip_address)
+                
+    vulnerability_counts_by_year = {}
 
+    unique_years = LevelCve.objects.filter(result__result__seg_scan=item).values('year').distinct()
+    # Итерируемся по уникальным годам и подсчитываем уровни уязвимостей
+    for year_info in unique_years:
+        year = year_info['year']
+
+
+        critical_count = LevelCve.objects.filter(year=year, level='Критичная').count()
+
+
+        high_count = LevelCve.objects.filter(year=year, level='Высокая').count()
+
+
+        medium_count = LevelCve.objects.filter(year=year, level='Средняя').count()
+        
+        
+        normal_count = LevelCve.objects.filter(year=year, level='Низкая').count()
+
+        # Создаем словарь для уровней уязвимостей текущего года
+        levels_dict = {
+            'Критичная': critical_count,
+            'Высокая': high_count,
+            'Средняя': medium_count,
+            'Низкая': normal_count
+        }
+        vulnerability_counts_by_year[year] = levels_dict
+
+    client_1 = 0
+    client_3 = 0
+    client_2 = 0
+    data_seg = IPAddress.objects.filter(seg_scan=item).in_bulk()
+    for id in data_seg:
+            if data_seg[id].tag == 'Done' and data_seg[id].client.ip_client == '1':
+                client_1 += 1
+            if data_seg[id].tag == 'Done' and data_seg[id].client.ip_client == '2':
+                client_2 += 1
+            if data_seg[id].tag == 'Done' and data_seg[id].client.ip_client == '3':
+                client_3 += 1
+                
     return render(request, 'server/detail_seg.html', {'item': item,
                                                       'all_ip': ip_dict,
                                                       'result': result_dict,
                                                       'task_done': task_done,
+                                                      'cve_year': vulnerability_counts_by_year,
+                                                      'client_1': client_1,
+                                                      'client_2': client_2,
+                                                      'client_3': client_3
                                                       })
 
 

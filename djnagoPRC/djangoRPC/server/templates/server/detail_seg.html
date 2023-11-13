@@ -34,7 +34,7 @@
                   labels: ["Клиент 1", "Клиент 2", "Клиент 3"],
                   datasets: [{
                       label: "Задачи",
-                      data: [],
+                      data: [{{client_1}}, {{client_2}}, {{client_3}}],
                       backgroundColor: ["#00CED1", "#00CED1", "#00CED1"],
                   }],
               };
@@ -47,10 +47,6 @@
               // Создаем WebSocket соединение
               var socket_cl_seg = new WebSocket('ws://' + window.location.host + '/ws/my_socket_client_seg/');  // Замените URL на ваш сервер и путь WebSocket
       
-              socket_cl_seg.onopen = function () {
-                  console.log('Соединение WebSocket установлено.');
-                  socket_cl_seg.send(JSON.stringify({ 'type': 'get_cl_data_seg' }));
-              };
       
               socket_cl_seg.onmessage = function (e) {
                   var newData = JSON.parse(e.data);
@@ -68,7 +64,7 @@
           <div class="card-box widget-chart-one gradient-success bx-shadow-lg">
             <div class="float-left" dir="ltr">
                 <script>
-                var seg_consum = new WebSocket('ws://' + window.location.host + '/ws/table_seg_ipadd/');
+                var seg_consum = new WebSocket('ws://' + window.location.host + '/ws/table_seg_count/');
             
                 seg_consum.onmessage = function (e) {
                 var data = JSON.parse(e.data);
@@ -106,20 +102,142 @@
           <h4 class="header-title mb-3">График</h4>
           <canvas id="myLineChart" height="228"></canvas>
           <script>
+
+
+
             // Получаем контекст canvas
             var ctx = document.getElementById('myLineChart').getContext('2d');
         
             var socket_cve = new WebSocket('ws://' + window.location.host + '/ws/cve_year/'); // Замените URL на ваш сервер и путь WebSocket
         
-            socket_cve.onopen = function () {
-                console.log('Соединение CVE установлено.');
-                socket_cve.send(JSON.stringify({ 'type': 'get_cve_data' }));
-                
-            };
             var myLineChart;
+            {% if cve_year %}
+            timeLabels = [];
+                dataValues1 = [];
+                dataValues2 = [];
+                dataValues3 = [];
+                dataValues4 = [];
+        
+                // Заполняем массивы данными из пришедшего сообщения
+
+              
+                for (var year in {{ cve_year|safe }}) {
+                  timeLabels.push(year);
+                  dataValues1.push({{ cve_year|safe }}[year]['Критичная']);
+                  dataValues2.push({{ cve_year|safe }}[year]['Высокая']);
+                  dataValues3.push({{ cve_year|safe }}[year]['Средняя']);
+                  dataValues4.push({{ cve_year|safe }}[year]['Низкая']);
+                }
+        
+                if (myLineChart) {
+
+                  myLineChart.destroy();
+
+                  myLineChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: timeLabels,
+                        datasets: [
+                            {
+                                label: 'Критичная',
+                                data: [],
+                                backgroundColor: "hsl(283, 90%, 55%)",
+                                borderColor: 'hsl(283, 90%, 55%)',
+                                borderWidth: 2,
+                                fill: false,
+                            },
+                            {
+                                label: 'Высокая',
+                                data: [],
+                                backgroundColor: "hsl(0, 86%, 65%)",
+                                borderColor: 'hsl(0, 86%, 65%)',
+                                borderWidth: 2,
+                                fill: false,
+                            },
+                            {
+                                label: 'Средняя',
+                                data: [],
+                                backgroundColor: "hsl(39, 90%, 55%)",
+                                borderColor: 'hsl(39, 90%, 55%)',
+                                borderWidth: 2,
+                                fill: false,
+                            },
+                            {
+                                label: 'Низкая',
+                                data: [],
+                                backgroundColor: "#33ce7a",
+                                borderColor: '#33ce7a',
+                                borderWidth: 2,
+                                fill: false,
+                            }
+                        ]
+                    },
+                });
+
+                  
+                  myLineChart.data.labels = timeLabels;
+                  myLineChart.data.datasets[0].data = dataValues1;
+                  myLineChart.data.datasets[1].data = dataValues2;
+                  myLineChart.data.datasets[2].data = dataValues3;
+                  myLineChart.data.datasets[3].data = dataValues4;
+      
+                  myLineChart.update();
+              } else {
+        
+            // Создаем объект графика
+            myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [
+                        {
+                            label: 'Критичная',
+                            data: [],
+                            backgroundColor: "hsl(283, 90%, 55%)",
+                            borderColor: 'hsl(283, 90%, 55%)',
+                            borderWidth: 2,
+                            fill: false,
+                        },
+                        {
+                            label: 'Высокая',
+                            data: [],
+                            backgroundColor: "hsl(0, 86%, 65%)",
+                            borderColor: 'hsl(0, 86%, 65%)',
+                            borderWidth: 2,
+                            fill: false,
+                        },
+                        {
+                            label: 'Средняя',
+                            data: [],
+                            backgroundColor: "hsl(39, 90%, 55%)",
+                            borderColor: 'hsl(39, 90%, 55%)',
+                            borderWidth: 2,
+                            fill: false,
+                        },
+                        {
+                            label: 'Низкая',
+                            data: [],
+                            backgroundColor: "#33ce7a",
+                            borderColor: '#33ce7a',
+                            borderWidth: 2,
+                            fill: false,
+                        }
+                    ]
+                },
+            });
+            myLineChart.data.labels = timeLabels;
+            myLineChart.data.datasets[0].data = dataValues1;
+            myLineChart.data.datasets[1].data = dataValues2;
+            myLineChart.data.datasets[2].data = dataValues3;
+            myLineChart.data.datasets[3].data = dataValues4;
+            myLineChart.update();
+          }
+          {% endif %}
+
             socket_cve.onmessage = function (e) {
                 var nData = JSON.parse(e.data);
                 var newData = nData.data
+                console.log(newData)
                 // Очищаем массивы
                 timeLabels = [];
                 dataValues1 = [];
@@ -128,6 +246,8 @@
                 dataValues4 = [];
         
                 // Заполняем массивы данными из пришедшего сообщения
+
+              
                 for (var year in newData) {
                   timeLabels.push(year);
                   dataValues1.push(newData[year]['Критичная']);

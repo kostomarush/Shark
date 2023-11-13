@@ -38,8 +38,9 @@ def update_seg_client_data(sender, instance, created, **kwargs):
     client_1 = 0
     client_2 = 0
     client_3 = 0
-    data_server = IPAddress.objects.in_bulk()
+    data_server = IPAddress.objects.filter(seg_scan=instance.seg_scan).in_bulk()
     for id in data_server:
+        
         if data_server[id].tag == 'Done' and data_server[id].client.id == 1:
             client_1 += 1
         if data_server[id].tag == 'Done' and data_server[id].client.id == 2:
@@ -54,9 +55,8 @@ def update_seg_client_data(sender, instance, created, **kwargs):
 
     }
 
-    task_done = IPAddress.objects.filter(tag='Done').count()
-    print(task_done)
-
+    task_done = IPAddress.objects.filter(seg_scan=instance.seg_scan, tag='Done').count()
+    
     async def send_seg_client_data():
         await channel_layer.group_send(
             'send_client_data_seg',
@@ -86,7 +86,7 @@ def update_cve_year_data(sender, instance, **kwargs):
     vulnerability_counts_by_year = {}
 
     # Получаем уникальные года
-    unique_years = LevelCve.objects.values('year').distinct()
+    unique_years = LevelCve.objects.filter(result__result__seg_scan=instance.result.result.seg_scan).values('year').distinct()
 
     # Итерируемся по уникальным годам и подсчитываем уровни уязвимостей
     for year_info in unique_years:
@@ -199,6 +199,7 @@ def update_client_data(sender, instance, **kwargs):
         'client_1': client_1,
         'client_2': client_2,
         'client_3': client_3
+
 
     }
 

@@ -59,7 +59,6 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
         data_segment = IPAddress.objects.in_bulk()
         response = prot_pb2.DataSegment()
         for i in data_segment:
-            try:
                 if data_segment[i].tag == 'Proc' and data_segment[i].client.ip_client == request.name_cl:
                     if request.message:
                         save_data_seg = IPAddress.objects.get(id=i)
@@ -118,8 +117,6 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     
                                     
                         return response
-            except:
-                print('Error')
         for i in data_segment:
             if data_segment[i].tag == 'False':
                 client = ClientBD.objects.get(ip_client=request.name_cl)

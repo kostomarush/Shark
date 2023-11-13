@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DataServer, ClientBD, IPAddress, SegmentScan, SegmentResult, ScanInfo, ResultPorts, CveInformationAim, LevelCveAim
+from .models import DataServer, ClientBD, IPAddress, SegmentScan, SegmentResult, ScanInfo, ResultPorts, CveInformationAim, LevelCveAim, LevelCve
 
 # Register your models here.
 admin.site.register(DataServer)
@@ -10,4 +10,4 @@ admin.site.register(SegmentResult)
 admin.site.register(ScanInfo)
 admin.site.register(ResultPorts)
 admin.site.register(CveInformationAim)
-admin.site.register(LevelCveAim)
+admin.site.register(LevelCve)
