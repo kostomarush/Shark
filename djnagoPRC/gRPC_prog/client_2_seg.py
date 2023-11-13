@@ -11,27 +11,80 @@ def connect(stub: prot_pb2_grpc.RPCStub, name_cl: str):
         prot_pb2.DataClientSegment(name_cl=name_cl))
     ip_add_seg = response_segment.ip_address
     mode_seg = response_segment.mode
-    segment_scan(stub, ip_add_seg, mode_seg, name_cl)
+    cve_report = response_segment.cve_report
+    full_scan = response_segment.full_scan
+    if full_scan == 'True':
+        parametr = '-p-'
+    else:
+        parametr = '--allports'
+    segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr)
     stub.segment_scan(prot_pb2.DataClientSegment(
         name_cl=name_cl, message='Done'))
+    
 
-
-def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
+def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr):
     nm = nmap.PortScanner()
-    if mode_seg == 'SYN':
-        nm.scan(ip_add_seg, arguments='-sV')
-        all_hosts = nm.all_hosts()
-        host_info = {}
-        if all_hosts:
-            for host in all_hosts:
+    host_info = {}
+    if mode_seg == 'TCP':
+        result = nm.scan(ip_add_seg, arguments=f'-sT {parametr}')
+        open_ports = 0
+        if result['scan']:
+            for host, scan_result in result['scan'].items():
                 host_info[host] = {}
                 host_info[host]['host'] = host
+                host_info[host]['tag'] = mode_seg
                 host_info[host]['state'] = nm[host].state()
+                host_info[host]['open_ports'] = []
                 if 'tcp' in nm[host]:
-                    host_info[host]['open_ports'] = list(
-                        nm[host]['tcp'].keys())
+                    host_info[host]['state_ports'] = 'open'
+                    for port, info in scan_result['tcp'].items():
+                        if cve_report == 'True':
+                            cve_information = cve_info(host, port)
+                        else:
+                            cve_information = 'Empty'
+                        port_data = {
+                            'port': f'{port}',
+                            'state': info['state'],
+                            'reason': info['reason'],
+                            'service': info['name'],
+                            'cve': cve_information
+                        }
+                        host_info[host]['open_ports'].append(port_data)
                 else:
-                    host_info[host]['open_ports'] = 'down'
+                    host_info[host]['state_ports'] = 'down'
+                    print("No open TCP ports found.")
+                    
+                print(host_info)
+
+            
+            stub.segment_scan(prot_pb2.DataClientSegment(
+                name_cl=name_cl, data=f'{host_info}'))
+        else:
+            print('hosts is down')
+
+    elif mode_seg == 'UDP':
+        result = nm.scan(ip_add_seg, arguments='-sU')
+        open_ports = 0
+        if result:
+            for host, scan_result in result['scan'].items():
+                host_info[host] = {}
+                host_info[host]['host'] = host
+                host_info[host]['tag'] = mode_seg
+                host_info[host]['state'] = nm[host].state()
+                host_info[host]['open_ports'] = []
+                if 'udp' in nm[host]:
+                    host_info[host]['state_ports'] = 'open'
+                    for port, info in scan_result['udp'].items():
+                        port_data = {
+                            'port': f'{port}',
+                            'state': info['state'],
+                            'reason': info['reason'],
+                            'service': info['name']
+                        }
+                        host_info[host]['open_ports'].append(port_data)
+                        open_ports += 1
+                else:
+                    host_info[host]['state_ports'] = 'down'
                     print("No open TCP ports found.")
 
                 print(host_info)
@@ -40,6 +93,46 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl):
         else:
             print('hosts is down')
 
+    elif mode_seg == 'OS':
+        # Выполняем сканирование
+        result = nm.scan(ip_add_seg, arguments='-O')
+        if result['scan']:
+            for host, scan_result in result['scan'].items():
+                host_info[host] = {}
+                host_info[host]['host'] = host
+                host_info[host]['tag'] = mode_seg
+                host_info[host]['state'] = nm[host].state()
+                prob_osmatch = scan_result['osmatch']
+                if prob_osmatch:
+                    osmatch = scan_result['osmatch'][0]
+                    name = osmatch['name']
+                    host_info[host][name] = {}
+                    osclass = osmatch['osclass'][0]
+                    host_info[host][name]['vendor'] = osclass.get('vendor', 'N/A')
+                    host_info[host][name]['osfamily'] = osclass.get('osfamily', 'N/A')
+                    host_info[host][name]['osgen'] = osclass.get('osgen', 'N/A')
+                    host_info[host][name]['accuracy'] = osclass.get('accuracy', 'N/A')
+                else:
+                    print('OS None')
+            stub.segment_scan(prot_pb2.DataClientSegment(
+                name_cl=name_cl, data=f'{host_info}'))  
+        else:
+            print('hosts is down')
+
+def cve_info(ip_add_seg, port): 
+    nm = nmap.PortScanner()
+    result = nm.scan(ip_add_seg, ports=f"{port}", arguments='-sV --script vulscan/ --script-args vulscandb=update_cve.csv')
+    cve_inf = result['scan'][ip_add_seg]['tcp'][port]['script']
+    if cve_inf:
+        all_chunk = cve_inf.get('vulscan', 'Emptys'),
+    else:
+        all_chunk = 'No'
+    
+    return all_chunk[0]
+
+
+        
+        
 
 def send_keep_alive_messages(stub, name_cl):
     while True:
@@ -58,12 +151,13 @@ def run():
         target=send_keep_alive_messages, args=(stub, name_cl))
     ping_thread.daemon = True
     ping_thread.start()
+
+
     while True:
         try:  # Запускаем отдельный поток для отправки пингов
             connect(stub, name_cl)
         except:
             pass
-
 
 if __name__ == "__main__":
     run()

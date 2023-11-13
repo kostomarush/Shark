@@ -137,7 +137,7 @@ def run():
     channel = grpc.insecure_channel(
         'localhost:50051', options=(('grpc.enable_http_proxy', 0),))
     stub = prot_pb2_grpc.RPCStub(channel)
-    name_cl = '1'
+    name_cl = '4'
     ping_thread = threading.Thread(
         target=send_keep_alive_messages, args=(stub, name_cl))
     ping_thread.daemon = True

@@ -9,5 +9,6 @@ websocket_urlpatterns = [
     path('ws/my_socket_add/', consumers.UpdateTable.as_asgi()),
     path('ws/cve_year/', consumers.UpdateCveInformationData.as_asgi()),
     path('ws/my_socket_client_seg/', consumers.ClientSegConsumer.as_asgi()),
-    # path('ws/my_socket_cve_level/', consumers.LevelCve.as_asgi())
+    path('ws/table_seg_ipadd/', consumers.SegTableCl.as_asgi()),
+    path('ws/table_seg_count/', consumers.TaskSegConsumer.as_asgi()),
 ]

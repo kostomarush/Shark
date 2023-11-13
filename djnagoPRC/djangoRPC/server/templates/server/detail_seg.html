@@ -35,7 +35,7 @@
                   datasets: [{
                       label: "Задачи",
                       data: [],
-                      backgroundColor: ["#00CED1", "#00CED1"],
+                      backgroundColor: ["#00CED1", "#00CED1", "#00CED1"],
                   }],
               };
       
@@ -68,9 +68,9 @@
           <div class="card-box widget-chart-one gradient-success bx-shadow-lg">
             <div class="float-left" dir="ltr">
                 <script>
-                var socket4 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_task/');
+                var seg_consum = new WebSocket('ws://' + window.location.host + '/ws/table_seg_ipadd/');
             
-                socket4.onmessage = function (e) {
+                seg_consum.onmessage = function (e) {
                 var data = JSON.parse(e.data);
                 console.log(data)
 
@@ -80,24 +80,24 @@
                 }
             };
         
-            socket4.onopen = function() {
+            seg_consum.onopen = function() {
                 console.log('WebSocket task connected');
             };
         
-            socket4.onclose = function() {
+            seg_consum.onclose = function() {
                 console.log('WebSocket closed');
             };
 
                 </script>
                 <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
-                        data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" data-max="{% for i in data_serv %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}" 
+                        data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" data-max="{% for i in all_ip %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}" 
                         value="{{ task_done }}" 
                         data-skin="tron" data-angleOffset="180"
                         data-readOnly=true data-thickness=".2" id='task_done'/>
             </div>
             <div class="widget-chart-one-content text-right">
                 <p class="text-white mb-0">Выполнено задач из</p>
-                <h3 class="text-white">{% for i in data_serv %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}</h3>
+                <h3 class="text-white">{% for i in all_ip %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}</h3>
             </div>
         </div>
       </div>
@@ -250,6 +250,32 @@
       <div class="col-xl-4">
         <div class="card-box">
           <h4 class="header-title mb-3">Таблица Адресов</h4>
+          <script>
+            var socket_ipadd = new WebSocket('ws://' + window.location.host + '/ws/table_seg_ipadd/');
+            
+            socket_ipadd.onmessage = function(e) {
+            var newData = JSON.parse(e.data);
+            var recordId = newData.id;
+            var tagCell = document.getElementById('tag-' + recordId);
+            var clientCell = document.getElementById('client-' + recordId); // Найдем ячейку для параметра 'client'
+            console.log(newData);
+            if (tagCell) {
+              tagCell.innerText = newData.tag;
+            }
+            if (clientCell) {
+              clientCell.innerText = newData.client; // Обновим текст в ячейке 'client' с новым значением
+            }
+        };
+            
+        
+        socket_ipadd.onopen = function() {
+                console.log('WebSocket connected');
+            };
+        
+            socket_ipadd.onclose = function() {
+                console.log('WebSocket closed');
+            };
+        </script>
           <table class="table table-bordered" id="datatables">
             <thead>
               <tr>
@@ -261,11 +287,11 @@
             </thead>
             <tbody>
               {% for i in all_ip %}
-              <tr>
+              <tr id="row-{{ i.pk }}">
                 <th>{{forloop.counter}}</th>
                 <th>{{i.address}}</th>
-                <th>{{i.client}}</th>
-                <th>{{i.tag}}</th>
+                <th id="client-{{ i.pk }}">{{ i.client }}</th>
+                <th id="tag-{{ i.pk }}">{{ i.tag }}</th>
               </tr>
               {% endfor %}
             </tbody>

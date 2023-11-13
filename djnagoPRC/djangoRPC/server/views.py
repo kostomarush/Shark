@@ -11,7 +11,7 @@ def detail_seg(request, pk):
     item = get_object_or_404(SegmentScan, pk=pk)
     segment_scans = SegmentScan.objects.all()
     all_ip_addresses = IPAddress.objects.all()
-
+    task_done = IPAddress.objects.filter(seg_scan = item, tag='Done').count()
     # Создайте словарь, где ключами будут объекты SegmentScan, а значениями будут связанные IP-адреса
     ip_addresses_by_segment = {}
     segment_results_by_segment = {}
@@ -43,7 +43,8 @@ def detail_seg(request, pk):
 
     return render(request, 'server/detail_seg.html', {'item': item,
                                                       'all_ip': ip_dict,
-                                                      'result': result_dict
+                                                      'result': result_dict,
+                                                      'task_done': task_done,
                                                       })
 
 
@@ -99,7 +100,7 @@ def segment(request):
             mask = segment_scan_instance.mask
             network = ipaddress.IPv4Network(f'{net}/{mask}', strict=False)
             segments = [
-                ipaddr for ipaddr in network.subnets(prefixlen_diff=4)]
+                ipaddr for ipaddr in network.subnets(prefixlen_diff=6)]
             for addr in segments:
                 IPAddress.objects.create(
                     address=f'{addr}', seg_scan=segment_scan_instance)

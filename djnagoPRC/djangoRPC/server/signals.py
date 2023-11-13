@@ -6,7 +6,7 @@ import json
 import logging
 
 
-from .models import ScanInfo, DataServer, ResultPortsAim, LevelCve
+from .models import ScanInfo, DataServer, ResultPortsAim, LevelCve, IPAddress
 
 from django.db.models import Count
 
@@ -14,29 +14,70 @@ channel_layer = get_channel_layer()
 
 
 
-
-# @receiver(post_save, sender=LevelCveAim)
-# def update_cve_level(sender, instance, **kwargs):
+@receiver(post_save, sender=IPAddress)
+def update_seg_client_data(sender, instance, created, **kwargs):
     
-#     critical = LevelCveAim.objects.filter(tag='Критично').count()
+    if created:
+        pass
+    else:
+        new_tag = instance.tag
+        new_cl = instance.client.ip_client
 
-#     send_level = {
+        # Отправьте это значение через WebSocket
+
+        async def send_seg_table_update():
+            await channel_layer.group_send('my_seg_table_group', {
+                'type': 'seg_update_tag',
+                'tag': new_tag,
+                'client': new_cl,
+                'id': instance.pk,  # Идентификатор записи, которую вы обновили
+            })
+
+        async_to_sync(send_seg_table_update)()
         
-#         'critical': critical
-        
-#     }
-    
-#     async def send_level_data():
-#         await channel_layer.group_send(
-#             'send_level_data',
-#             {
-#                 'type': 'level.update',
-#                 'data': send_level
-#             }
-#         )
-    
-#     async_to_sync(send_level)()
+    client_1 = 0
+    client_2 = 0
+    client_3 = 0
+    data_server = IPAddress.objects.in_bulk()
+    for id in data_server:
+        if data_server[id].tag == 'Done' and data_server[id].client.id == 1:
+            client_1 += 1
+        if data_server[id].tag == 'Done' and data_server[id].client.id == 2:
+            client_2 += 1
+        if data_server[id].tag == 'Done' and data_server[id].client.id == 3:
+            client_3 += 1
+    client_data = {
 
+        'client_1': client_1,
+        'client_2': client_2,
+        'client_3': client_3,
+
+    }
+
+    task_done = IPAddress.objects.filter(tag='Done').count()
+    print(task_done)
+
+    async def send_seg_client_data():
+        await channel_layer.group_send(
+            'send_client_data_seg',
+            {
+                'type': 'client_data.update',
+                'client': client_data
+            }
+        )
+
+    async def send_seg_task_done():
+        await channel_layer.group_send(
+            'send_task_seg_done',
+            {
+                'type': 'task_done.update',
+                'task': task_done
+            }
+        )
+
+    async_to_sync(send_seg_client_data)()
+
+    async_to_sync(send_seg_task_done)()
 
 @receiver(post_save, sender=LevelCve)
 def update_cve_year_data(sender, instance, **kwargs):
@@ -144,16 +185,20 @@ def update_client_data(sender, instance, **kwargs):
 
     client_1 = 0
     client_2 = 0
+    client_3 = 0
     data_server = DataServer.objects.in_bulk()
     for id in data_server:
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 1:
+        if data_server[id].tag == 'Done' and data_server[id].client.id == 4:
             client_1 += 1
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 2:
+        if data_server[id].tag == 'Done' and data_server[id].client.id == 5:
             client_2 += 1
+        if data_server[id].tag == 'Done' and data_server[id].client.id == 6:
+            client_3 += 1    
     client_data = {
 
         'client_1': client_1,
-        'client_2': client_2
+        'client_2': client_2,
+        'client_3': client_3
 
     }
 

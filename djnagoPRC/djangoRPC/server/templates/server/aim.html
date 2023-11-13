@@ -83,11 +83,11 @@
                 
                         // Инициализируем начальные данные для графика
                         var initialData = {
-                            labels: ["Клиент 1", "Клиент 2"],
+                            labels: ["Клиент 1", "Клиент 2", "Клиент 3"],
                             datasets: [{
                                 label: "Задачи",
                                 data: [],
-                                backgroundColor: ["#00CED1", "#00CED1"],
+                                backgroundColor: ["#00CED1", "#00CED1", "#00CED1"],
                             }],
                         };
                 
@@ -106,9 +106,8 @@
                 
                         socket2.onmessage = function (e) {
                             var newData = JSON.parse(e.data);
-                            console.log(newData.data.client_2)
                             // Обновляем данные в графике
-                            barChart.data.datasets[0].data = [newData.data.client_1, newData.data.client_2];
+                            barChart.data.datasets[0].data = [newData.data.client_1, newData.data.client_2, newData.data.client_3];
                             barChart.update();
                         };
                 
@@ -212,6 +211,7 @@ chart.update();
                     
                     socket3.onmessage = function(e) {
                     var newData = JSON.parse(e.data);
+                    console.log(newData.tag)
                     var recordId = newData.id;
                     var tagCell = document.getElementById('tag-' + recordId);
                     var clientCell = document.getElementById('client-' + recordId); // Найдем ячейку для параметра 'client'
@@ -226,7 +226,7 @@ chart.update();
                     
                 
                     socket3.onopen = function() {
-                        console.log('WebSocket connected');
+                        console.log('WebSocket done connected');
                     };
                 
                     socket3.onclose = function() {
@@ -240,7 +240,7 @@ chart.update();
                             <th>ip</th>
                             <th>port</th>
                             <th>mode</th>
-                            <th>client_scan</th>
+                            <th>client</th>
                             <th>tag</th>
                             <th>CVE</th>
                             <th>delete</th>
