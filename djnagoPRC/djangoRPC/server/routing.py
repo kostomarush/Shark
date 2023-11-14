@@ -11,4 +11,5 @@ websocket_urlpatterns = [
     path('ws/my_socket_client_seg/', consumers.ClientSegConsumer.as_asgi()),
     path('ws/table_seg_ipadd/', consumers.SegTableCl.as_asgi()),
     path('ws/table_seg_count/', consumers.TaskSegConsumer.as_asgi()),
+    path('ws/table_seg_res/', consumers.UpdateTableSeg.as_asgi()),
 ]

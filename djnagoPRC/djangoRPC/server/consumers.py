@@ -207,7 +207,25 @@ class TaskConsumer(AsyncWebsocketConsumer):
             'task': task,
         }))
 
+class UpdateTableSeg(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
 
+        await self.channel_layer.group_add(
+            'send_data_table_seg',
+            self.channel_name
+        )
+
+    async def disconnect(self, close_code):
+        # Отсоедините клиента от группы WebSocket при разрыве соединения
+        await self.channel_layer.group_discard(
+            'send_data_table_seg',
+            self.channel_name
+        )
+
+    async def data_table_seg(self, event):
+        await self.send(json.dumps({'data': event['data']}))
+        
 class UpdateTable(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()

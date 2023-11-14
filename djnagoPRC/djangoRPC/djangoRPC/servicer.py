@@ -233,8 +233,10 @@ def check_ping_thread(my_service):
                     for i in elements_on_delete:
                         try:
                             if elements_on_delete[i].client.ip_client == client_name and elements_on_delete[i].tag == 'Proc':
-                                IPAddress.objects.filter(id=i).update(
-                                    client=None, tag='False')
+                                del_ip = IPAddress.objects.get(id=i)
+                                del_ip.client.ip_client='None' 
+                                del_ip.tag='False'
+                                del_ip.save()
                                 print(
                                     f'Клиент {client_name} удален!')
                         except:

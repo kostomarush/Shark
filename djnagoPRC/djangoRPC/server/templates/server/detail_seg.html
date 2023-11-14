@@ -22,7 +22,7 @@
     <div class="row">
       <div class="col-xl-4">
         <div class="card-box">
-          <h4 class="header-title mb-3">График</h4>
+          <h4 class="header-title mb-3">Распределенность клиентов</h4>
           <canvas id="barChart" width="400" height="185"></canvas>
 
           <script>
@@ -99,7 +99,7 @@
       </div>
       <div class="col-xl-4">
         <div class="card-box">
-          <h4 class="header-title mb-3">График</h4>
+          <h4 class="header-title mb-3">Количество CVE уязвимостей</h4>
           <canvas id="myLineChart" height="228"></canvas>
           <script>
 
@@ -369,7 +369,7 @@
       </div>
       <div class="col-xl-4">
         <div class="card-box">
-          <h4 class="header-title mb-3">Таблица Адресов</h4>
+          <h4 class="header-title mb-3">Таблица задач</h4>
           <script>
             var socket_ipadd = new WebSocket('ws://' + window.location.host + '/ws/table_seg_ipadd/');
             
@@ -399,8 +399,8 @@
           <table class="table table-bordered" id="datatables">
             <thead>
               <tr>
-                <th>id</th>
-                <th>ip</th>
+                <th>№</th>
+                <th>IP</th>
                 <th>Клиенты</th>
                 <th>Состояние</th>
               </tr>
@@ -410,7 +410,7 @@
               <tr id="row-{{ i.pk }}">
                 <th>{{forloop.counter}}</th>
                 <th>{{i.address}}</th>
-                <th id="client-{{ i.pk }}">{{ i.client }}</th>
+                <th id="client-{{ i.pk }}">{{ i.client.ip_client }}</th>
                 <th id="tag-{{ i.pk }}">{{ i.tag }}</th>
               </tr>
               {% endfor %}
@@ -443,18 +443,55 @@
               <a href="javascript:void(0);" class="dropdown-item">Action</a>
             </div>
           </div>
-          <h4 class="header-title mb-3">Таблица Адресов</h4>
+          <h4 class="header-title mb-3">Таблица выполненных задач</h4>
+          <script>
+            var socket_table_res = new WebSocket('ws://' + window.location.host + '/ws/table_seg_res/');
+        
+            socket_table_res.onmessage = function (e) {
+                var data = JSON.parse(e.data);
+                console.log(data.data);
+                
+                // Полученные данные добавляются в таблицу
+                var dataTable = document.getElementById('selection-datatable').getElementsByTagName('tbody')[0];
+                var newRow = dataTable.insertRow();
+        
+                var cell1 = newRow.insertCell(0);
+                var cell2 = newRow.insertCell(1);
+                var cell3 = newRow.insertCell(2);
+                var cell4 = newRow.insertCell(3);
+        
+                cell1.innerHTML = data.data.row_count;
+                cell2.innerHTML = data.data.host;
+                cell3.innerHTML = data.data.mode;
+                cell4.innerHTML = data.data.state_scan;
+        
+                // Добавление кнопки или ссылки, в зависимости от режима
+                var cell5 = newRow.insertCell(4);
+                
+                if (data.data.id) {
+                    var portInfoUrl = "{% url 'port_information' pk=1 %}".replace('1', data.data.id);
+                
+                    if (data.data.mode === 'OS') {
+                        cell5.innerHTML = '<button type="button" class="btn btn-outline-info waves-effect waves-light width-md" data-toggle="modal" data-target="#myModal' + data.data.id + '">Информация об ОС</button>';
+                    } else {
+                        cell5.innerHTML = '<a class="btn btn-outline-info waves-effect waves-light width-md" href="' + portInfoUrl + '">Информация о портах</a>';
+                    }
+                }
+            };
+        
+            socket_add.onclose = function () {
+                console.log('Соединение адресов закрыто.');
+            };
+        </script>
+        
           <table class="table table-bordered" id="selection-datatable">
             <thead>
                 <th>id</th>
                 <th>Хост</th>
+                <th>Режим</th>
                 <th>Состояние хоста</th>
-                {% if item.mode == 'OS'%}
-                <th>Полное имя ОС</th>
-                <th>Вендор</th>
-                <th>Семейство</th>
-                <th>Версия</th>
-                <th>Точность сканирования</th>
+                {% if result.mode == 'OS'%}
+
                 {% else %}
                 <th>{{"Открытые порты"}}</th>
                 {% endif %}
@@ -462,22 +499,34 @@
             <tbody>
               {% for i in result %}
               <tr>
-                <th>{{forloop.counter}}</th>
-                <th>{{i.host}}</th>
-                <th>{{i.state_scan}}</th>
-                {% if i.state_ports %}
-                  {% if i.state_ports == 'down' %}
-                    <th>{{ "Порты закрыты" }}</th>
-                  {% else %}
+                <td>{{forloop.counter}}</td>
+                <td>{{i.host}}</td>
+                <td>{{i.result.seg_scan.mode}}</td>
+                <td>{{i.state_scan}}</td>
+                {% if i.result.mode == 'OS'%}
+                <td><button type="button" class="btn btn-outline-info waves-effect waves-light width-md" data-toggle="modal" data-target="#myModal{{ i.id }}">
+                    Информация об ОС
+                  </button></td>
+                  
+                  <!-- Модальное окно -->
+                  <div class="modal fade" id="myModal{{ i.id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title" id="myModalLabel"> Информация об ОС {{i.host}}</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body" style="font-size: 16px;">
+                          <!-- Содержимое модального окна -->
+                        Полное имя ОС: {{i.full_name}}<br>
+                        Вендор: {{i.vendor}}<br>
+                        Семейство: {{i.osfamily}}<br>
+                        Версия: {{i.osgen}}<br>
+                        Точность сканирования: {{i.accuracy}}
+                        </div>
+                {% else %}
                     <th><a class="btn btn-outline-info waves-effect waves-light width-md"
                       href="{% url 'port_information' pk=i.pk %}"> Информация о портах</a></th>
-                  {% endif %}
-                {% else %}
-                  <th>{{i.full_name}}</th>
-                  <th>{{i.vendor}}</th>
-                  <th>{{i.osfamily}}</th>
-                  <th>{{i.osgen}}</th>
-                  <th>{{i.accuracy}}</th>
                 {% endif %}
                 </tr>
                 {% endfor %}
