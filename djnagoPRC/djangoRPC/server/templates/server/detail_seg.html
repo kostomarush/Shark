@@ -498,6 +498,7 @@
               </thead>
             <tbody>
               {% for i in result %}
+                {% if i.is_execution_complete %}
               <tr>
                 <td>{{forloop.counter}}</td>
                 <td>{{i.host}}</td>
@@ -529,6 +530,7 @@
                       href="{% url 'port_information' pk=i.pk %}"> Информация о портах</a></th>
                 {% endif %}
                 </tr>
+                  {% endif %}
                 {% endfor %}
               </tbody>
           </table>

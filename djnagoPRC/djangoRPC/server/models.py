@@ -83,6 +83,12 @@ class SegmentResult(models.Model):
     accuracy = models.CharField(max_length=20)
     result = models.ForeignKey(
         IPAddress, on_delete=models.CASCADE)
+    
+    is_execution_complete = models.BooleanField(default=False)
+
+    def mark_execution_complete(self):
+        self.is_execution_complete = True
+        self.save()
 
 
 class ResultPorts(models.Model):

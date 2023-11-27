@@ -14,53 +14,59 @@ channel_layer = get_channel_layer()
 
 @receiver(post_save, sender=SegmentResult)
 def update_table_res(sender, instance, created, **kwargs):
-    host = instance.host
-    state_scan = instance.state_scan
-    mode = instance.result.seg_scan.mode
-    state_ports = instance.state_ports
     
-    row_count = SegmentResult.objects.count()
-    
-    if mode == 'OS':
-        full_name = instance.full_name
-        vendor = instance.vendor
-        osfamily = instance.osfamily
-        osgen = instance.osgen
-        accuracy = instance.accuracy
-    else:
-        full_name = ''
-        vendor = ''
-        osfamily = ''
-        osgen = ''
-        accuracy = ''
-    
-    data = {
+    if created:
+        pass
+
+    if instance.is_execution_complete:
         
-        'row_count': row_count,
-        'id': instance.pk,
-        'host': host,
-        'state_scan': state_scan,
-        'mode': mode,
-        'state_ports': state_ports,
-        'full_name': full_name,
-        'vendor': vendor,
-        'osfamily': osfamily,
-        'osgen': osgen,
-        'accuracy': accuracy
-    }
-    
-    
-    async def send_data_table_seg():
-        await channel_layer.group_send(
-            'send_data_table_seg',
-            {
-                'type': 'data_table_seg.update',
-                'data': data
-            }
-        )
+        host = instance.host
+        state_scan = instance.state_scan
+        mode = instance.result.seg_scan.mode
+        state_ports = instance.state_ports
+
+        row_count = SegmentResult.objects.count()
+
+        if mode == 'OS':
+            full_name = instance.full_name
+            vendor = instance.vendor
+            osfamily = instance.osfamily
+            osgen = instance.osgen
+            accuracy = instance.accuracy
+        else:
+            full_name = ''
+            vendor = ''
+            osfamily = ''
+            osgen = ''
+            accuracy = ''
+
+        data = {
+
+            'row_count': row_count,
+            'id': instance.pk,
+            'host': host,
+            'state_scan': state_scan,
+            'mode': mode,
+            'state_ports': state_ports,
+            'full_name': full_name,
+            'vendor': vendor,
+            'osfamily': osfamily,
+            'osgen': osgen,
+            'accuracy': accuracy
+        }
 
 
-    async_to_sync(send_data_table_seg)()
+        async def send_data_table_seg():
+            await channel_layer.group_send(
+                'send_data_table_seg',
+                {
+                    'type': 'data_table_seg.update',
+                    'data': data
+                }
+            )
+
+
+        async_to_sync(send_data_table_seg)()
 
 @receiver(post_save, sender=IPAddress)
 def update_seg_client_data(sender, instance, created, **kwargs):

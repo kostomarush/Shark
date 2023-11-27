@@ -114,9 +114,11 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     save_data_in_segment_ports.save()
                                     save_cve = CveInformation(cve_information = cve, result_ports = save_data_in_segment_ports)
                                     save_cve.save()
-                                    
+                    
+                        save_data_in_segment.mark_execution_complete()                
                                     
                         return response
+                    
         for i in data_segment:
             if data_segment[i].tag == 'False':
                 client = ClientBD.objects.get(ip_client=request.name_cl)
