@@ -37,6 +37,12 @@ class ScanInfo(models.Model):
     result = models.ForeignKey(
         DataServer, on_delete=models.CASCADE)
     
+    is_execution_complete = models.BooleanField(default=False)
+
+    def mark_execution_complete(self):
+        self.is_execution_complete = True
+        self.save()
+    
 
 class ResultPortsAim(models.Model):
     port = models.CharField(max_length=10)
@@ -89,6 +95,7 @@ class SegmentResult(models.Model):
     def mark_execution_complete(self):
         self.is_execution_complete = True
         self.save()
+        
 
 
 class ResultPorts(models.Model):
@@ -104,6 +111,13 @@ class CveInformation(models.Model):
     result_ports = models.ForeignKey(ResultPorts, on_delete=models.CASCADE)
 
 class LevelCve(models.Model):
+    
+    is_execution_complete = models.BooleanField(default=False)
+
+    def mark_execution_complete(self):
+        self.is_execution_complete = True
+        self.save()
+        
     port = models.CharField(max_length=10)
     cve = models.CharField(max_length=20)
     level = models.CharField(max_length=30)

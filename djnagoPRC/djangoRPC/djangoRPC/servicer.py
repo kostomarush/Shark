@@ -64,6 +64,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                         save_data_seg = IPAddress.objects.get(id=i)
                         save_data_seg.tag = 'Done'
                         save_data_seg.save()
+                        
                         return response
                     elif request.data:
                         result = IPAddress.objects.get(id=data_segment[i].id)
@@ -88,6 +89,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     host=info['host'], state_ports = info['state_ports'], state_scan=info['state'], result=result)
                                 save_data_in_segment.save()
 
+
                                 for port_info in info['open_ports']:
                                     port = port_info['port']
                                     state = port_info['state']
@@ -107,16 +109,19 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                         criticality = self.get_criticality(stripped_cve, nvd_json_path)
                                         all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
                                         save_cve_level = LevelCve(port = port, cve=stripped_cve, level=criticality, year = year, result = save_data_in_segment)
-                                        save_cve_level.save()                                  
+                                        save_cve_level.save()
+                                                                          
                                         
                                     save_data_in_segment_ports = ResultPorts(
                                         port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data_in_segment)
                                     save_data_in_segment_ports.save()
                                     save_cve = CveInformation(cve_information = cve, result_ports = save_data_in_segment_ports)
                                     save_cve.save()
-                    
-                        save_data_in_segment.mark_execution_complete()                
                                     
+                                if cve_matches:           
+                                    save_cve_level.mark_execution_complete()
+                                                   
+                                save_data_in_segment.mark_execution_complete()             
                         return response
                     
         for i in data_segment:
@@ -193,6 +198,9 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                             save_data_in_aim_ports.save()
                             save_cve = CveInformationAim(cve_information = cve, result_ports = save_data_in_aim_ports)
                             save_cve.save()
+                    
+                    save_data.mark_execution_complete()
+                    
                     return response
                                 
             elif data_server[data_id].tag == 'False':
@@ -235,8 +243,8 @@ def check_ping_thread(my_service):
                     for i in elements_on_delete:
                         try:
                             if elements_on_delete[i].client.ip_client == client_name and elements_on_delete[i].tag == 'Proc':
-                                del_ip = IPAddress.objects.get(id=i)
-                                del_ip.client.ip_client='None' 
+                                del_ip = IPAddress.objects.get(pk=i)
+                                del_ip.client = None 
                                 del_ip.tag='False'
                                 del_ip.save()
                                 print(

@@ -223,7 +223,7 @@ class UpdateTableSeg(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def data_table_seg(self, event):
+    async def send_data_table_seg_update(self, event):
         await self.send(json.dumps({'data': event['data']}))
         
 class UpdateTable(AsyncWebsocketConsumer):

@@ -13,20 +13,15 @@ from django.db.models import Count
 channel_layer = get_channel_layer()
 
 @receiver(post_save, sender=SegmentResult)
-def update_table_res(sender, instance, created, **kwargs):
+def update_table_res(sender, instance, **kwargs):
     
-    if created:
-        pass
-
     if instance.is_execution_complete:
         
         host = instance.host
         state_scan = instance.state_scan
         mode = instance.result.seg_scan.mode
         state_ports = instance.state_ports
-
         row_count = SegmentResult.objects.count()
-
         if mode == 'OS':
             full_name = instance.full_name
             vendor = instance.vendor
@@ -39,9 +34,7 @@ def update_table_res(sender, instance, created, **kwargs):
             osfamily = ''
             osgen = ''
             accuracy = ''
-
         data = {
-
             'row_count': row_count,
             'id': instance.pk,
             'host': host,
@@ -54,18 +47,14 @@ def update_table_res(sender, instance, created, **kwargs):
             'osgen': osgen,
             'accuracy': accuracy
         }
-
-
         async def send_data_table_seg():
             await channel_layer.group_send(
                 'send_data_table_seg',
                 {
-                    'type': 'data_table_seg.update',
+                    'type': 'send_data_table_seg.update',
                     'data': data
                 }
             )
-
-
         async_to_sync(send_data_table_seg)()
 
 @receiver(post_save, sender=IPAddress)
@@ -75,7 +64,10 @@ def update_seg_client_data(sender, instance, created, **kwargs):
         pass
     else:
         new_tag = instance.tag
-        new_cl = instance.client.ip_client
+        if instance.client:
+            new_cl = instance.client.ip_client
+        else:
+            new_cl=None
 
         # Отправьте это значение через WebSocket
 
@@ -137,101 +129,105 @@ def update_seg_client_data(sender, instance, created, **kwargs):
 def update_cve_year_data(sender, instance, **kwargs):
     # Создаем словарь для хранения количества уникальных уровней уязвимостей для каждого года
     # Создаем словарь для хранения количества уровней уязвимостей для каждого года
-    vulnerability_counts_by_year = {}
-
-    # Получаем уникальные года
-    unique_years = LevelCve.objects.filter(result__result__seg_scan=instance.result.result.seg_scan).values('year').distinct()
-
-    # Итерируемся по уникальным годам и подсчитываем уровни уязвимостей
-    for year_info in unique_years:
-        year = year_info['year']
-
-
-        critical_count = LevelCve.objects.filter(year=year, level='Критичная').count()
-
-
-        high_count = LevelCve.objects.filter(year=year, level='Высокая').count()
-
-
-        medium_count = LevelCve.objects.filter(year=year, level='Средняя').count()
+    if instance.is_execution_complete:
         
-        
-        normal_count = LevelCve.objects.filter(year=year, level='Низкая').count()
+        vulnerability_counts_by_year = {}
 
-        # Создаем словарь для уровней уязвимостей текущего года
-        levels_dict = {
-            'Критичная': critical_count,
-            'Высокая': high_count,
-            'Средняя': medium_count,
-            'Низкая': normal_count
-        }
+        # Получаем уникальные года
+        unique_years = LevelCve.objects.filter(result__result__seg_scan=instance.result.result.seg_scan).values('year').distinct()
 
-        # Добавляем в общий словарь
-        vulnerability_counts_by_year[year] = levels_dict
+        # Итерируемся по уникальным годам и подсчитываем уровни уязвимостей
+        for year_info in unique_years:
+            year = year_info['year']
 
-    async def send_cve_year_data():
-        await channel_layer.group_send(
-            'send_data_information_cve_data',
-            {
-                'type': 'cve_data.update',
-                'data': vulnerability_counts_by_year
+
+            critical_count = LevelCve.objects.filter(year=year, level='Критичная').count()
+
+
+            high_count = LevelCve.objects.filter(year=year, level='Высокая').count()
+
+
+            medium_count = LevelCve.objects.filter(year=year, level='Средняя').count()
+
+
+            normal_count = LevelCve.objects.filter(year=year, level='Низкая').count()
+
+            # Создаем словарь для уровней уязвимостей текущего года
+            levels_dict = {
+                'Критичная': critical_count,
+                'Высокая': high_count,
+                'Средняя': medium_count,
+                'Низкая': normal_count
             }
-        )
+
+            # Добавляем в общий словарь
+            vulnerability_counts_by_year[year] = levels_dict
+
+        async def send_cve_year_data():
+            await channel_layer.group_send(
+                'send_data_information_cve_data',
+                {
+                    'type': 'cve_data.update',
+                    'data': vulnerability_counts_by_year
+                }
+            )
 
 
-    async_to_sync(send_cve_year_data)()
+        async_to_sync(send_cve_year_data)()
 
 
 @receiver(post_save, sender=ScanInfo)
 def update_table_data(sender, instance, **kwargs):
 
-    host = instance.host
-    state_scan = instance.state_scan
-    mode = instance.result.mode
-    state_ports = instance.state_ports
+    if instance.is_execution_complete:
     
-    row_count = ScanInfo.objects.count()
-    
-    if mode == 'OS':
-        full_name = instance.full_name
-        vendor = instance.vendor
-        osfamily = instance.osfamily
-        osgen = instance.osgen
-        accuracy = instance.accuracy
-    else:
-        full_name = ''
-        vendor = ''
-        osfamily = ''
-        osgen = ''
-        accuracy = ''
-    
-    data = {
-        
-        'row_count': row_count,
-        'id': instance.pk,
-        'host': host,
-        'state_scan': state_scan,
-        'mode': mode,
-        'state_ports': state_ports,
-        'full_name': full_name,
-        'vendor': vendor,
-        'osfamily': osfamily,
-        'osgen': osgen,
-        'accuracy': accuracy
-    }
-    
-    
-    async def send_data_table():
-        await channel_layer.group_send(
-            'send_data_table',
-            {
-                'type': 'data_table.update',
-                'data': data
-            }
-        )
+        host = instance.host
+        state_scan = instance.state_scan
+        mode = instance.result.mode
+        state_ports = instance.state_ports
+
+        row_count = ScanInfo.objects.count()
+
+        if mode == 'OS':
+            full_name = instance.full_name
+            vendor = instance.vendor
+            osfamily = instance.osfamily
+            osgen = instance.osgen
+            accuracy = instance.accuracy
+        else:
+            full_name = ''
+            vendor = ''
+            osfamily = ''
+            osgen = ''
+            accuracy = ''
+
+        data = {
+
+            'row_count': row_count,
+            'id': instance.pk,
+            'host': host,
+            'state_scan': state_scan,
+            'mode': mode,
+            'state_ports': state_ports,
+            'full_name': full_name,
+            'vendor': vendor,
+            'osfamily': osfamily,
+            'osgen': osgen,
+            'accuracy': accuracy
+        }
 
 
-    async_to_sync(send_data_table)()
+        async def send_data_table():
+            await channel_layer.group_send(
+                'send_data_table',
+                {
+                    'type': 'data_table.update',
+                    'data': data
+                }
+            )
+
+
+        async_to_sync(send_data_table)()
 
 
 @receiver(post_save, sender=DataServer)

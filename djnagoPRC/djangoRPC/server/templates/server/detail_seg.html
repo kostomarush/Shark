@@ -445,9 +445,9 @@
           </div>
           <h4 class="header-title mb-3">Таблица выполненных задач</h4>
           <script>
-            var socket_table_res = new WebSocket('ws://' + window.location.host + '/ws/table_seg_res/');
+            var table_res = new WebSocket('ws://' + window.location.host + '/ws/table_seg_res/');
         
-            socket_table_res.onmessage = function (e) {
+            table_res.onmessage = function (e) {
                 var data = JSON.parse(e.data);
                 console.log(data.data);
                 
@@ -478,8 +478,12 @@
                     }
                 }
             };
+
+            table_res.onopen = function() {
+              console.log('Таблица connected');
+          };
         
-            socket_add.onclose = function () {
+          table_res.onclose = function () {
                 console.log('Соединение адресов закрыто.');
             };
         </script>
