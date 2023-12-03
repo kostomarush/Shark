@@ -17,13 +17,47 @@
       <h4 class="page-title">Результаты сканирования</h4>
     </div>
     <!-- end page title -->
-    <h2>Детали элемента: {{item.ip}}/{{item.mask}} </h2>
-    <h2>Режим сканирования: {{item.mode}} </h2>
     <div class="row">
       <div class="col-xl-4">
         <div class="card-box">
-          <h4 class="header-title mb-3">Распределенность клиентов</h4>
-          <canvas id="barChart" width="400" height="185"></canvas>
+          <h4 class="header-title mb-3">Детали элемента {{item.ip}}/{{item.mask}} </h4>
+          <div class="float-left" dir="ltr">
+              <script>
+              var seg_consum = new WebSocket('ws://' + window.location.host + '/ws/table_seg_count/');
+          
+              seg_consum.onmessage = function (e) {
+              var data = JSON.parse(e.data);
+              console.log(data)
+
+              var taskKnob = document.getElementById('task_done');
+              if (taskKnob) {
+                  taskKnob.value = data.task;
+              }
+          };
+      
+          seg_consum.onopen = function() {
+              console.log('WebSocket task connected');
+          };
+      
+          seg_consum.onclose = function() {
+              console.log('WebSocket closed');
+          };
+
+              </script>
+              <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
+                      data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" data-max="{% for i in all_ip %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}" 
+                      value="{{ task_done }}" 
+                      data-angleOffset="180"
+                      data-readOnly=true data-thickness=".2" id='task_done'/>
+          </div>
+          <div class="widget-chart-one-content text-right">
+              <h5 class="text-white mb-3">Выполнено задач из <h5>
+                <h2>{% for i in all_ip %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}</h2>
+          </div>
+      </div>
+        <div class="card-box">
+          <h4 class="header-title ">Распределенность клиентов</h4>
+          <canvas id="barChart" width="400" height="153"></canvas>
 
           <script>
               document.addEventListener('DOMContentLoaded', function () {
@@ -61,41 +95,7 @@
           });
           </script>  
         </div>
-          <div class="card-box widget-chart-one gradient-success bx-shadow-lg">
-            <div class="float-left" dir="ltr">
-                <script>
-                var seg_consum = new WebSocket('ws://' + window.location.host + '/ws/table_seg_count/');
-            
-                seg_consum.onmessage = function (e) {
-                var data = JSON.parse(e.data);
-                console.log(data)
-
-                var taskKnob = document.getElementById('task_done');
-                if (taskKnob) {
-                    taskKnob.value = data.task;
-                }
-            };
-        
-            seg_consum.onopen = function() {
-                console.log('WebSocket task connected');
-            };
-        
-            seg_consum.onclose = function() {
-                console.log('WebSocket closed');
-            };
-
-                </script>
-                <input data-plugin="knob" data-width="80" data-height="80" data-linecap=round
-                        data-fgColor="#ffffff" data-bgcolor="rgba(255,255,255,0.2)" data-max="{% for i in all_ip %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}" 
-                        value="{{ task_done }}" 
-                        data-skin="tron" data-angleOffset="180"
-                        data-readOnly=true data-thickness=".2" id='task_done'/>
-            </div>
-            <div class="widget-chart-one-content text-right">
-                <p class="text-white mb-0">Выполнено задач из</p>
-                <h3 class="text-white">{% for i in all_ip %}{% if forloop.last %}{{ forloop.counter }}{% endif %}{% endfor %}</h3>
-            </div>
-        </div>
+          
       </div>
       <div class="col-xl-4">
         <div class="card-box">
