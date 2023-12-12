@@ -8,6 +8,8 @@ from asgiref.sync import async_to_sync
 import ipaddress
 import math
 
+def not_found (request):
+    return render(request, 'server/404.html')
 
 @login_required(redirect_field_name=None, login_url='/')
 def detail_seg(request, pk):

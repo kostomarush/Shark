@@ -416,17 +416,31 @@ File: Dashboard
     //initializing various components and plugins
     Dashboard.prototype.init = function () {
         
+        
         $('#myTable').DataTable({
             "pageLength": 3,
             "searching": false,
-            "lengthChange": false
-        });
+            "lengthChange": false,
+            "ordering": true,
+            "info": true,
+            "language": {
+            "info": "Показаны CVE с _START_ по _END_ из _TOTAL_",
+            "paginate": {
+                "first": "Первая",
+                "last": "Последняя",
+                "next": "Следующая",
+                "previous": "Предыдущая"
+            }
+            }
+
+    });
 
         $('#datatables').DataTable({
             "pageLength": 5,
             "searching": false,
             "lengthChange": false
         });
+
 
         $('#usa').vectorMap({
 			map: 'usa_en',

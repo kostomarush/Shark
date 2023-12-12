@@ -20,22 +20,6 @@
         <div class="row">
             <div class="col-xl-4">
                 <div class="card-box">
-                    <div class="dropdown float-right">
-                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="mdi mdi-dots-horizontal"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                        </div>
-                    </div>
                     <h4 class="header-title mb-3">Ввести задачу</h4>
                     <form class="form-horizontal" method="post" id="post-form">
                         {% csrf_token %}
@@ -74,7 +58,7 @@
                     </form>
                 </div><!-- end card-box-->
                 <div class="card-box">
-                    <h4 class="header-title">Гистограмма</h4>
+                    <h4 class="header-title">Распределенность клиентов</h4>
                     <canvas id="barChart" width="400" height="167"></canvas>
 
                     <script>
@@ -120,22 +104,7 @@
             </div> <!-- end col -->
             <div class="col-xl-4">
                 <div class="card-box">
-                    <div class="dropdown float-right">
-                        <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                            aria-expanded="false">
-                            <i class="mdi mdi-dots-horizontal"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                        </div>
-                    </div>
+
                     <h4 class="header-title mt-1 mb-3">Статистика состояния портов</h4>
                     <div class="mb-2">
                         <canvas id="chartId" height="470"></canvas>
@@ -189,22 +158,7 @@ chart.update();
             </div> <!-- end col -->
         <div class="col-xl-4">
             <div class="card-box">
-                <div class="dropdown float-right">
-                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="mdi mdi-dots-horizontal"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                        <!-- item-->
-                        <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                    </div>
-                </div>
+
                 <h4 class="header-title mb-3">Таблица Задач</h4>
                 <script>
                     var socket3 = new WebSocket('ws://' + window.location.host + '/ws/my_socket_table/');
@@ -233,8 +187,8 @@ chart.update();
                         console.log('WebSocket closed');
                     };
                 </script>
-                <table class="table table-bordered dt-responsive nowrap" id = 'datatables'>
-                    <thead>
+                <table class="table table-bordered dt-responsive nowrap" id = 'datatable'>
+                    <thead align="center">
                         <tr>
                             <th>id</th>
                             <th>ip</th>
@@ -245,7 +199,7 @@ chart.update();
                             <th>CVE</th>
                             <th>delete</th>
                         </tr>
-                    </thead>
+                    </thead align="center">
                     <tbody>
                         {% for i in data_serv %}
                         <tr id="row-{{ i.pk }}"> 
@@ -303,26 +257,6 @@ chart.update();
         <div class="row">
             <div class="col-xl-12">
                 <div class="card-box">
-                  <div class="dropdown float-right">
-                    <a
-                      href="#"
-                      class="dropdown-toggle arrow-none card-drop"
-                      data-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      <i class="mdi mdi-dots-horizontal"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                      <!-- item-->
-                      <a href="javascript:void(0);" class="dropdown-item">Settings</a>
-                      <!-- item-->
-                      <a href="javascript:void(0);" class="dropdown-item">Download</a>
-                      <!-- item-->
-                      <a href="javascript:void(0);" class="dropdown-item">Upload</a>
-                      <!-- item-->
-                      <a href="javascript:void(0);" class="dropdown-item">Action</a>
-                    </div>
-                  </div>
                   <h4 class="header-title mb-3">Таблица выполненных задач</h4>
                   <script>
                     var socket_add = new WebSocket('ws://' + window.location.host + '/ws/my_socket_add/');
@@ -365,7 +299,7 @@ chart.update();
                 </script>
                 
                   <table class="table table-bordered" id="selection-datatable">
-                    <thead>
+                    <thead align="center">
                         <th>id</th>
                         <th>Хост</th>
                         <th>Режим</th>
@@ -376,7 +310,7 @@ chart.update();
                         <th>{{"Открытые порты"}}</th>
                         {% endif %}
                       </thead>
-                    <tbody>
+                    <tbody align="center">
                       {% for i in section %}
                       <tr>
                         <td>{{forloop.counter}}</td>

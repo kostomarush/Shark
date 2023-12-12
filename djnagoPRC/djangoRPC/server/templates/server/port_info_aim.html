@@ -15,14 +15,13 @@
           <li class="breadcrumb-item active">Информация о портах</li>
         </ol>
       </div>
-      <h4 class="page-title">Информация о портах</h4>
+      <h4 class="page-title">Информация о портах: {{item.host}}</h4>
     </div>
     <!-- end page title -->
-    <h2>Состояние открытых портов: {{item.host}}</h2>
     <div class="row">
-      <div class="col-xl-6">
+      <div class="col-xl-7">
         <div class="card-box" dir="ltr">
-          <h5 style="margin-top: -10px;">Состояния</h5>
+          <h4 style="margin-top: 0px;">Статус уязвимостей</h4>
           <br>
           <div class="row">
             <div class="col-md-3 text-center">
@@ -32,7 +31,7 @@
               data-angleArc="250" data-max="{{count}}" readonly="readonly"/>
 
               
-              <h4 class="text-muted mt-3">Критичная</h4>
+              <h4 class="text-muted mt-3">Критично</h4>
             </div>
             <div class="col-md-3 text-center">
               <input data-plugin="knob" data-width="150" data-height="150"
@@ -60,33 +59,24 @@
           <br>
         </div> <!-- end card-box -->
       </div>
-      <div class="col-xl-3">
-        <div class="card-box" align='center'>
-          <h5 style="margin-top: -10px;">Состояния</h5>
-          <div style="width: 260px; height: 245px;">
-          <canvas id="chart"></canvas>
-        </div>
-        <br>
-      </div>
-      </div>
-      <div class="col-xl-3">
+      <div class="col-xl-5">
         <div class="card-box" dir="ltr">
-          <h5 style="margin-top: 0px;">Наиболее опасные уязвимости</h5> 
-          <table style="margin-top: -20px;" id='myTable' class="table table-bordered">
-            <thead>
+          <h4 style="margin-top: 0px;">Наиболее опасные уязвимости</h4> 
+          <table id='myTable' class="table table-bordered">
+            <thead align="center">
               <tr>
                 <th>Порт</th>
                 <th>CVE</th>
                 <th>Состояние</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody align="center">
               {% for i in level_dict %}
               {% if i.level == 'Критичная' or i.level == 'Высокая' %}
               <tr>
-                <td style='font-size: 13px'>{{i.port}}</td>
-                <td style='font-size: 12px'>{{i.cve}}</td>
-                <td style='font-size: 11px'>{{i.level}}</td>
+                <th style='font-size: 15px'>{{i.port}}</th>
+                <th style='font-size: 15px'>{{i.cve}}</th>
+                <th style='font-size: 15px'>{{i.level}}</th>
               </tr>
               {% endif %}
               {% endfor %}
@@ -121,7 +111,7 @@
           </div>
           <h4 class="header-title mb-3">Таблица портов</h4>
           <table class="table table-bordered">
-            <thead>
+            <thead align="center">
               <tr>
                 <th>№</th>
                 <th>port</th>
@@ -160,24 +150,6 @@
   </div>
 </div>
 
-
-<script>
-  const data = {
-    labels: ['open', 'filtered', 'close', 'open|filtered'],
-    datasets: [{
-      label: 'My First Dataset',
-      data: [{{open}}, {{filtered}}, {{close}}, {{open_filtered}}],
-      backgroundColor: ['#33ce7a', '#ffc107', '#dc3545', '#00CED1'],
-      hoverOffset: 4
-    }]
-  };
-
-  const ctx = document.getElementById('chart').getContext('2d');
-  new Chart(ctx, {
-    type: 'pie', // Используем тип "doughnut" для круговой диаграммы
-    data: data
-  });
-</script>
 
 {% endblock %}
 

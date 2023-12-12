@@ -6,6 +6,7 @@ from . import views
 
 urlpatterns = [
     path('aim/', views.data, name='aim'),
+    path('not_found/', views.not_found, name='not_found'),
     path('aim/cve_information_aim/<int:pk>/', views.cve_information_aim, name='cve_information_aim'),
     path('segment/', views.segment, name='segment'),
     path('detail_seg/<int:pk>/', views.detail_seg, name='detail_seg'),

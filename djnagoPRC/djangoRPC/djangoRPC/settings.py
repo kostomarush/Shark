@@ -142,6 +142,15 @@ LOGGING = {
     },
 }
 
+MIDDLEWARE = [
+    # другие middleware
+    'server.middleware.RedirectToPageMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    
+    # другие middleware
+]
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
