@@ -214,7 +214,7 @@
             <!-- Navigation Menu-->
             <ul class="navigation-menu">
               <li class="has-submenu">
-                <a href="index.html">
+                <a href="{% url 'dashboard' %}">
                   <i class="dripicons-meter"></i>Главное меню
                 </a>
               </li>
@@ -299,7 +299,7 @@
     <script src="{% static 'server/libs/datatables/responsive.bootstrap4.min.js' %}"></script>
 
     <!-- Datatables init -->
-    <script src="{% static 'server/js/pages/datatable.init.js' %}"></script>
+    <script src="{% static 'server/js/pages/datatables.init.js' %}"></script>
 
     <!-- Dashboard Init JS -->
     <script src="{% static 'server/js/pages/dashboardes.init.js' %}"></script>

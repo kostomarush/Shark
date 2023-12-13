@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from . import views
 
 urlpatterns = [
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('aim/', views.data, name='aim'),
     path('not_found/', views.not_found, name='not_found'),
     path('aim/cve_information_aim/<int:pk>/', views.cve_information_aim, name='cve_information_aim'),

@@ -32,8 +32,9 @@ $(document).ready(function() {
             "searching": false,
             "lengthChange": false,
             "ordering": true,
-            "info": false,
+            "info": true,
             "language": {
+            "info": "Задачи с _START_ по _END_ из _TOTAL_",
             "paginate": {
                 "first": "Первая",
                 "last": "Последняя",

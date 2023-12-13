@@ -87,11 +87,11 @@ def update_seg_client_data(sender, instance, created, **kwargs):
     data_server = IPAddress.objects.filter(seg_scan=instance.seg_scan).in_bulk()
     for id in data_server:
         
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 1:
+        if data_server[id].tag == 'Done' and data_server[id].client.ip_client == '1':
             client_1 += 1
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 2:
+        if data_server[id].tag == 'Done' and data_server[id].client.ip_client == '2':
             client_2 += 1
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 3:
+        if data_server[id].tag == 'Done' and data_server[id].client.ip_client == '3':
             client_3 += 1
     client_data = {
 
@@ -238,11 +238,11 @@ def update_client_data(sender, instance, **kwargs):
     client_3 = 0
     data_server = DataServer.objects.in_bulk()
     for id in data_server:
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 4:
+        if data_server[id].tag == 'Done' and data_server[id].client.ip_client == '4':
             client_1 += 1
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 5:
+        if data_server[id].tag == 'Done' and data_server[id].client.ip_client == '5':
             client_2 += 1
-        if data_server[id].tag == 'Done' and data_server[id].client.id == 6:
+        if data_server[id].tag == 'Done' and data_server[id].client.ip_client == '6':
             client_3 += 1    
     client_data = {
 

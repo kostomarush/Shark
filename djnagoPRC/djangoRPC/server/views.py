@@ -8,6 +8,11 @@ from asgiref.sync import async_to_sync
 import ipaddress
 import math
 
+
+@login_required(redirect_field_name=None, login_url='/')
+def dashboard(request):
+    return render(request, 'server/dashboard.html')
+
 def not_found (request):
     return render(request, 'server/404.html')
 
@@ -149,7 +154,7 @@ def segment(request):
             mask = segment_scan_instance.mask
             network = ipaddress.IPv4Network(f'{net}/{mask}', strict=False)
             segments = [
-                ipaddr for ipaddr in network.subnets(prefixlen_diff=6)]
+                ipaddr for ipaddr in network.subnets(prefixlen_diff=3)]
             for addr in segments:
                 IPAddress.objects.create(
                     address=f'{addr}', seg_scan=segment_scan_instance)
