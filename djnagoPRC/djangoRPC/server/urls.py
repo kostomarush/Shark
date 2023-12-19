@@ -10,6 +10,7 @@ urlpatterns = [
     path('not_found/', views.not_found, name='not_found'),
     path('aim/cve_information_aim/<int:pk>/', views.cve_information_aim, name='cve_information_aim'),
     path('segment/', views.segment, name='segment'),
+    path('generate_report/<int:pk>/', views.generate_word_report, name='generate_word_report'),
     path('detail_seg/<int:pk>/', views.detail_seg, name='detail_seg'),
     path('aim/data/<int:pk>/', views.remove_item, name='delete'),
     path('segment/<int:pk>/', views.remove_segment, name='segment_delete'),

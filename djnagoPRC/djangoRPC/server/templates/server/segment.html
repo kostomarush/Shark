@@ -74,6 +74,7 @@
               <th>CVE</th>
               <th>Все порты</th>
               <th>Резульаты сканирования</th>
+              <th>Сохранить отчет</th>
               <th>Удалить</th>
             </thead>
             <tbody align="center">
@@ -92,6 +93,13 @@
                     class="btn btn-outline-success waves-effect waves-light width-md"
                     href="{% url 'detail_seg' pk=i.pk %}"
                     >Подробнее</a
+                  >
+                </td>
+                <td>
+                  <a
+                    href="{% url 'generate_word_report' i.pk %}"
+                    class="btn btn-warning text-light mx-auto"
+                    >Скачать</a
                   >
                 </td>
                 <td>

@@ -1,13 +1,54 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import ScanInfo, DataServer, SegmentScan, ClientBD, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim, LevelCve
+from .models import ScanInfo, DataServer, SegmentScan, IPAddress, SegmentResult, ResultPorts, CveInformation, ResultPortsAim, CveInformationAim, LevelCveAim, LevelCve
 from .forms import DataServerForm, SegmentScanForm
+from django.http import HttpResponse
+from tempfile import NamedTemporaryFile
 from django.contrib.auth.decorators import login_required
-import json
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+from docx import Document
 import ipaddress
-import math
+from docx.shared import Pt
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+import datetime
 
+
+def generate_word_report(request, pk):
+    # Извлекаем данные из базы данных
+    items = SegmentResult.objects.all()
+
+    # Создаем новый документ Word
+    document = Document()
+    # Добавляем информацию о сканировании
+    document.add_heading('Отчет по безопасности', level=1)
+
+    # Добавляем информацию о дате сканирования и версии сканера
+    current_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    scanner_version = '1.0'  # Замените на реальную версию вашего сканера
+    document.add_paragraph(f"Дата сканирования: {current_date}", style='Heading2')
+    document.add_paragraph(f"Версия сканера: {scanner_version}", style='Heading2')
+
+    # Добавляем информацию о хостах в документ
+    document.add_heading('Информация о хостах', level=2)
+
+    for host in items:
+        document.add_heading(host.host, level=3)
+        document.add_paragraph(f"Состояние: {host.state_scan}")
+        document.add_paragraph(f"Общее количество CVE: 11")
+
+    # Настраиваем стили форматирования
+    for paragraph in document.paragraphs:
+        for run in paragraph.runs:
+            run.font.size = Pt(12)
+
+    # Сохраняем документ во временном файле
+    temp_file_path = "report.docx"
+    document.save(temp_file_path)
+
+    # Отправляем файл пользователю как вложение
+    with open(temp_file_path, 'rb') as f:
+        response = HttpResponse(f.read(), content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        response['Content-Disposition'] = f'attachment; filename=report.docx'
+
+    return response
 
 @login_required(redirect_field_name=None, login_url='/')
 def dashboard(request):
