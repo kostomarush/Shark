@@ -68,6 +68,8 @@ class SegmentScan(models.Model):
     state_scan = models.CharField(max_length=20, default=False)
     cve_report = models.BooleanField(default=False)
     full_scan = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
 
 
 class IPAddress(models.Model):

@@ -148,11 +148,11 @@ LOGGING = {
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 ASGI_APPLICATION = 'djangoRPC.asgi.application'
 

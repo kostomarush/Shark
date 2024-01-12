@@ -4,7 +4,7 @@ from .forms import DataServerForm, SegmentScanForm
 from django.http import HttpResponse
 from tempfile import NamedTemporaryFile
 from django.contrib.auth.decorators import login_required
-from docx import Document
+import docx
 import ipaddress
 from docx.shared import Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -14,23 +14,46 @@ import datetime
 def generate_word_report(request, pk):
     # Извлекаем данные из базы данных
     items = SegmentResult.objects.all()
+    task = SegmentScan.objects.get(pk = pk)
 
     # Создаем новый документ Word
-    document = Document()
+    document = docx.Document()
     # Добавляем информацию о сканировании
-    document.add_heading('Отчет по безопасности', level=1)
-
+    title = document.add_heading(f'Отчет по безопасности сети {task.ip}/{task.mask}', level=1)
+    title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    styles = document.styles
+    styles['Heading 1'].font.color.rgb = docx.shared.RGBColor(0, 0, 0)
+    styles['Heading 2'].font.color.rgb = docx.shared.RGBColor(0, 0, 0)
+    styles['Heading 3'].font.color.rgb = docx.shared.RGBColor(0, 0, 0)
     # Добавляем информацию о дате сканирования и версии сканера
-    current_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    document.add_heading("Служебная информация:", level=2)
     scanner_version = '1.0'  # Замените на реальную версию вашего сканера
-    document.add_paragraph(f"Дата сканирования: {current_date}", style='Heading2')
-    document.add_paragraph(f"Версия сканера: {scanner_version}", style='Heading2')
-
+    document.add_paragraph(f"Дата сканирования: {task.created_at.strftime('%Y-%m-%d %H:%M:%S')}")
+    document.add_paragraph(f"Версия сканера: {scanner_version}")
+    document.add_paragraph(f"Режим сканирования: {task.mode}")
+    document.add_paragraph(f"Режим CVE: {task.cve_report}")
+    document.add_paragraph(f"Режим сканирования всех портов: {task.full_scan}")
+    
     # Добавляем информацию о хостах в документ
     document.add_heading('Информация о хостах', level=2)
+    
+    table = document.add_table(rows=3, cols=4, style='Table Grid')
+    table.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    table.cell(0, 0).text = 'Ip Адресс узла'
+    table.cell(0, 1).text = 'Состояние хоста'
+    table.cell(0, 2).text = 'Количество открытых портов'
+    table.cell(0, 3).text = 'Общее количество CVE'
+    
+    for item in items:
+        row_cells = table.add_row().cells
+        row_cells[0].text = item.host
+        row_cells[1].text = item.state_scan
+        
+        #row_cells[3].text = item.result.seg_scan
 
+    
     for host in items:
-        document.add_heading(host.host, level=3)
+        document.add_heading(f'{host.host}/{task.mask}', level=3)
         document.add_paragraph(f"Состояние: {host.state_scan}")
         document.add_paragraph(f"Общее количество CVE: 11")
 
