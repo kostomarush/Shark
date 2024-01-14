@@ -6,25 +6,86 @@ from tempfile import NamedTemporaryFile
 from django.contrib.auth.decorators import login_required
 import docx
 import ipaddress
-from docx.shared import Pt
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-import datetime
+from docx.shared import Pt, Cm, Inches
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_ALIGN_PARAGRAPH
+
+@login_required(redirect_field_name=None, login_url='/')
+def tcp(request):
+    return render(request, 'server/tcp.html')
+
+@login_required(redirect_field_name=None, login_url='/')
+def udp(request):
+    return render(request, 'server/udp.html') 
+
+@login_required(redirect_field_name=None, login_url='/')
+def os(request):
+    return render(request, 'server/os.html') 
+
+def count_ports_for_report(item):
+    # Get the SegmentResult object
+    segment_result = SegmentResult.objects.get(id=item)
+
+    # Count the number of ports for the given SegmentResult
+    ports_count = ResultPorts.objects.filter(all_info=segment_result).count()
+
+    return ports_count
+
+def count_cves_for_segment_result(segment_result_id):
+    
+    segment_result = SegmentResult.objects.get(id=segment_result_id)
+
+    # Count the number of ports for the given SegmentResult
+    cve_count = LevelCve.objects.filter(result=segment_result).count()
+
+    return cve_count
+
+def find_ports(item_port):
+    
+    segment_result = SegmentResult.objects.get(id=item_port)
+    
+    all_data = ResultPorts.objects.filter(all_info=segment_result).all()
+
+    return all_data
+
+def find_cve(cve):
+    
+    segment_result = SegmentResult.objects.get(id=cve)
+    
+    all_data = ResultPorts.objects.filter(all_info=segment_result)
+    
+    info = []
+    
+    for result in all_data:
+    
+        cve_item = CveInformation.objects.filter(result_ports=result).all()
+        
+        for i in cve_item:
+            info.append(i.cve_information)
+    
+    return info
 
 
 def generate_word_report(request, pk):
     # Извлекаем данные из базы данных
     items = SegmentResult.objects.all()
     task = SegmentScan.objects.get(pk = pk)
-
+    table = ResultPorts.objects.all()
     # Создаем новый документ Word
     document = docx.Document()
-    # Добавляем информацию о сканировании
+    # Добавляем раздел "header" в документ
+    header_section = document.sections[0]
+    header = header_section.header
+
+    # Вставляем изображение в правый верхний угол
+    image_path = '/home/user/Dipl/djnagoPRC/djangoRPC/server/static/server/images/logo-shark_2.png'  # Укажите путь к вашему изображению
+    header.paragraphs[0].add_run().add_picture(image_path, width=Inches(1.5))  # Вы можете настроить ширину изображения
     title = document.add_heading(f'Отчет по безопасности сети {task.ip}/{task.mask}', level=1)
     title.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     styles = document.styles
     styles['Heading 1'].font.color.rgb = docx.shared.RGBColor(0, 0, 0)
     styles['Heading 2'].font.color.rgb = docx.shared.RGBColor(0, 0, 0)
     styles['Heading 3'].font.color.rgb = docx.shared.RGBColor(0, 0, 0)
+    styles['Heading 4'].font.color.rgb = docx.shared.RGBColor(0, 0, 0)
     # Добавляем информацию о дате сканирования и версии сканера
     document.add_heading("Служебная информация:", level=2)
     scanner_version = '1.0'  # Замените на реальную версию вашего сканера
@@ -33,13 +94,13 @@ def generate_word_report(request, pk):
     document.add_paragraph(f"Режим сканирования: {task.mode}")
     document.add_paragraph(f"Режим CVE: {task.cve_report}")
     document.add_paragraph(f"Режим сканирования всех портов: {task.full_scan}")
-    
+        
     # Добавляем информацию о хостах в документ
-    document.add_heading('Информация о хостах', level=2)
+    document.add_heading('Общая информация о сетевых узлах:', level=2)
     
-    table = document.add_table(rows=3, cols=4, style='Table Grid')
+    table = document.add_table(rows=1, cols=4, style='Table Grid')
     table.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    table.cell(0, 0).text = 'Ip Адресс узла'
+    table.cell(0, 0).text = 'Ip Адрес узла'
     table.cell(0, 1).text = 'Состояние хоста'
     table.cell(0, 2).text = 'Количество открытых портов'
     table.cell(0, 3).text = 'Общее количество CVE'
@@ -48,16 +109,54 @@ def generate_word_report(request, pk):
         row_cells = table.add_row().cells
         row_cells[0].text = item.host
         row_cells[1].text = item.state_scan
-        
-        #row_cells[3].text = item.result.seg_scan
+        row_cells[2].text = str(count_ports_for_report(item.id))
+        row_cells[3].text = str(count_cves_for_segment_result(item.id))
 
+
+    document.add_heading('Подробная информация о сетевых узлах:', level=2)
     
     for host in items:
-        document.add_heading(f'{host.host}/{task.mask}', level=3)
+        document.add_heading(f'Узел {host.host}/{task.mask}', level=3)
         document.add_paragraph(f"Состояние: {host.state_scan}")
-        document.add_paragraph(f"Общее количество CVE: 11")
-
+        document.add_paragraph(f"Количество открытых портов: {count_ports_for_report(host.id)}")
+        document.add_paragraph(f"Общее количество CVE: {count_cves_for_segment_result(host.id)}")
+        if task.mode == 'OS':
+            document.add_paragraph(f"Операционная система: {host.full_name}")
+            document.add_paragraph(f"Вендор: {host.vendor}")
+            document.add_paragraph(f"Семейство: {host.osfamily}")
+            document.add_paragraph(f"Версия: {host.osgen}")
+            document.add_paragraph(f"Точность сканирования: {host.accuracy}")
+        
+        document.add_heading('Таблица информации о портах:', level=4)
+        table = document.add_table(rows=1, cols=5, style='Table Grid')
+        table.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        table.cell(0, 0).text = 'Номер порта'
+        table.cell(0, 1).text = 'Состояние'
+        table.cell(0, 2).text = 'Причина'
+        table.cell(0, 3).text = 'Сервис'
+        table.cell(0, 4).text = 'CVE'
+        
+        table.columns[4].width = Cm(14)
+        
+        for i in find_ports(host.id):
+            row_cells = table.add_row().cells
+            row_cells[0].text = i.port
+            row_cells[1].text = i.state
+            row_cells[2].text = i.reason
+            row_cells[3].text = i.service
+            row_cells[4].text = i.one_cve
+            
+        document.add_heading('Описание CVE:', level=4)
+        paragraph = document.add_paragraph()
+        for i in find_cve(host.id):
+            run_mono2 = paragraph.add_run(f"{i}")
+            font_mono2 = run_mono2.font
+            font_mono2.name = 'Courier New'
+            font_mono2.size = Pt(10)
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        
     # Настраиваем стили форматирования
+    
     for paragraph in document.paragraphs:
         for run in paragraph.runs:
             run.font.size = Pt(12)

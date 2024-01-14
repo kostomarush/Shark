@@ -74,70 +74,6 @@
       <div class="navbar-custom">
         <div class="container-fluid">
           <ul class="list-unstyled topnav-menu float-right mb-0">
-            <li class="dropdown notification-list">
-              <a
-                class="nav-link dropdown-toggle waves-effect waves-light"
-                data-toggle="dropdown"
-                href="#"
-                role="button"
-                aria-haspopup="false"
-                aria-expanded="false"
-              >
-                <i class="dripicons-bell noti-icon"></i>
-                <span class="badge badge-info noti-icon-badge">21</span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-right dropdown-lg">
-                <!-- item-->
-                <div class="dropdown-item noti-title">
-                  <h5 class="m-0">
-                    <span class="float-right">
-                      <a href="" class="text-dark">
-                        <small>Clear All</small>
-                      </a> </span
-                    >Notification
-                  </h5>
-                </div>
-
-                <div class="slimscroll noti-scroll">
-                  <!-- item-->
-                  <a
-                    href="javascript:void(0);"
-                    class="dropdown-item notify-item active"
-                  >
-                    <div class="notify-icon bg-warning">
-                      <i class="mdi mdi-comment-account-outline"></i>
-                    </div>
-                    <p class="notify-details">
-                      Клиент 1 не отвечает более минуты<small class="text-muted"
-                        >1 min ago</small
-                      >
-                    </p>
-                  </a>
-
-                  <!-- item-->
-                  <a
-                    href="javascript:void(0);"
-                    class="dropdown-item notify-item"
-                  >
-                    <div class="notify-icon bg-info">
-                      <i class="mdi mdi-account-plus"></i>
-                    </div>
-                    <p class="notify-details">
-                      Клиент удален<small class="text-muted">5 hours ago</small>
-                    </p>
-                  </a>
-                </div>
-
-                <!-- All-->
-                <a
-                  href="javascript:void(0);"
-                  class="dropdown-item text-center text-primary notify-item notify-all"
-                >
-                  View all
-                  <i class="fi-arrow-right"></i>
-                </a>
-              </div>
-            </li>
 
             <li class="dropdown notification-list">
               <a
@@ -148,46 +84,27 @@
                 aria-haspopup="false"
                 aria-expanded="false"
               >
-                <img
-                  src="{% static 'server/images/users/avatar-4.jpg' %}"
-                  alt="user-image"
-                  class="rounded-circle"
-                />
                 <span class="pro-user-name ml-1">
-                  Vlad K <i class="mdi mdi-chevron-down"></i>
+                  Admin <i class="mdi mdi-chevron-down"></i>
                 </span>
               </a>
               <div class="dropdown-menu dropdown-menu-right profile-dropdown">
                 <!-- item-->
-                <a href="javascript:void(0);" class="dropdown-item notify-item">
-                  <i class="dripicons-user"></i>
-                  <span>My Account</span>
-                </a>
-
-                <!-- item-->
-                <a href="javascript:void(0);" class="dropdown-item notify-item">
-                  <i class="dripicons-power"></i>
-                  <span>Logout</span>
-                </a>
+                  {% if user.is_authenticated %}
+                  <a href="{% url 'logout' %}" class="dropdown-item notify-item dripicons-power">    Выйти</a>
+                  {% endif %}
               </div>
             </li>
           </ul>
 
           <ul class="list-unstyled menu-left mb-0">
             <li class="float-left logo-box">
-              <a href="/" class="logo">
+              <a href="{% url 'dashboard' %}" class="logo">
                 <span class="logo-lg p-1">
                   <img
                     src="{% static 'server/images/logo-shark.png' %}"
                     alt=""
                     height="40"
-                  />
-                </span>
-                <span class="logo-sm">
-                  <img
-                    src="{% static 'server/images/logo-sm.png' %}"
-                    alt=""
-                    height="24"
                   />
                 </span>
               </a>
@@ -239,16 +156,13 @@
                 ></a>
                 <ul class="submenu">
                   <li>
-                    <a href="email-inbox.html">SYN-ASK</a>
+                    <a href="{% url 'tcp' %}">TCP</a>
                   </li>
                   <li>
-                    <a href="email-read.html">UDP</a>
+                    <a href="{% url 'udp' %}">UDP</a>
                   </li>
                   <li>
-                    <a href="email-compose.html">CS</a>
-                  </li>
-                  <li>
-                    <a href="email-compose.html">OS</a>
+                    <a href="{% url 'os' %}">OS</a>
                   </li>
                 </ul>
               </li>
