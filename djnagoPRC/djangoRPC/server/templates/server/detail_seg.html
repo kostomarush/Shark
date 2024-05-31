@@ -474,7 +474,7 @@
                 <th>Хост</th>
                 <th>Режим</th>
                 <th>Состояние хоста</th>
-                {% if result.mode == 'OS'%}
+                {% if result.seg_scan.mode == 'OS'%}
 
                 {% else %}
                 <th>{{"Открытые порты"}}</th>
@@ -488,7 +488,7 @@
                 <td>{{i.host}}</td>
                 <td>{{i.result.seg_scan.mode}}</td>
                 <td>{{i.state_scan}}</td>
-                {% if i.result.mode == 'OS'%}
+                {% if i.result.seg_scan.mode == 'OS'%}
                 <td><button type="button" class="btn btn-outline-info waves-effect waves-light width-md" data-toggle="modal" data-target="#myModal{{ i.id }}">
                     Информация об ОС
                   </button></td>
@@ -510,8 +510,8 @@
                         Точность сканирования: {{i.accuracy}}
                         </div>
                 {% else %}
-                    <th><a class="btn btn-outline-info waves-effect waves-light width-md"
-                      href="{% url 'port_information' pk=i.pk %}"> Информация о портах</a></th>
+                <th>{% if i.state_ports != 'down'%}<a class="btn btn-outline-info waves-effect waves-light width-md"
+                  href="{% url 'port_information' pk=i.pk %}"> Информация о портах</a>{% else %}Ports Down {% endif %}</th>
                 {% endif %}
                 </tr>
                   {% endif %}

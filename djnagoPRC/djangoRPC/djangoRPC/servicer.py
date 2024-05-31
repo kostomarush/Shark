@@ -64,6 +64,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                     save_data_seg = IPAddress.objects.get(id=i)
                     save_data_seg.tag = 'Done'
                     save_data_seg.save()
+
                     
                     return response
                 elif request.data:
@@ -78,47 +79,66 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     osfamily = os_data['osfamily']
                                     osgen = os_data['osgen']
                                     accuracy = os_data['accuracy']
-                                    save_data_in_segment = SegmentResult(
-                                    host=info['host'], state_scan=info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, result=result)
-                                    save_data_in_segment.save()
+                                    save_data_seg = SegmentResult(host=info['host'], 
+                                                  state_scan=info['state'],
+                                                  full_name = os, 
+                                                  vendor=vendor, 
+                                                  osfamily=osfamily, 
+                                                  osgen=osgen, 
+                                                  accuracy=accuracy, 
+                                                  result=result)
+                                    save_data_seg.save()
+                                    
+                                    save_data_seg.mark_execution_complete()
+
+                                    return response
+                                
                                 else:
                                     pass
                                     
                         else:
                             save_data_in_segment = SegmentResult(
-                                host=info['host'], state_ports = info['state_ports'], state_scan=info['state'], result=result)
+                                host=info.get('host','None'), state_ports = info.get('state_ports','None'), state_scan=info.get('state','None'), result=result)
                             save_data_in_segment.save()
-                            for port_info in info['open_ports']:
-                                port = port_info['port']
-                                state = port_info['state']
-                                reason = port_info['reason']
-                                service = port_info['service']
-                                cve = port_info['cve']
-                                # Используем регулярное выражение для поиска всех [CVE ...]
-                                cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
-                        
-                                # Выводим результат
-                                nvd_json_path = "/usr/share/nmap/scripts/vulscan/cvss"
-                                all_cve=''
-                                for cve_match in cve_matches:
-                                    stripped_cve = cve_match.strip("[]")
-                                    year = cve_match.split("-")[1]
-                                    criticality = self.get_criticality(stripped_cve, nvd_json_path)
-                                    all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
-                                    save_cve_level = LevelCve(port = port, cve=stripped_cve, level=criticality, year = year, result = save_data_in_segment)
-                                    save_cve_level.save()
-                                                                      
-                                    
-                                save_data_in_segment_ports = ResultPorts(
-                                    port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data_in_segment)
-                                save_data_in_segment_ports.save()
-                                save_cve = CveInformation(cve_information = cve, result_ports = save_data_in_segment_ports)
-                                save_cve.save()
+
+                            if info['state_ports'] != 'down':
                                 
-                            if cve_matches:           
-                                save_cve_level.mark_execution_complete()
-                                               
-                            save_data_in_segment.mark_execution_complete()             
+                                for port_info in info['open_ports']:
+                                    port = port_info['port']
+                                    state = port_info['state']
+                                    reason = port_info['reason']
+                                    service = port_info['service']
+                                    cve = port_info['cve']
+                                    # Используем регулярное выражение для поиска всех [CVE ...]
+                                    cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
+
+                                    # Выводим результат
+                                    nvd_json_path = "/usr/share/nmap/scripts/vulscan/cvss"
+                                    all_cve=''
+                                    for cve_match in cve_matches:
+                                        stripped_cve = cve_match.strip("[]")
+                                        year = cve_match.split("-")[1]
+                                        criticality = self.get_criticality(stripped_cve, nvd_json_path)
+                                        all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
+                                        save_cve_level = LevelCve(port = port, cve=stripped_cve, level=criticality, year = year, result = save_data_in_segment)
+                                        save_cve_level.save()
+
+
+                                    save_data_in_segment_ports = ResultPorts(
+                                        port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data_in_segment)
+                                    save_data_in_segment_ports.save()
+                                    save_cve = CveInformation(cve_information = cve, result_ports = save_data_in_segment_ports)
+                                    save_cve.save()
+
+                                if cve_matches:           
+                                    save_cve_level.mark_execution_complete()
+
+
+                            else:
+                                return response
+                            
+                            save_data_in_segment.mark_execution_complete()           
+                            
                     return response
                     
         for i in data_segment:
@@ -160,42 +180,58 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                 osfamily = os_data['osfamily']
                                 osgen = os_data['osgen']
                                 accuracy = os_data['accuracy']
-                                save_scan_info_os = ScanInfo(
-                                host=all_info['host'], state_scan=all_info['state'],full_name = os, vendor=vendor, osfamily=osfamily, osgen=osgen, accuracy=accuracy, result=result)
-                                save_scan_info_os.save()
+
+                                ScanInfo(
+                                host=all_info['host'], 
+                                state_scan=all_info['state'],
+                                full_name = os, 
+                                vendor=vendor, 
+                                osfamily=osfamily, 
+                                osgen=osgen, 
+                                accuracy=accuracy, 
+                                result=result).save()
+
+                                return response
+                            
                             else:
                                 pass
                                     
                     else:
                         save_data = ScanInfo(
-                            host=all_info['host'], state_ports = all_info['state_ports'], state_scan=all_info['state'], result=result)
+                            host=all_info.get('host','None'), state_ports = all_info.get('ports','None'), state_scan=all_info.get('state','None'), result=result)
                         save_data.save()
-                        for port_info in all_info['ports']:
-                            port = port_info['port']
-                            state = port_info['state']
-                            reason = port_info['reason']
-                            service = port_info['service']
-                            cve = port_info['cve']
-                            # Используем регулярное выражение для поиска всех [CVE ...]
-                            cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
-                            
-                            # Выводим результат
-                            nvd_json_path = "/usr/share/nmap/scripts/vulscan/cvss"
-                            all_cve=''
-                            for cve_match in cve_matches:
-                                stripped_cve = cve_match.strip("[]")
-                                year = cve_match.split("-")[1]
-                                criticality = self.get_criticality(stripped_cve, nvd_json_path)
-                                all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
-                                save_cve_level = LevelCveAim(port = port, cve=stripped_cve, level=criticality, result = save_data)
-                                save_cve_level.save()                                  
+
+                        if all_info['ports'] != 'down':
+
+                            for port_info in all_info['ports']:
+                                port = port_info['port']
+                                state = port_info['state']
+                                reason = port_info['reason']
+                                service = port_info['service']
+                                cve = port_info['cve']
+                                # Используем регулярное выражение для поиска всех [CVE ...]
+                                cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
                                 
-                            save_data_in_aim_ports = ResultPortsAim(
-                                port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data)
-                            save_data_in_aim_ports.save()
-                            save_cve = CveInformationAim(cve_information = cve, result_ports = save_data_in_aim_ports)
-                            save_cve.save()
-                    
+                                # Выводим результат
+                                nvd_json_path = "/usr/share/nmap/scripts/vulscan/cvss"
+                                all_cve=''
+                                for cve_match in cve_matches:
+                                    stripped_cve = cve_match.strip("[]")
+                                    year = cve_match.split("-")[1]
+                                    criticality = self.get_criticality(stripped_cve, nvd_json_path)
+                                    all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
+                                    save_cve_level = LevelCveAim(port = port, cve=stripped_cve, level=criticality, result = save_data)
+                                    save_cve_level.save()                                  
+                                    
+                                save_data_in_aim_ports = ResultPortsAim(
+                                    port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data)
+                                save_data_in_aim_ports.save()
+                                save_cve = CveInformationAim(cve_information = cve, result_ports = save_data_in_aim_ports)
+                                save_cve.save()
+                                
+                        else:
+                            return response
+                        
                     save_data.mark_execution_complete()
                     
                     return response

@@ -192,10 +192,10 @@ chart.update();
                         <tr>
                             <th>id</th>
                             <th>ip</th>
-                            <th>port</th>
-                            <th>mode</th>
                             <th>client</th>
+                            <th>mode</th>
                             <th>tag</th>
+                            <th>port</th>
                             <th>CVE</th>
                             <th>delete</th>
                         </tr>
@@ -205,10 +205,10 @@ chart.update();
                         <tr id="row-{{ i.pk }}"> 
                             <th>{{forloop.counter}}</th>
                             <th>{{i.ip}}</th>
-                            <th>{{i.port}}</th>
-                            <th>{{i.mode}}</th>
                             <th id="client-{{ i.pk }}">{{ i.client }}</th>
+                            <th>{{i.mode}}</th>
                             <th id="tag-{{ i.pk }}">{{ i.tag }}</th>
+                            <th>{{i.port}}</th>
                             <th>{{i.cve_report}}</th>
                             <th><a href="{% url 'delete' i.pk %}" class="btn btn-danger mx-auto">Удалить</a></th>
                         </tr>
@@ -339,8 +339,8 @@ chart.update();
                                 Точность сканирования: {{i.accuracy}}
                                 </div>
                         {% else %}
-                            <th><a class="btn btn-outline-info waves-effect waves-light width-md"
-                              href="{% url 'port_info_aim' pk=i.pk %}"> Информация о портах</a></th>
+                            <th>{% if i.state_ports != 'down'%}<a class="btn btn-outline-info waves-effect waves-light width-md"
+                              href="{% url 'port_info_aim' pk=i.pk %}"> Информация о портах</a>{% else %}Ports Down {% endif %}</th>
                         {% endif %}
                         </tr>
                         {% endfor %}

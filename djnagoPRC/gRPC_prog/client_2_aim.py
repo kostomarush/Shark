@@ -86,7 +86,7 @@ def scan(stub, ip_address, port, mode, cve_report, name_cl):
 
     elif mode == 'OS':
         # Выполняем сканирование
-        result = nm.scan(ip_address, ports=port, arguments='-O', sudo=True)
+        result = nm.scan(ip_address, arguments='-O', sudo=True)
         if result['scan']:
             host_info['host'] = ip_address
             host_info['tag'] = mode

@@ -41,7 +41,7 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr):
                         if cve_report == 'True':
                             cve_information = cve_info(host, port)
                         else:
-                            cve_information = 'Empty'
+                            cve_information = ''
                         port_data = {
                             'port': f'{port}',
                             'state': info['state'],
@@ -75,11 +75,16 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr):
                 if 'udp' in nm[host]:
                     host_info[host]['state_ports'] = 'open'
                     for port, info in scan_result['udp'].items():
+                        if cve_report == 'True':
+                            cve_information = cve_info(host, port)
+                        else:
+                            cve_information = ''
                         port_data = {
                             'port': f'{port}',
                             'state': info['state'],
                             'reason': info['reason'],
-                            'service': info['name']
+                            'service': info['name'],
+                            'cve': cve_information
                         }
                         host_info[host]['open_ports'].append(port_data)
                         open_ports += 1
@@ -95,6 +100,8 @@ def segment_scan(stub, ip_add_seg, mode_seg, name_cl, cve_report, parametr):
 
     elif mode_seg == 'OS':
         # Выполняем сканирование
+        #index = ip_add_seg.find('/')
+        #ip_wh_mask = ip_add_seg [0: index]
         result = nm.scan(ip_add_seg, arguments='-O')
         if result['scan']:
             for host, scan_result in result['scan'].items():

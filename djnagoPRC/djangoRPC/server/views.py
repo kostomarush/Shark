@@ -66,10 +66,41 @@ def find_cve(cve):
 
 
 def generate_word_report(request, pk):
-    # Извлекаем данные из базы данных
-    items = SegmentResult.objects.all()
     task = SegmentScan.objects.get(pk = pk)
-    table = ResultPorts.objects.all()
+    all_ip_addresses = IPAddress.objects.all()
+    ports_by_host = {}
+    segment_results_by_segment = {}
+
+    for all_ip_address in all_ip_addresses:
+
+        segment_results = SegmentResult.objects.filter(result=all_ip_address)
+
+
+        segment_results_by_segment[all_ip_address] = segment_results
+
+    items = []
+    for all_ip_address, segment_results in segment_results_by_segment.items():
+        if all_ip_address.seg_scan == task:
+            for result in segment_results:
+                items.append(result)
+
+
+    for segment_result in segment_results:
+        # Получите связанные с этим объектом IPAddress
+        ports = ResultPorts.objects.filter(all_info=segment_result)
+
+        # Сохраните их в словаре
+        ports_by_host[segment_result] = ports
+
+    table = []
+    for ports, segment_result in ports_by_host.items():
+        if ports == task:
+            for ports in segment_result:
+                table.append(ports)
+    
+
+    # Извлекаем данные из базы данных
+    task = SegmentScan.objects.get(pk = pk)
     # Создаем новый документ Word
     document = docx.Document()
     # Добавляем раздел "header" в документ
