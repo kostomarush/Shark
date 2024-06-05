@@ -21,7 +21,7 @@ def scan(stub, ip_address, port, mode, cve_report, name_cl):
     host_info = {}
     nm = nmap.PortScanner()
     if mode == 'TCP':
-        result = nm.scan(ip_address, ports=port, arguments='-sT', sudo=True)
+        result = nm.scan(ip_address, ports=port, arguments='-sT')
         if result['scan']:
             host_info['host'] = ip_address
             host_info['tag'] = mode

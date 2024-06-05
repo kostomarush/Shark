@@ -198,7 +198,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                                     
                     else:
                         save_data = ScanInfo(
-                            host=all_info.get('host','None'), state_ports = all_info.get('ports','None'), state_scan=all_info.get('state','None'), result=result)
+                            host=all_info.get('host','None'), state_ports = all_info.get('state_ports','None'), state_scan=all_info.get('state','None'), result=result)
                         save_data.save()
 
                         if all_info['ports'] != 'down':
