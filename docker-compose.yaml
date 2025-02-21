@@ -1,0 +1,33 @@
+version: '3.9'
+
+networks:
+  net_main:
+    driver: bridge
+
+services:
+  server:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - net_main
+
+  db:
+    image: 'postgres:latest'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1
+      POSTGRES_DB: shark
+    ports:
+      - "5432:5432"
+    networks:
+      - net_main
+
+  redis:
+    image: 'redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - net_main
