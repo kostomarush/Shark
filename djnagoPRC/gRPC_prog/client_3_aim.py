@@ -132,10 +132,18 @@ def send_keep_alive_messages(stub, name_cl):
         stub.SayHello(request)
 
 
-def run():
+import logging
+import time
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(threadName)s %(message)s"
+)
+log = logging.getLogger(__name__)
+
+def run():
     channel = grpc.insecure_channel(
-        'localhost:50051', options=(('grpc.enable_http_proxy', 0),))
+        '0.0.0.0:50051', options=(('grpc.enable_http_proxy', 0),))
     stub = prot_pb2_grpc.RPCStub(channel)
     name_cl = '6'
     ping_thread = threading.Thread(
@@ -145,10 +153,11 @@ def run():
 
 
     while True:
-        try:  # Запускаем отдельный поток для отправки пингов
+        try:
             connect(stub, name_cl)
-        except:
-            pass
+        except Exception:
+            log.exception("RPC failed")
+            time.sleep(1)
 
 if __name__ == "__main__":
     run()

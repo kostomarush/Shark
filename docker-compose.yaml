@@ -1,25 +1,48 @@
-
 services:
   server:
     build: .
     ports:
       - "8080:8080"
+      - "50051:50051"
+    environment:
+      DATABASE_URL: postgres://postgres:1@db:5432/shark
+      REDIS_URL: redis://redis:6379/0
     depends_on:
-      - db
-      - redis
-
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   db:
-    image: 'postgres:latest'
+    image: postgres:16-alpine
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1
+      POSTGRES_PASSWORD: "1"
       POSTGRES_DB: shark
+    volumes:
+      - db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-      - "51000:51000"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d shark"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
 
   redis:
-    image: 'redis:latest'
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  redis_data:

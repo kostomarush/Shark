@@ -6,6 +6,9 @@ import time
 import json
 import re
 import os
+import grpc
+import prot_pb2
+import prot_pb2_grpc
 
 
 
@@ -140,6 +143,7 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
                             save_data_in_segment.mark_execution_complete()           
                             
                     return response
+        context.abort(grpc.StatusCode.NOT_FOUND, "No segment job available")
                     
         for i in data_segment:
             if data_segment[i].tag == 'False':
@@ -160,104 +164,105 @@ class RPCServicer(prot_pb2_grpc.RPCServicer):
     def scan(self, request, context):
         data_server = DataServer.objects.in_bulk()
         response = prot_pb2.DataServer()
+
         for data_id in data_server:
-            
             if data_server[data_id].tag == 'Proc' and f'{data_server[data_id].client.ip_client}' == request.name_cl:
                 if request.message:
                     save_data = DataServer.objects.get(id=data_id)
                     save_data.tag = 'Done'
                     save_data.save()
                     return response
+
                 elif request.data:
                     result = DataServer.objects.get(id=data_server[data_id].id)
                     alls_info = request.data
                     all_info = eval(alls_info)
-                    
+
                     if all_info['tag'] == 'OS':
-                        for os, os_data in all_info.items():
-                            if os != 'host' and os != 'state' and os != 'tag':
+                        for os_name, os_data in all_info.items():
+                            if os_name not in ('host', 'state', 'tag'):
                                 vendor = os_data['vendor']
                                 osfamily = os_data['osfamily']
                                 osgen = os_data['osgen']
                                 accuracy = os_data['accuracy']
 
                                 ScanInfo(
-                                host=all_info['host'], 
-                                state_scan=all_info['state'],
-                                full_name = os, 
-                                vendor=vendor, 
-                                osfamily=osfamily, 
-                                osgen=osgen, 
-                                accuracy=accuracy, 
-                                result=result).save()
-
+                                    host=all_info['host'],
+                                    state_scan=all_info['state'],
+                                    full_name=os_name,
+                                    vendor=vendor,
+                                    osfamily=osfamily,
+                                    osgen=osgen,
+                                    accuracy=accuracy,
+                                    result=result
+                                ).save()
                                 return response
-                            
-                            else:
-                                pass
-                                    
+
                     else:
                         save_data = ScanInfo(
-                            host=all_info.get('host','None'), state_ports = all_info.get('state_ports','None'), state_scan=all_info.get('state','None'), result=result)
+                            host=all_info.get('host', 'None'),
+                            state_ports=all_info.get('state_ports', 'None'),
+                            state_scan=all_info.get('state', 'None'),
+                            result=result
+                        )
                         save_data.save()
 
                         if all_info['ports'] != 'down':
-
                             for port_info in all_info['ports']:
                                 port = port_info['port']
                                 state = port_info['state']
                                 reason = port_info['reason']
                                 service = port_info['service']
                                 cve = port_info['cve']
-                                # Используем регулярное выражение для поиска всех [CVE ...]
+
                                 cve_matches = re.findall(r'\[CVE-\d{4}-\d+\]', cve)
-                                
-                                # Выводим результат
                                 nvd_json_path = "/usr/share/nmap/scripts/vulscan/cvss"
-                                all_cve=''
+                                all_cve = ''
+
                                 for cve_match in cve_matches:
                                     stripped_cve = cve_match.strip("[]")
                                     year = cve_match.split("-")[1]
                                     criticality = self.get_criticality(stripped_cve, nvd_json_path)
-                                    all_cve += f'[{stripped_cve}] - {criticality}'+ '\n'
-                                    save_cve_level = LevelCveAim(port = port, cve=stripped_cve, level=criticality, result = save_data)
-                                    save_cve_level.save()                                  
-                                    
+                                    all_cve += f'[{stripped_cve}] - {criticality}\n'
+
+                                    LevelCveAim(port=port, cve=stripped_cve, level=criticality, result=save_data).save()
+
                                 save_data_in_aim_ports = ResultPortsAim(
-                                    port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data)
+                                    port=port, state=state, reason=reason, service=service, one_cve=all_cve, all_info=save_data
+                                )
                                 save_data_in_aim_ports.save()
-                                save_cve = CveInformationAim(cve_information = cve, result_ports = save_data_in_aim_ports)
-                                save_cve.save()
-                                
-                        else:
-                            return response
-                        
-                    save_data.mark_execution_complete()
-                    
-                    return response
-                                
+
+                                CveInformationAim(cve_information=cve, result_ports=save_data_in_aim_ports).save()
+
+                        save_data.mark_execution_complete()
+                        return response
+
             elif data_server[data_id].tag == 'False':
-                client = ClientBD.objects.get(ip_client=request.name_cl)
+                client = ClientBD.objects.filter(ip_client=request.name_cl).first()
+                if not client:
+                    context.abort(grpc.StatusCode.NOT_FOUND, f"Client {request.name_cl} not found")
+
                 save_tab = DataServer.objects.get(id=data_id)
                 save_tab.client = client
                 save_tab.tag = 'Proc'
                 save_tab.save()
-                ip = data_server[data_id].ip
-                port = data_server[data_id].port
-                mode = data_server[data_id].mode
-                cve_report = f'{data_server[data_id].cve_report}'
+
                 response_aim = prot_pb2.DataServer(
-                    ip_address=ip, port=port, mode=mode, cve_report=cve_report)
+                    ip_address=data_server[data_id].ip,
+                    port=data_server[data_id].port,
+                    mode=data_server[data_id].mode,
+                    cve_report=f'{data_server[data_id].cve_report}',
+                )
                 return response_aim
-                
+
+        context.abort(grpc.StatusCode.NOT_FOUND, f"No scan task for client {request.name_cl}")
 
     def SayHello(self, request, context):
         if request.message == "Ping":
-            # Обработка сообщения PING
             self.last_ping_times[request.name] = time.time()
             return prot_pb2.HelloReply(message="Received PING")
-        else:
-            pass
+
+        context.abort(grpc.StatusCode.INVALID_ARGUMENT, "expected Ping")
 
 
 def check_ping_thread(my_service):
